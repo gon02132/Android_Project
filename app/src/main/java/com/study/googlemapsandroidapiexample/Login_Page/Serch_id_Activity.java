@@ -1,6 +1,5 @@
-package com.study.googlemapsandroidapiexample;
+package com.study.googlemapsandroidapiexample.Login_Page;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +7,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.study.googlemapsandroidapiexample.R;
+import com.study.googlemapsandroidapiexample.db_conn;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -17,6 +19,8 @@ public class Serch_id_Activity extends AppCompatActivity{
     private Button back_bt, serch_bt;
     private db_conn conn;
     private EditText serch_name_et;
+
+    private long fir_time, sec_time;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +74,7 @@ public class Serch_id_Activity extends AppCompatActivity{
 
                             //검색된 모든 결과값을 문자열에 저장
                             for(int i=0; i<json_result.length(); i++){
-                                print_string += json_result.getString(i)+"\n";
+                                print_string += (i+1)+":"+json_result.getString(i)+"\n";
                             }
 
                             //결과String값을 가지고 결과 Activity로 이동
@@ -88,4 +92,17 @@ public class Serch_id_Activity extends AppCompatActivity{
             }
         });
     }
+
+    //뒤로가기 두번 클릭시 나가지는 이벤트
+    @Override
+    public void onBackPressed() {
+        sec_time = System.currentTimeMillis();
+        if(sec_time - fir_time < 2000){
+            super.onBackPressed();
+            finishAffinity();
+        }
+        Toast.makeText(this, "한번더 뒤로가기 클릭 시 종료", Toast.LENGTH_SHORT).show();
+        fir_time = System.currentTimeMillis();
+    }
+
 }

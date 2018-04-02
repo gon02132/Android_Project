@@ -1,4 +1,4 @@
-package com.study.googlemapsandroidapiexample;
+package com.study.googlemapsandroidapiexample.Login_Page;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +9,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.study.googlemapsandroidapiexample.R;
+import com.study.googlemapsandroidapiexample.db_conn;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -17,6 +20,8 @@ public class Serch_pass_Activity extends AppCompatActivity{
     private Button back_bt, serch_bt;
     private EditText serch_id_et, serch_name_et;
     private db_conn conn;
+
+    private long fir_time, sec_time;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +79,6 @@ public class Serch_pass_Activity extends AppCompatActivity{
                                 print_string += "password:" +json_obj.getString("password")+"\n";
                                 print_string += "name:"     +json_obj.getString("name")+"\n";
                             }
-                            Toast.makeText(Serch_pass_Activity.this, result_String, Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(Serch_pass_Activity.this, Serch_result_pw_Activity.class);
                             intent.putExtra("user_info", print_string);
                             startActivity(intent);
@@ -91,4 +95,17 @@ public class Serch_pass_Activity extends AppCompatActivity{
             }
         });
     }
+
+    //뒤로가기 두번 클릭시 나가지는 이벤트
+    @Override
+    public void onBackPressed() {
+        sec_time = System.currentTimeMillis();
+        if(sec_time - fir_time < 2000){
+            super.onBackPressed();
+            finishAffinity();
+        }
+        Toast.makeText(this, "한번더 뒤로가기 클릭 시 종료", Toast.LENGTH_SHORT).show();
+        fir_time = System.currentTimeMillis();
+    }
+
 }

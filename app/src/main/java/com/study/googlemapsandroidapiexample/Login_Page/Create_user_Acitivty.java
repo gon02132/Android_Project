@@ -1,4 +1,4 @@
-package com.study.googlemapsandroidapiexample;
+package com.study.googlemapsandroidapiexample.Login_Page;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -12,25 +12,32 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.concurrent.ExecutionException;
+import com.study.googlemapsandroidapiexample.R;
+import com.study.googlemapsandroidapiexample.db_conn;
 
 
 public class Create_user_Acitivty extends AppCompatActivity{
     private Button exist_id_check_bt, create_user_bt, create_cancel_bt;
-    private EditText id_input_et, pass_fir_et, pass_sec_et, name_et;
+    private EditText id_input_et, pass_fir_et, pass_sec_et, name_et, email_et,phone_et, address_et;
     private TextView serch_result, two_pass_check;
     private db_conn conn;
     private Integer count = 0;
+    private long fir_time, sec_time;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.create_id);
+        setContentView(R.layout.create_user);
 
         id_input_et = (EditText)findViewById(R.id.id_input_tv);
         name_et = (EditText)findViewById(R.id.name_et);
+        email_et = (EditText)findViewById(R.id.emil_et);
+        phone_et = (EditText)findViewById(R.id.phone_et);
+        address_et = (EditText)findViewById(R.id.address_et);
 
         two_pass_check = (TextView)findViewById(R.id.two_pass_check);
         serch_result = (TextView)findViewById(R.id.serch_result);
+
 
 
         exist_id_check_bt = (Button)findViewById(R.id.exist_id_check_bt);
@@ -155,14 +162,23 @@ public class Create_user_Acitivty extends AppCompatActivity{
                 String hexColor1 = "#"+Integer.toHexString(two_pass_check.getCurrentTextColor()).substring(2);
                 String hexColor2 = "#"+Integer.toHexString(serch_result.getCurrentTextColor()).substring(2);
 
-                //둘다 사용가능한 상태라면 가입하기!
+                //사용가능한 상태라면 가입하기!
                 //인자만큼 db에 저장되도록!!
-                if(hexColor1.equals("#0000ff") && hexColor2.equals("#0000ff") && name_et.getText().toString().length()>0){
+                if(hexColor1.equals("#0000ff")
+                        && hexColor2.equals("#0000ff")
+                        && name_et.getText().toString().length()>0
+                        && email_et.getText().toString().length()>0){
                     conn = new db_conn();
                     //인자:id,pass
                     try {
                         //.get()을 할경우 doIn..함수에서 반환값이 돌아온다(하지만 처리량이 많을경우) 리턴값이 늦게받아질수도 있다
-                        String s = conn.execute("create_user_ok",id_input_et.getText().toString(), pass_sec_et.getText().toString(), name_et.getText().toString()).get();
+                        String s = conn.execute("create_user_ok",
+                                id_input_et.getText().toString(),
+                                pass_sec_et.getText().toString(),
+                                name_et.getText().toString(),
+                                email_et.getText().toString(),
+                                phone_et.getText().toString(),
+                                address_et.getText().toString()).get();
 
                         //DB에 insert되었다면 생성완료 알림 후 Mainpage로 이동
                         if(s.equals("insert_OK")){
@@ -190,4 +206,17 @@ public class Create_user_Acitivty extends AppCompatActivity{
     public int get_count(){
         return count;
     }
+
+    //뒤로가기 두번 클릭시 나가지는 이벤트
+    @Override
+    public void onBackPressed() {
+        sec_time = System.currentTimeMillis();
+        if(sec_time - fir_time < 2000){
+            super.onBackPressed();
+            finishAffinity();
+        }
+        Toast.makeText(this, "한번더 뒤로가기 클릭 시 종료", Toast.LENGTH_SHORT).show();
+        fir_time = System.currentTimeMillis();
+    }
+
 }
