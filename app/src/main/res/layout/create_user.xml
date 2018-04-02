@@ -23,21 +23,21 @@
         android:id="@+id/id_input_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="30dp"
         android:ems="10"
         android:hint="아이디"
         android:text=""
         app:layout_constraintEnd_toStartOf="@+id/exist_id_check_bt"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintStart_toStartOf="@+id/name_et"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/exist_id_check_bt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="30dp"
         android:text="중복 확인"
-        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintEnd_toEndOf="@+id/name_et"
         app:layout_constraintStart_toEndOf="@+id/id_input_tv"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -47,7 +47,7 @@
         android:layout_height="wrap_content"
         android:text=""
         app:layout_constraintEnd_toStartOf="@+id/exist_id_check_bt"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintStart_toStartOf="@+id/id_input_tv"
         app:layout_constraintTop_toBottomOf="@+id/id_input_tv" />
 
     <EditText
@@ -91,30 +91,64 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""
-        app:layout_constraintEnd_toStartOf="@+id/guideline2"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintEnd_toEndOf="@+id/pass_sec_et"
+        app:layout_constraintStart_toStartOf="@+id/pass_sec_et"
         app:layout_constraintTop_toBottomOf="@+id/pass_sec_et" />
 
+    <EditText
+        android:id="@+id/emil_et"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="email"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@+id/two_pass_check" />
+
+    <EditText
+        android:id="@+id/phone_et"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="phone/선택사항"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@+id/emil_et" />
+
+    <EditText
+        android:id="@+id/address_et"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="address/선택사항"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@+id/phone_et" />
 
 
     <Button
         android:id="@+id/create_user_bt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="가입하기"
         app:layout_constraintEnd_toStartOf="@+id/create_cancel_bt"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toBottomOf="@+id/two_pass_check" />
+        app:layout_constraintStart_toStartOf="@+id/emil_et"
+        app:layout_constraintTop_toBottomOf="@+id/address_et" />
 
     <Button
         android:id="@+id/create_cancel_bt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
         android:layout_marginTop="8dp"
         android:text="뒤로가기"
-        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintEnd_toEndOf="@+id/emil_et"
         app:layout_constraintStart_toEndOf="@+id/create_user_bt"
-        app:layout_constraintTop_toBottomOf="@+id/two_pass_check" />
+        app:layout_constraintTop_toBottomOf="@+id/address_et" />
 
 </android.support.constraint.ConstraintLayout>

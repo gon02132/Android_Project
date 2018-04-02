@@ -18,7 +18,8 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCyE-tzkA5dpRJQuCbsIyS8s3oNrMcZu1Y" />
 
-        <activity android:name=".Login_page_Activity">
+        <activity android:name=".Login_Page.Login_page_Activity"
+            android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,13 +27,18 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".MainActivity" android:screenOrientation="landscape"/>
-        <activity android:name=".Login_ok_Activity"/>
-        <activity android:name=".Create_user_Acitivty"/>
-        <activity android:name=".Serch_id_Activity"/>
-        <activity android:name=".Serch_pass_Activity"/>
-        <activity android:name=".Serch_result_id_Activity"/>
-        <activity android:name=".Serch_result_pw_Activity"/>
+        <activity android:name=".Main_Page.MainActivity"
+            android:screenOrientation="landscape"/>
+        <activity android:name=".Login_Page.Create_user_Acitivty" />
+        <activity android:name=".Login_Page.Serch_id_Activity"
+            android:screenOrientation="landscape"/>
+        <activity android:name=".Login_Page.Serch_pass_Activity"
+            android:screenOrientation="landscape"/>
+        <activity android:name=".Login_Page.Serch_result_id_Activity"
+            android:screenOrientation="landscape"/>
+        <activity android:name=".Login_Page.Serch_result_pw_Activity"
+            android:screenOrientation="landscape"/>
+
     </application>
 
 </manifest>
