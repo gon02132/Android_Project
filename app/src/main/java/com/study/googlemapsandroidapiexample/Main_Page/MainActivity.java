@@ -75,6 +75,14 @@ class get_set_package {
         this.originMarkerlist = originMarkerlist;
     }
 
+    //현재 그려진 모든 마커들 가져오기
+    public ArrayList<Marker> getOriginMarkerlist() {
+        return originMarkerlist;
+    }
+
+    //다음 가야할 마커 가져오기
+    public Marker getNow_Marker() {return now_Marker;}
+
     //마커 그리기
     public void drawMarkers(LatLng latLng, String vd_name, String vending_info, Integer status, boolean draggable) {
         //최초 마커를 생성하는 경우 처음 그려주는 행위
@@ -192,7 +200,7 @@ class locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
     private ArrayList<Marker> originMarkerlist;
 
     private GoogleMap gmap;
-    private TextView my_status;
+    private TextView my_status, next_vending;
     private Context context;
     private get_set_package get_set_package;
     private Marker closestMarker;
@@ -212,15 +220,20 @@ class locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
 
     private Location lastlocation;
 
-    public locationlistener(Context context, ArrayList<Marker> originMarkerlist, GoogleMap gmap, ListView sc_lv, TextView my_status, get_set_package get_set_package, Menu navi_menu) {
+    public locationlistener(Context context, ArrayList<Marker> originMarkerlist, GoogleMap gmap, ListView sc_lv, TextView my_status, TextView next_vending, get_set_package get_set_package, Menu navi_menu) {
         this.originMarkerlist = originMarkerlist;
         this.gmap = gmap;
         this.sc_lv = sc_lv;
         this.my_status = my_status;
+        this.next_vending = next_vending;
         this.context = context;
         this.get_set_package = get_set_package;
         this.navi_menu = navi_menu;
         gmap.setOnMapLongClickListener(this);
+    }
+
+    public void setBefore_snippet(String before_snippet) {
+        this.before_snippet = before_snippet;
     }
 
     @Override
@@ -303,6 +316,10 @@ class locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
                     (((Activity) context).findViewById(R.id.close_button)).setVisibility(View.VISIBLE);
                 }
 
+                //다음가야할 정보 출력공간을 보이게 한다.
+                if((((Activity) context).findViewById(R.id.next_vending_layout)).getVisibility() == View.GONE) {
+                    (((Activity) context).findViewById(R.id.next_vending_layout)).setVisibility(View.VISIBLE);
+                }
             }
         }
 
@@ -343,7 +360,7 @@ class locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy년MM월dd일HH시mm분ss초");
             String nowDate = sdf.format(date);
 
-            //0km/s근접 소수점일 경우 0으로 내림(E-7이딴식으로 나오는거 방지)
+            //0km/s근접 소수점일 경우 0으로 내림(E-7이런 식으로 나오는거 방지)
             if (kmPerHour < 0.1)
                 kmPerHour = 0;
             //double형 -> String형 변환 + 소수점 한자리까지만 표현
@@ -353,10 +370,22 @@ class locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
             msg += addr + "\n";
             msg += nowDate + "\n";
             msg += SkmPerHour + "km/h";
+
+            //추가된 마커가 하나이상 있을경우 실행
             if (originMarkerlist.size() > 1 && closestMarker != null) {
                 double next_meter = get_set_package.getmeter(originMarkerlist.get(0).getPosition(), closestMarker.getPosition());
-                msg += "\n다음 위치 까지의 거리" + String.format("%.1f", next_meter) + " m";
+                if((int)next_meter >= 1000){
+                    //1000m가 넘어 갈시, km로만 표시한다
+                    //현재 m의 올림으로 1000m미만으로 떨어질경우, 다시 m로 표시된다
+                    int km = (int)Math.ceil(next_meter/1000);
+                    //msg += "\n다음 위치 까지의 거리" + km + "km";
+                    next_vending.setText("NEXT:" + km + "km");
+                }else {
+                    //msg += "\n다음 위치 까지의 거리" + String.format("%.1f", next_meter) + " m";
+                    next_vending.setText("NEXT:" + String.format("%.1f", next_meter) + "m");
+                }
             }
+
             //얼마나 신뢰도를 가지는지 보고 싶으면 주석 제거(하지만 딱히 신뢰도가 정확하지 않음)
             //나중에 신뢰도를 사용할 알고리즘이 있다면 이거 쓰지말고
             //직접 알고리즘으로 짜서 예외처리하는 것이 보다 효율적
@@ -461,6 +490,10 @@ class locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
                             (((Activity) context).findViewById(R.id.ok_button)).setVisibility(View.VISIBLE);
                             (((Activity) context).findViewById(R.id.close_button)).setVisibility(View.VISIBLE);
                         }
+                        //다음가야할 정보 출력공간을 보이게 한다.
+                        if((((Activity) context).findViewById(R.id.next_vending_layout)).getVisibility() == View.GONE) {
+                            (((Activity) context).findViewById(R.id.next_vending_layout)).setVisibility(View.VISIBLE);
+                        }
 
                         //다음 자판기 추적을 켜져있을경우 끈다.
                         closest_vendingmachine_tracking_button = false;
@@ -534,12 +567,18 @@ class mark_click_event implements GoogleMap.OnMarkerClickListener {
                 //검색된 배열을 순차적으로 돈다
                 for (int i = 0; i < json_result.length(); i++) {
 
-                    //[0]=vd_id [1]=vd_name [2]=drink_name [3]=drink_path [4]=drink_stook [5]=drink_line [6]=expiration_date
+                    //[0]=vd_id [1]=vd_name [2]z=drink_name [3]=drink_path [4]=drink_stook [5]=drink_line [6]=note
                     JSONObject json_obj = json_result.getJSONObject(i);
                     //인자값 : 제품명,이미지경로,제품수량,제품라인
-                    list_itemArrayList.add(new AlertDialog_list_item(json_obj.getString("drink_name"), json_obj.getString("drink_path"), json_obj.getInt("drink_stook"), json_obj.getInt("drink_line")));
+
+                    if(json_obj.getString("note") == null || json_obj.getString("note").equals("null")){
+                        list_itemArrayList.add(new AlertDialog_list_item(" ",json_obj.getString("drink_name"), json_obj.getString("drink_path"), json_obj.getInt("drink_stook"), json_obj.getInt("drink_line")));
+                    }
+                    else {
+                        list_itemArrayList.add(new AlertDialog_list_item(json_obj.getString("note"), json_obj.getString("drink_name"), json_obj.getString("drink_path"), json_obj.getInt("drink_stook"), json_obj.getInt("drink_line")));
+                    }
                 }
-                AlertDialog_Custom_dialog custom_dialog = new AlertDialog_Custom_dialog(context, list_itemArrayList, marker.getTitle());
+                AlertDialog_Custom_dialog custom_dialog = new AlertDialog_Custom_dialog(context, list_itemArrayList, marker.getTitle(),json_result.getJSONObject(0).getString("vd_id"));
                 custom_dialog.callFunction();
             }
         } catch (Exception e) {
@@ -554,7 +593,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private DrawerLayout drawerLayout;
 
     private GoogleMap gmap;
-    private TextView user_name_tv, user_email_tv, user_id_tv_hide, my_status;
+
+    private TextView user_name_tv, user_email_tv, user_id_tv_hide, my_status, next_vending;
     private ListView sc_lv;
     private Button ok_button, close_button;
     private ImageButton open_button;
@@ -570,7 +610,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Boolean drawer_check = true;
 
     private ArrayList<Marker> originMarkerlist = new ArrayList<Marker>();
-    private ArrayList<LatLng> japan_two_marker;
 
     private locationlistener listener;
     private Share_login_info share_login_info_obj;
@@ -604,7 +643,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         //xml 설정하기
-        ConstraintLayout linear = (ConstraintLayout) inflater.inflate(R.layout.main_page_second_activity, null);
+        final ConstraintLayout linear = (ConstraintLayout) inflater.inflate(R.layout.main_page_second_activity, null);
 
         //레이아웃의 폭과 높이 설정
         ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(
@@ -686,6 +725,25 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                     //작업지시서 최신화 하기
                     case R.id.refrash_order_list:
+
+                        //기존 마커 지우기
+                        get_set_package.getOriginMarkerlist().clear();
+
+                        //다음 가야할 위치 제거
+                        get_set_package.getNow_Marker().remove();
+
+                        //오른쪽 밑 레이아웃 지우기
+                        findViewById(R.id.sc_layout).setVisibility(View.GONE);
+
+                        //마커 그리기
+                        draw_marker();
+
+                        //다음가야할 길이 레이아웃 숨기기
+                        findViewById(R.id.next_vending_layout).setVisibility(View.GONE);
+
+                        //다음 가야할 자판기 초기화
+                        listener.setBefore_snippet("");
+
                         Toast.makeText(MainActivity.this, menuItem.getTitle(), Toast.LENGTH_LONG).show();
                         break;
 
@@ -738,11 +796,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
 
 
-        my_status = (TextView) findViewById(R.id.my_status);
-        sc_lv = (ListView) findViewById(R.id.sc_lv);
-        ok_button = (Button) findViewById(R.id.ok_button);
-        close_button = (Button) findViewById(R.id.close_button);
-        open_button = (ImageButton) findViewById(R.id.open_button);
+        my_status       = (TextView)    findViewById(R.id.my_status);
+        next_vending    = (TextView)    findViewById(R.id.next_vending);
+        sc_lv           = (ListView)    findViewById(R.id.sc_lv);
+        ok_button       = (Button)      findViewById(R.id.ok_button);
+        close_button    = (Button)      findViewById(R.id.close_button);
+        open_button     = (ImageButton) findViewById(R.id.open_button);
 
         //로그인 한 결과값을 가져온다(사용자 정보)
         Intent data = getIntent();
@@ -767,11 +826,30 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             user_email_tv.setText(user_info[2]);
         }
 
-        //보충완료 버튼 클릭시,
+        //자판기 갱신 버튼 클릭시,
         ok_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "ok버튼 누름!", Toast.LENGTH_SHORT).show();
+
+                //기존 마커 지우기
+                get_set_package.getOriginMarkerlist().clear();
+
+                //마커 그리기
+                draw_marker();
+
+                //다음 가야할 위치 제거
+                get_set_package.getNow_Marker().remove();
+
+                //오른쪽 밑의 레이아웃 안보이게 하기
+                findViewById(R.id.sc_layout).setVisibility(View.GONE);
+
+                //다음가야할 길이 레이아웃 숨기기
+                findViewById(R.id.next_vending_layout).setVisibility(View.GONE);
+
+                //이전 자판기에대한 정보 초기화
+                listener.setBefore_snippet("");
+
+                Toast.makeText(MainActivity.this, "갱신완료!", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -846,8 +924,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         //길찾기 함수 호출(일본에서 경로표시)
         new Directions_Functions(gmap, get_set_package);
+        draw_marker();
 
-
+/*
         try {
             db_conn_obj = new db_conn(this);
             //DB에 저장되어있는 마커들을 불러온다 ->user의 login_id를 기준으로
@@ -884,13 +963,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             Log.e(">>>>>>>>>>>>>>>>>>>>>>>", e.toString());
 
         }
-
+*/
 
         //마커클릭 이벤트 클래스 생성
         mark_click_event = new mark_click_event(this, googleMap, originMarkerlist);
 
         //매초 혹은 미터 마다 갱신될 class 생성
-        listener = new locationlistener(this, originMarkerlist, gmap, sc_lv, my_status, get_set_package, navi_menu);
+        listener = new locationlistener(this, originMarkerlist, gmap, sc_lv, my_status,next_vending, get_set_package, navi_menu);
 
         //GPS가 켜져있다면 이 함수 실행
         initLocationManager();
@@ -904,6 +983,46 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         //최초 카메라 위치 잡기 -> 자신의 위치가 갱신 되기전(영진전문대) 위치를 기본으로 시작한다.
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(35.8963510, 128.6219001), 17));
+    }
+
+    //마커 그리기
+    private void draw_marker(){
+        try {
+            db_conn_obj = new db_conn(this);
+            //DB에 저장되어있는 마커들을 불러온다 ->user의 login_id를 기준으로
+            String result_str = db_conn_obj.execute("get_markers", user_info[0]).get();
+            //받아온 값이 없거나 mysql구문의 에러의 경우 아무것도 실행하지 않고 다음으로 넘어간다
+            if (result_str.equals("no_marker") || result_str.equals("mysql_err")) {
+                Toast.makeText(this, "no marker or mysql_err", Toast.LENGTH_SHORT).show();
+            }
+
+            //받아온 값이 JSON객체로 있을 경우
+            else {
+                //json 객체로 변환하여 json배열에 저장
+                JSONObject jsonObject = new JSONObject(result_str);
+                JSONArray json_result = jsonObject.getJSONArray("result");
+
+                //검색된 배열을 순차적으로 돈다
+                for (int i = 0; i < json_result.length(); i++) {
+
+                    String vending_info = "";
+
+                    //vd_id, vd_name, vd_latitude, vd_longitude, vd_place, vd_supplement, vd_soldout 가 저장 되어 있음
+                    JSONObject json_obj = json_result.getJSONObject(i);
+                    LatLng latLng = new LatLng(json_obj.getDouble("vd_latitude"), json_obj.getDouble("vd_longitude"));
+                    vending_info += json_obj.getInt("vd_id");//+"/br/";
+                    //vending_info += json_obj.getString("vd_place")+"/br/";
+                    //vending_info += json_obj.getString("vd_supplement");
+                    //Toast.makeText(this, vending_info, Toast.LENGTH_SHORT).show();
+                    get_set_package.drawMarkers(latLng, json_obj.getString("vd_name"), vending_info, json_obj.getInt("vd_soldout"), false);
+
+
+                }
+            }
+        } catch (Exception e) {
+            Log.e(">>>>>>>>>>>>>>>>>>>>>>>", e.toString());
+
+        }
     }
 
     //GPS가 켜져 있을 때, 최초 한번 실행

@@ -15,7 +15,7 @@
                 android:width="2dp"
                 android:color="#565656" />
             <!--배경 투명도+색상 투명도는 앞2자리로 16진수로 표현-->
-            <solid android:color="#7FFFFFFF" />
+            <solid android:color="#9FFFFFFF" />
         </shape>
     </item>
 

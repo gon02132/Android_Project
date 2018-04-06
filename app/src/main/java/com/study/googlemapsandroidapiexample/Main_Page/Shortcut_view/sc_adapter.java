@@ -6,13 +6,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.study.googlemapsandroidapiexample.R;
 
 import java.util.ArrayList;
 
-public class sc_adapter  extends BaseAdapter{
+public class sc_adapter extends BaseAdapter{
     private Context context;
     private ArrayList<sc_list_item> sc_list;
     private TextView name,line,count;
@@ -41,13 +40,14 @@ public class sc_adapter  extends BaseAdapter{
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.short_grid_item, null);
+            convertView = LayoutInflater.from(context).inflate(R.layout.short_lv_item, null);
         }
-        name = (TextView) convertView.findViewById(R.id.lv_product_name);
-        name.setText("  "+sc_list.get(position).getLv_product_name());
 
         line = (TextView) convertView.findViewById(R.id.lv_product_line);
-        line.setText(sc_list.get(position).getLv_product_line());
+        line.setText(" "+sc_list.get(position).getLv_product_line());
+
+        name = (TextView) convertView.findViewById(R.id.lv_product_name);
+        name.setText("  "+sc_list.get(position).getLv_product_name());
 
         count = (TextView) convertView.findViewById(R.id.lv_product_count);
         count.setText(sc_list.get(position).getLv_product_count());

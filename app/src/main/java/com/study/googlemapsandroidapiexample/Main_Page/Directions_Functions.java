@@ -196,7 +196,7 @@ public class Directions_Functions extends FragmentActivity{
             if (polylineOptions!=null) {
                 mMap.addPolyline(polylineOptions);
             } else {
-                Toast.makeText(getApplicationContext(), "Direction not found!", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "Direction not found!", Toast.LENGTH_SHORT).show();
             }
 
         }
