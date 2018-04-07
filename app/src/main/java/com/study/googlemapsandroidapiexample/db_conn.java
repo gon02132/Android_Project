@@ -15,9 +15,9 @@ import java.net.URL;
 //인자1:doInBackground 2:onProgressUpdate 3:onPostExecute  들의 매개변수 타입결정
 //비동기적 쓰레드, 백그라운드 쓰레드와 UI쓰레드(메인 쓰레드)와 같이 쓰기위해 쓰임
 public class db_conn extends AsyncTask<String, Void, String> {
-    private Context             context;
-    private BufferedReader      bufferedReader = null;  //버퍼
-    private Share_login_info    share_login_info_obj;   //로그인 정보
+    private Context             context;                         //MainActivity this
+    private BufferedReader      bufferedReader          = null;  //버퍼
+    private Share_login_info    share_login_info_obj;            //로그인 정보
 
     //받아올 php 경로 선택 1:aws 2:autoset
     String link = "http://ec2-13-125-198-224.ap-northeast-2.compute.amazonaws.com/android_db_conn_source/conn.php";
@@ -26,7 +26,7 @@ public class db_conn extends AsyncTask<String, Void, String> {
     //HTTP커넥션
     HttpURLConnection con;
 
-    //---------------------------생성자----------------------------------------------------------
+    //----------------------------------------생성자----------------------------------------------
     public db_conn(Context context, Share_login_info share_login_info_obj){
         this.context              = context;
         this.share_login_info_obj = share_login_info_obj;
@@ -43,9 +43,12 @@ public class db_conn extends AsyncTask<String, Void, String> {
     @Override
     protected String doInBackground(String... strings) {
         try {
+
             //구별 인자값의 널값 확인 - 예외처리
             if(strings[0] != null) {
+
                 switch (strings[0]){
+
                     //로그인 버튼 클릭시 넘어가는 인자값들
                     case "login":
                         if(strings[1] != null && strings[2] != null) {
@@ -109,8 +112,10 @@ public class db_conn extends AsyncTask<String, Void, String> {
                         }
                 }
             }
+
             URL url = new URL(link);
             con = (HttpURLConnection)url.openConnection();
+
             //연결 성공시
             if(con != null) {
                 //---------------연결설정-------------------------------------------
@@ -122,7 +127,9 @@ public class db_conn extends AsyncTask<String, Void, String> {
 
                 //연결성공 코드가 반환됬을시
                 if(con.getResponseCode() == HttpURLConnection.HTTP_OK) {
+
                     StringBuilder sb = new StringBuilder();
+
                     //buffer에 직접 씌울수 없으므로 IS리더를 사용한다 //캐릭터자료형은 utf8
                     bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream(),"UTF-8"));
 
