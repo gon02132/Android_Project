@@ -1,15 +1,16 @@
 package com.study.googlemapsandroidapiexample.Main_Page.Shortcut_view;
 
 
-public class sc_list_item {
-    private String lv_product_name;
-    private String lv_product_line;
-    private String lv_product_count;
+//custom list_view에 저장되는 item들
+public class Sc_list_item {
+    private String lv_product_name;  //제품 명
+    private String lv_product_line;  //제품 라인
+    private String lv_product_count; //제품 수량
 
-    public sc_list_item(String lv_product_name, String lv_product_line, String lv_product_count) {
-        this.lv_product_name = lv_product_name;
-        this.lv_product_line = lv_product_line;
-        this.lv_product_count = lv_product_count;
+    public Sc_list_item(String lv_product_name, String lv_product_line, String lv_product_count) {
+        this.lv_product_name    = lv_product_name;
+        this.lv_product_line    = lv_product_line;
+        this.lv_product_count   = lv_product_count;
     }
 
     public String getLv_product_name() {

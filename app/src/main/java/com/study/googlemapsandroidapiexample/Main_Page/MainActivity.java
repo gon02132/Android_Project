@@ -64,15 +64,16 @@ import org.json.JSONObject;
 
 //공통 get set함수를 모아놓은 클래스
 class get_set_package {
-    private Context context;
-    private GoogleMap googleMap;
-    private ArrayList<Marker> originMarkerlist;
-    private Marker now_Marker;
+    private Context             context;            //MainActivity this
+    private GoogleMap           googleMap;          //구글맵 객체
+    private ArrayList<Marker>   originMarkerlist;   //구글맵에 그려진 마커들이 저장된 배열
+    private Marker              next_Marker;         //다음 가야할 위치의 마커
 
+    //생성자
     public get_set_package(Context context, GoogleMap googleMap, ArrayList<Marker> originMarkerlist) {
-        this.context = context;
-        this.googleMap = googleMap;
-        this.originMarkerlist = originMarkerlist;
+        this.context            = context;
+        this.googleMap          = googleMap;
+        this.originMarkerlist   = originMarkerlist;
     }
 
     //현재 그려진 모든 마커들 가져오기
@@ -81,49 +82,53 @@ class get_set_package {
     }
 
     //다음 가야할 마커 가져오기
-    public Marker getNow_Marker() {return now_Marker;}
+    public Marker getNow_Marker() {return next_Marker;}
 
     //마커 그리기
     public void drawMarkers(LatLng latLng, String vd_name, String vending_info, Integer status, boolean draggable) {
         //최초 마커를 생성하는 경우 처음 그려주는 행위
 
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(latLng);
+        MarkerOptions markerOptions = new MarkerOptions();  //마커 옵션들을 설정할 수있게 해주는 함수 호출\
+        markerOptions.position(latLng);                     //마커의 현재 위도와 경도
+        markerOptions.title(vd_name);                       //제목(위치의 주소)
+        markerOptions.snippet(vending_info);                //내용
+        markerOptions.draggable(draggable);                 //드래그 허용
 
-        markerOptions.title(vd_name); //제목(위치의 주소)
-        markerOptions.snippet(vending_info);//내용
-        markerOptions.draggable(draggable);//드래그 허용
-
-        //markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN));
-        //1 = 매진임박 2=매진 3=라인변경
+        //1=매진임박 2=매진 3=라인변경
+        //resizeMapIcons함수를 사용하여 각각의 다른 사이즈의 사진이 들어와도
+        //통일되게 사이즈를 재설정하여 아이콘을 만든다.
         if (status == 1) {
             //resize함수로 사이즈를 통일한다
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("japangi", 50, 60)));
-            //markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.japangi));
         } else if (status == 2) {
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("japangi2", 50, 60)));
-            //markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.japangi2));
         } else if (status == 3) {
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("japangi3", 50, 60)));
-            //markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.japangi3));
         } else if (status == 0) {
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("now", 50, 60)));
-            //markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.now));
         } else {//없을 경우(예외처리)
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("x2", 50, 60)));
-            //markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.x2));
         }
 
+        //다음 가야할 자판기를 그려 줄때 호출되는 함수
         if (status == 0) {
-            if (now_Marker != null) {
-                now_Marker.remove();
+
+            //다음 가야할 자판기가 이미 그려져 있는 경우 맵에서 지운다.
+            if (next_Marker != null) {
+                next_Marker.remove();
             }
-            now_Marker = googleMap.addMarker(markerOptions);
-        } else {
+
+            //다음 가야할 자판기를 다시 맵에 그린다.
+            next_Marker = googleMap.addMarker(markerOptions);
+        }
+
+        //이외에는 자판기들이 추가 된다!
+        else {
             //리스트의 경우 0의자리는 자신의 위치를 나타내므로 더미로 초기화를 시켜준다
             if (originMarkerlist.size() == 0) {
                 originMarkerlist.add(googleMap.addMarker(markerOptions));
             }
+
             // 구글맵에 마커 생성 + 마커배열 추가
             originMarkerlist.add(googleMap.addMarker(markerOptions));
         }
@@ -131,8 +136,8 @@ class get_set_package {
 
     //아이콘들의 사이즈 설정
     public Bitmap resizeMapIcons(String iconName, int width, int height) {
-        Bitmap imageBitmap = BitmapFactory.decodeResource(context.getResources(), context.getResources().getIdentifier(iconName, "drawable", context.getPackageName()));
-        Bitmap resizedBitmap = Bitmap.createScaledBitmap(imageBitmap, width, height, false);
+        Bitmap imageBitmap      = BitmapFactory.decodeResource(context.getResources(), context.getResources().getIdentifier(iconName, "drawable", context.getPackageName()));
+        Bitmap resizedBitmap    = Bitmap.createScaledBitmap(imageBitmap, width, height, false);
         return resizedBitmap;
     }
 
@@ -140,38 +145,50 @@ class get_set_package {
     public String getAddress(LatLng latLng) {
         List<Address> list = null;
         try {
+            //Geocoder로 지명을 가져오기위해 클래스를 가져온다
             Geocoder geocoder = new Geocoder(context);
+
+            //주소 리스트 객체를 가져온다
             list = geocoder.getFromLocation(
                     latLng.latitude,
                     latLng.longitude,
                     10);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        //현재 위치의 지명이 저장되어 있는경우 그 지명을 반환해준다
         if (list != null) {
             //배열이 반환되는데 그 중에 그 위치의 지명 만을 반환
             return list.get(0).getAddressLine(0).toString();
         }
+
+        //지명이 없는경우 지명이 없다는 것을 반환해준다.
         return "not found location name";
     }
 
     //마커옵션 객체 생성후 반환
     public MarkerOptions getMarkerOption(LatLng latLng, String addr, boolean draggable) {
+
+        //마커 옵션 클래스 생성
         MarkerOptions markerOptions = new MarkerOptions();
+
+        //위치 확인
         markerOptions.position(latLng);
 
-        markerOptions.title(addr); //제목(위치의 주소)
+        markerOptions.title(addr);               //제목(위치의 주소)
         markerOptions.snippet("[" + latLng.latitude + ":" + latLng.longitude + "]");//내용
-        markerOptions.draggable(draggable);//드래그 허용
+        markerOptions.draggable(draggable);      //드래그 허용
 
-        //markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN));
-        //markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.japangi));
         return markerOptions;
     }
 
     //현재 위치와 다음 위치의 직선거리(meter단위) 구하기
     static double getmeter(LatLng now_location, LatLng last_location) {
         int R = 6371000; //지구는 둥글구나아~
+
+        //현제 위치와 다음자판기의 위도와 경도의 차
         double dLon = toRad(now_location.longitude - last_location.longitude);
         double dLat = toRad(now_location.latitude - last_location.latitude);
 
@@ -197,45 +214,48 @@ class get_set_package {
 
 //로케이션리스너 생성 클래스
 class locationlistener implements LocationListener, GoogleMap.OnMapLongClickListener {
-    private ArrayList<Marker> originMarkerlist;
+    private GoogleMap       gmap;                       //구글 지도
+    private TextView        my_status, next_vending;    //내 정보(왼쪽 위에 표시되는 tv), 다음 자판기까지의 거리
+    private Context         context;                    //MainActivity this
+    private get_set_package get_set_package;            //내가 만든 getset패키지 함수!
+    private Marker          closestMarker;              //가장 가까운 마커(다음 가야할 자판기)
+    private Menu            navi_menu;                  //drawerlayout의 menu
+    private ListView        sc_lv;                      //오른쪽 밑에 표시되는 제품의 listview
 
-    private GoogleMap gmap;
-    private TextView my_status, next_vending;
-    private Context context;
-    private get_set_package get_set_package;
-    private Marker closestMarker;
-    private Menu navi_menu;
-    private ListView sc_lv;
+    private ArrayList<Marker> originMarkerlist;         //현재 표시되어있는 자판기들 배열
 
-    private String before_snippet = "";
+    private String before_snippet = "";                 //db접속을 최소화 하기위한 String
+
+    private Location lastlocation;                      //최초 한번만 update되는 함수가 호출되어
+                                                        //생기는 에러를 방지하기위한 변수
 
     //-----한번만 실행되게 하기위한 Boolean 변수들-----
     //GPS추적 버튼 클릭시
     private boolean location_button = false;
+
     //가장 가까운 자판기 추적 버튼 클릭 시
     private boolean closest_vendingmachine_tracking_button = false;
-    //GPS가 최초로 업데이트 될 경우, 오른쪽 밑에 버튼 들을 최초 한번만 보이게 한다
-    private boolean check_button = false;
     //-----------------------------------------------
 
-    private Location lastlocation;
-
+    //생성자
     public locationlistener(Context context, ArrayList<Marker> originMarkerlist, GoogleMap gmap, ListView sc_lv, TextView my_status, TextView next_vending, get_set_package get_set_package, Menu navi_menu) {
-        this.originMarkerlist = originMarkerlist;
-        this.gmap = gmap;
-        this.sc_lv = sc_lv;
-        this.my_status = my_status;
-        this.next_vending = next_vending;
-        this.context = context;
-        this.get_set_package = get_set_package;
-        this.navi_menu = navi_menu;
+        this.originMarkerlist   = originMarkerlist;
+        this.gmap               = gmap;
+        this.sc_lv              = sc_lv;
+        this.my_status          = my_status;
+        this.next_vending       = next_vending;
+        this.context            = context;
+        this.get_set_package    = get_set_package;
+        this.navi_menu          = navi_menu;
         gmap.setOnMapLongClickListener(this);
     }
 
+    //이전 snippet을 수정하는 함수
     public void setBefore_snippet(String before_snippet) {
         this.before_snippet = before_snippet;
     }
 
+    //프로그래머가 지정한 일정 시간 or 간 meter만큼 반복해서 실행되는 함수
     @Override
     public void onLocationChanged(Location location) {
 
@@ -243,7 +263,11 @@ class locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
         Double lattitude = location.getLatitude();
         Double longitude = location.getLongitude();
         Double altitude = location.getAltitude();
+
+        //status에 저장될 msg
         String msg = "";
+
+        //현재 지명 가져오기
         String addr = get_set_package.getAddress(new LatLng(lattitude, longitude));
 
         //가장 가까운 자판기 추적 버튼 활성화시
@@ -251,16 +275,19 @@ class locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
 
             //현재위치와 가장 가까운 마커를 찾는 과정
             for (int i = 1; i < originMarkerlist.size(); i++) {
+
                 //값이 하나도 안들어 가 있을경우 초기화 시켜준다.
                 if (closestMarker == null) {
                     closestMarker = originMarkerlist.get(i);
                 }
+
                 //값이 들어가 있는경우 거리 비교
                 else {
                     LatLng my_latlng = new LatLng(lattitude, longitude);
                     double sec_meter = get_set_package.getmeter(my_latlng, closestMarker.getPosition());
                     double fir_meter = get_set_package.getmeter(my_latlng, originMarkerlist.get(i).getPosition());
 
+                    //거리가 더 짧은게 올 경우 가장 가까운 마커를 최신화 시켜준다.
                     if (sec_meter > fir_meter) {
                         closestMarker = originMarkerlist.get(i);
                     }
@@ -274,8 +301,11 @@ class locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
             //매Update마다 가져오는건 부담이 크기때문에 계속 동일한 장소를 가리킬시, 한번만 가져오도록한다
             if (!before_snippet.equals(closestMarker.getSnippet())) {
                 try {
+                    //db 접속(try/catch 필수)
                     db_conn db_conn_obj = new db_conn(context);
-                    String result_str = db_conn_obj.execute("get_vending_info", closestMarker.getSnippet()).get();
+
+                    //db에 접속하여 반환된 결과값 초기호
+                    String result_str   = db_conn_obj.execute("get_vending_info", closestMarker.getSnippet()).get();
 
                     //에러상황들 예외처리
                     if (result_str.equals("no_vending")) {
@@ -294,12 +324,16 @@ class locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
                         Toast.makeText(context, "4no vending machine", Toast.LENGTH_SHORT).show();
                         return;
                     }
+
                     //값들을 제대로 받아 왔을 시,
                     else {
-                        String next_vending_result = "";
                         //json 객체로 변환하여 json배열에 저장
-                        JSONObject jsonObject = new JSONObject(result_str);
-                        sc_custom_listview sc_custom = new sc_custom_listview(context, jsonObject, sc_lv);
+                        JSONObject jsonObject           = new JSONObject(result_str);
+
+                        //오른쪽 밑에 보여주는 listview를 custom하여 보여준다
+                        Sc_custom_listview sc_custom    = new Sc_custom_listview(context, jsonObject, sc_lv);
+
+                        //custom Listview 만들기!!
                         sc_custom.change_listview();
                     }
                 } catch (Exception e) {
@@ -310,13 +344,14 @@ class locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
                 before_snippet = closestMarker.getSnippet();
 
                 //보충완료,닫기버튼을 보이게 한다.(강제형변환으로 액티비티를 접근한다. ->이게 최선이에요 ㅠㅠ)
+                //순서대로 : 열기버튼,sortcutlayout,확인버튼,닫기버튼
                 if((((Activity) context).findViewById(R.id.open_button)).getVisibility() == View.GONE) {
                     (((Activity) context).findViewById(R.id.sc_layout)).setVisibility(View.VISIBLE);
                     (((Activity) context).findViewById(R.id.ok_button)).setVisibility(View.VISIBLE);
                     (((Activity) context).findViewById(R.id.close_button)).setVisibility(View.VISIBLE);
                 }
 
-                //다음가야할 정보 출력공간을 보이게 한다.
+                //다음가야할 정보 출력공간을 보이게 한다. -> 오른쪽 맨위 layout
                 if((((Activity) context).findViewById(R.id.next_vending_layout)).getVisibility() == View.GONE) {
                     (((Activity) context).findViewById(R.id.next_vending_layout)).setVisibility(View.VISIBLE);
                 }
@@ -324,12 +359,16 @@ class locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
         }
 
 
+        //0번째는 사용자의 위치! -> 아무것도 안들었다면 현재 위치를 넣어준다!
         if (originMarkerlist.size() == 0) {
             //0번째 arraylist에 배열 추가
             //0번째에는 항상 사용자의 위치가 들어간다
             //마커 옵션 함수를 만들고, 반환하여 구글맵에 마커를 그린다.
             originMarkerlist.add(0, gmap.addMarker(get_set_package.getMarkerOption(new LatLng(lattitude, longitude), addr, true)));
-        } else {
+        }
+
+        //0번째 위치를 갱신한다.
+        else {
             //get으로 0번째의 마커를 지우고, set으로 새로운 위치에 마커를 생성한다.
             originMarkerlist.get(0).remove();
             originMarkerlist.set(0, gmap.addMarker(get_set_package.getMarkerOption(new LatLng(lattitude, longitude), addr, true)));
@@ -349,13 +388,16 @@ class locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
 
             //이전미터와 현재미터의 거리를 가져오기
             double d = get_set_package.getmeter(new LatLng(location.getLatitude(), location.getLongitude()), new LatLng(lastlocation.getLatitude(), lastlocation.getLongitude()));
+
             //현재 시간과 이전시간의 시간 차 가져오기
             double resultTime = location.getTime() - lastlocation.getTime();
 
             double kmPerHour = (d / resultTime) * 3600; //km/s -> km/h 변환 과정(1초->1시 = 3600)
+
             //현재 날짜 구하기
             long nowSecond = location.getTime();
             Date date = new Date(nowSecond);
+
             //데이터 포멧 설정
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy년MM월dd일HH시mm분ss초");
             String nowDate = sdf.format(date);
@@ -363,17 +405,19 @@ class locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
             //0km/s근접 소수점일 경우 0으로 내림(E-7이런 식으로 나오는거 방지)
             if (kmPerHour < 0.1)
                 kmPerHour = 0;
+
             //double형 -> String형 변환 + 소수점 한자리까지만 표현
-            String SkmPerHour = String.format("%.1f", kmPerHour);
+            String SkmPerHour = String.format("%.1f", kmPerHour);   //현재 km/h
             //msg ="좌표: [ " + lattitude + ":" + longitude+"]\n"; //현재 위치의 좌표 출력 //주석 제거시 표현
             //msg+="고도: "+String.format("%.1f",altitude)+"m\n"; //고도의 세계표준을 한국표준으로 바꾸는걸 모르겟엉.. 쓸꺼면 걍써 잘 되니까...
-            msg += addr + "\n";
-            msg += nowDate + "\n";
-            msg += SkmPerHour + "km/h";
+            msg += addr + "\n";          //주소
+            msg += nowDate + "\n";       //현재 날짜
+            msg += SkmPerHour + "km/h";  //현재 km/h
 
             //추가된 마커가 하나이상 있을경우 실행
             if (originMarkerlist.size() > 1 && closestMarker != null) {
                 double next_meter = get_set_package.getmeter(originMarkerlist.get(0).getPosition(), closestMarker.getPosition());
+
                 if((int)next_meter >= 1000){
                     //1000m가 넘어 갈시, km로만 표시한다
                     //현재 m의 올림으로 1000m미만으로 떨어질경우, 다시 m로 표시된다
@@ -478,10 +522,9 @@ class locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
                     }
                     //값을 제대로 받아 왔을 시,
                     else {
-                        String next_vending_result = "";
                         //json 객체로 변환하여 json배열에 저장
                         JSONObject jsonObject = new JSONObject(result_str);
-                        sc_custom_listview sc_custom = new sc_custom_listview(context, jsonObject, sc_lv);
+                        Sc_custom_listview sc_custom = new Sc_custom_listview(context, jsonObject, sc_lv);
                         sc_custom.change_listview();
 
                         if(((Activity) context).findViewById(R.id.open_button).getVisibility() == View.GONE){

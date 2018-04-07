@@ -10,34 +10,47 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class sc_custom_listview {
-    private ListView sc_lv;
-    private sc_adapter sc_adapter;
-    private ArrayList<sc_list_item> sc_list_items;
-    private JSONObject json_obj;
-    private Context context;
+//custom_listview를 만들기위해 MainActivity에서 접근하는 class
+public class Sc_custom_listview {
+    private ListView                sc_lv;          //제품 리스트들이 출력될 저장소
+    private Sc_adapter              sc_adapter;     //custom_listview가 만들어지는 곳
+    private ArrayList<Sc_list_item> sc_list_items;  //db에서 가져온 제품 리스트들이 저장될 곳
+    private JSONObject              json_obj;       //db에서 가져온 제품 리스트들의 JSONObj
+    private Context                 context;        //MatinActivty this
 
-    public sc_custom_listview(Context context, JSONObject json_obj, ListView sc_lv) {
-        this.json_obj = json_obj;
-        this.context = context;
-        this.sc_lv = sc_lv;
-        sc_list_items = new ArrayList<sc_list_item>();
+    //생성자
+    public Sc_custom_listview(Context context, JSONObject json_obj, ListView sc_lv) {
+        this.json_obj           = json_obj;
+        this.context            = context;
+        this.sc_lv              = sc_lv;
+        this.sc_list_items      = new ArrayList<Sc_list_item>();
     }
 
+    //호출 함수
     public void change_listview(){
+        //db접속은 try/catch 필수
         try {
+
+            //제품들이 저장되어있는 JSON배열을 가져온다.
             JSONArray json_result = json_obj.getJSONArray("result");
+
             //검색된 배열을 순차적으로 돈다
             String note_str = json_result.getJSONObject(0).getString("note");
+
+            //만약 작업지시가 있는 경우, 첫번째 list에는 작업지시내용을 보여준다.
             if(!note_str.equals("null")){
-                sc_list_items.add(new sc_list_item(note_str,"!!", ""));
+                sc_list_items.add(new Sc_list_item(note_str,"!!", ""));
             }
+
+            //실제 내용들이 들어가는 반복문
             for (int i = 0; i < json_result.length(); i++) {
                 //[0]=vd_id [1]=vd_name [2]=drink_name [3]=drink_path [4]=drink_stook [5]=drink_line [6]=note
                 JSONObject json_obj = json_result.getJSONObject(i);
-                sc_list_items.add(new sc_list_item(json_obj.getString("drink_name"), json_obj.getString("drink_line"), json_obj.getString("drink_stook")));
+                sc_list_items.add(new Sc_list_item(json_obj.getString("drink_name"), json_obj.getString("drink_line"), json_obj.getString("drink_stook")));
             }
-            sc_adapter = new sc_adapter(context, sc_list_items);
+
+            //custom_listview 생성
+            sc_adapter = new Sc_adapter(context, sc_list_items);
             sc_lv.setAdapter(sc_adapter);
         }catch (Exception e){
             e.printStackTrace();

@@ -15,19 +15,20 @@ import java.net.URL;
 //인자1:doInBackground 2:onProgressUpdate 3:onPostExecute  들의 매개변수 타입결정
 //비동기적 쓰레드, 백그라운드 쓰레드와 UI쓰레드(메인 쓰레드)와 같이 쓰기위해 쓰임
 public class db_conn extends AsyncTask<String, Void, String> {
-    private Context context;
-    private BufferedReader bufferedReader = null;
-    private Share_login_info share_login_info_obj;
+    private Context             context;
+    private BufferedReader      bufferedReader = null;  //버퍼
+    private Share_login_info    share_login_info_obj;   //로그인 정보
 
     //받아올 php 경로 선택 1:aws 2:autoset
     String link = "http://ec2-13-125-198-224.ap-northeast-2.compute.amazonaws.com/android_db_conn_source/conn.php";
     //String link  = "http://172.25.1.26/android_db_conn_source/conn.php";
 
+    //HTTP커넥션
     HttpURLConnection con;
 
     //---------------------------생성자----------------------------------------------------------
     public db_conn(Context context, Share_login_info share_login_info_obj){
-        this.context = context;
+        this.context              = context;
         this.share_login_info_obj = share_login_info_obj;
     }
 

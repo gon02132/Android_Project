@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-
+//길찾기 함수 -> github에서 제공중
 public class Directions_Functions extends FragmentActivity{
     private static final int LOCATION_REQUEST = 500;
     private GoogleMap mMap;

@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.study.googlemapsandroidapiexample.Main_Page.MainActivity;
@@ -16,29 +15,31 @@ import com.study.googlemapsandroidapiexample.db_conn;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+//로그인 MAIN PAGE
 public class Login_page_Activity extends AppCompatActivity implements View.OnClickListener{
-    Button login_bt, id_serch_bt, pass_serch_bt, create_id_bt;
-    EditText id_et, pass_et;
-    TextView textView;
 
-    db_conn test_obj;
-    Share_login_info share_login_info_obj;
+    Button           login_bt, id_serch_bt, pass_serch_bt, create_id_bt; //로그인, 로그인찾기, 비밀번호찾기, 아이디 생성 버튼
+    EditText         id_et, pass_et;                                     //ID, 비밀번호 입력란
+    db_conn          test_obj;                                           //db연결 object
+    Share_login_info share_login_info_obj;                               //연결 유지 함수
 
-    private long fir_time, sec_time;
+    private long     fir_time, sec_time;                                 //뒤로가기 2번누르기를 위한 변수
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        textView = (TextView)findViewById(R.id.textView);
 
+        //이전에 로그인 했는지 확인 하기 위한 class 생성
         share_login_info_obj = new Share_login_info(this);
-        //이전에 로그인을 했다면
+
+        //이전에 로그인을 했는지 확인한다.(문자열 길이 확인)
         if(share_login_info_obj.get_login_info().length() > 0){
-            //textView.setText(share_login_info_obj.get_login_info());
 
             //로그인 되어있다면 바로 다음페이지로 이동(로그인된 정보와 같이)
             Intent intent = new Intent(Login_page_Activity.this, MainActivity.class);
+
+            //저장되어있는 사용자 정보와함께 다음 페이지로 이동한다.
             intent.putExtra("user_info", share_login_info_obj.get_login_info());
             startActivity(intent);
             finish();
@@ -48,12 +49,12 @@ public class Login_page_Activity extends AppCompatActivity implements View.OnCli
             //textView.setText(share_login_info_obj.get_login_info());
         }
 
-        //로그인 버튼 클릭시
-        login_bt = (Button)findViewById(R.id.login_bt);
-        id_serch_bt = (Button)findViewById(R.id.id_serch_bt);
-        pass_serch_bt = (Button)findViewById(R.id.pass_serch_bt);
-        create_id_bt = (Button)findViewById(R.id.create_id_bt);
+        login_bt        = (Button)findViewById(R.id.login_bt);          //로그인 버튼
+        id_serch_bt     = (Button)findViewById(R.id.id_serch_bt);       //ID찾기 버튼
+        pass_serch_bt   = (Button)findViewById(R.id.pass_serch_bt);     //비밀번호 찾기 버튼
+        create_id_bt    = (Button)findViewById(R.id.create_id_bt);      //ID생성 버튼
 
+        //리스너 등록
         login_bt.setOnClickListener(this);
         id_serch_bt.setOnClickListener(this);
         pass_serch_bt.setOnClickListener(this);
@@ -64,6 +65,7 @@ public class Login_page_Activity extends AppCompatActivity implements View.OnCli
 
     @Override
     public void onClick(View v) {
+        //다른 페이지로 가기위한 intent
         Intent intent;
 
         switch (v.getId()){
@@ -91,9 +93,10 @@ public class Login_page_Activity extends AppCompatActivity implements View.OnCli
 
             //로그인 버튼
             case R.id.login_bt:
-                id_et = (EditText)findViewById(R.id.id_et);
-                pass_et = (EditText)findViewById(R.id.pass_et);
-                test_obj = new db_conn(Login_page_Activity.this, share_login_info_obj);
+                //ID와 PASSWORD를 서버에 날려 결과값을 받아온다.
+                id_et       = (EditText)findViewById(R.id.id_et);
+                pass_et     = (EditText)findViewById(R.id.pass_et);
+                test_obj    = new db_conn(Login_page_Activity.this, share_login_info_obj);
                 //doInBackground 실행(인자를 2개로 넘겨준다 // ID,비밀번호)
                 try {
                     //doin함수에서 반환되는 값을 가져와서 에러가 있을 경우 처리를 한다.
@@ -123,32 +126,28 @@ public class Login_page_Activity extends AppCompatActivity implements View.OnCli
                             //json 객체로 변환하여 json배열에 저장
                             JSONObject jsonObject = new JSONObject(result_String);
 
-                            String print_string = "";
+                            //json 배열로 받아온다.
                             JSONArray json_result = jsonObject.getJSONArray("result");
-                            //계산 결과
-                            //db에 올바르지 않은 값이 들어가 있을 시,
+
+                            //받아온 결과값이 없거나, 올바르지 않은 값이 들어가 있을 시,
                             if(json_result == null || json_result.length() == 0){
                                 Toast.makeText(this, "데이터베이스 입력값 오류", Toast.LENGTH_SHORT).show();
                                 return;
                             }
                             //모든 예외처리 통과시 이 구문이 실행됨
-                            //for (int i = 0; i < json_result.length(); i++) {
                             int i = 0;
                             //id,name,email.imgsrc
                             JSONObject c = json_result.getJSONObject(i);
-                            print_string += c.getString("login_id")+"/br/";
-                            print_string += c.getString("name")+"/br/";
-                            print_string += c.getString("email")+"/br/";
-                            print_string += c.getString("imgsrc")+"/br/";
-                            //}
-
-                            //강제로 tv에 쑤셔넣는 작업
-                            //TextView tv = (((Activity) context).findViewById(R.id.textView));
-                            //tv.setText(print_string);
+                            String print_string = "";
+                            print_string += c.getString("login_id")+"/br/"; //로그인 id
+                            print_string += c.getString("name")+"/br/";     //보충기사 이름
+                            print_string += c.getString("email")+"/br/";    //이메일
+                            print_string += c.getString("imgsrc")+"/br/";   //보충기사 사진
 
                             //얘는 휴대폰을 꺼도 접속유지를위한애
                             share_login_info_obj.set_login_info(print_string);
                             Intent intent_2 = new Intent(this, MainActivity.class);
+                            //user_info파일에 보충기사의 정보를 저장한다.
                             intent_2.putExtra("user_info", print_string);
                             startActivity(intent_2);
                             finish();
@@ -156,7 +155,8 @@ public class Login_page_Activity extends AppCompatActivity implements View.OnCli
                             return;
                     }
                 }catch (Exception e){
-
+                    //conn 에러 잡는 부분
+                    Toast.makeText(this, "Login_Page_Activity err", Toast.LENGTH_SHORT).show();
                 }
                 break;
         }

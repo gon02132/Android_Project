@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Created by NgocTri on 12/11/2017.
  */
-
+//길찾기 알고리즘 -> github에서 가져옴
 public class DirectionsParser {
     /**
      * Returns a list of lists containing latitude and longitude from a JSONObject
