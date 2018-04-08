@@ -110,6 +110,15 @@ public class db_conn extends AsyncTask<String, Void, String> {
                             link += "?con=get_vending_info";
                             link += "&vending_id=" + strings[1];
                         }
+                        break;
+
+                    //작업지시서 보기 버튼 클릭시, DB에서 값을 가져온다.
+                    case "get_order_sheet":
+                        if(strings[1] != null){
+                            link += "?con=get_order_sheet";
+                            link += "&user_login_id=" + strings[1];
+                        }
+                        break;
                 }
             }
 
@@ -118,7 +127,8 @@ public class db_conn extends AsyncTask<String, Void, String> {
 
             //연결 성공시
             if(con != null) {
-                //---------------연결설정-------------------------------------------
+
+                //-----------------------------연결설정-------------------------------
                 con.setRequestMethod("GET");    //get방식 통신
                 con.setConnectTimeout(5000);    //지연됬을경우 기다려주는시간 5초
                 con.setUseCaches(false);        //캐싱데이터를 안받음
@@ -128,6 +138,7 @@ public class db_conn extends AsyncTask<String, Void, String> {
                 //연결성공 코드가 반환됬을시
                 if(con.getResponseCode() == HttpURLConnection.HTTP_OK) {
 
+                    //문자열 빌더 생성
                     StringBuilder sb = new StringBuilder();
 
                     //buffer에 직접 씌울수 없으므로 IS리더를 사용한다 //캐릭터자료형은 utf8
@@ -144,7 +155,10 @@ public class db_conn extends AsyncTask<String, Void, String> {
 
                     //가져온 데이터의 가공 전 배분과정
                     switch (strings[0]) {
-                        //값을 가져오는 경우 로그인,id중복체크,유저 생성,id찾기,pw찾기
+                        //값을 가져오는 경우
+
+                        //로그인, id중복체크, 유저 생성, id찾기, pw찾기,
+                        //자판기 아이콘 가져오기, 특정 자판기 정보 가져오기, 작업지시서 보기
                         case "login":
                         case "exist_id_check":
                         case "create_user_ok":
@@ -152,8 +166,11 @@ public class db_conn extends AsyncTask<String, Void, String> {
                         case "serch_pass":
                         case "get_markers":
                         case "get_vending_info":
+                        case "get_order_sheet":
+
                             //연결과 반환이 정상적으로 이루어 졌을시
-                            //차곡차곡 채워 넣은 데이터를 앞뒤공백 제거하여 반환한다 ->onPostExcute함수 자동 실행
+                            //차곡차곡 채워 넣은 데이터를 앞뒤공백 제거하여 반환한다 ->
+                            // get()으로 받는 쪽으로 반환, onPostExcute함수 자동 실행
                             return sb.toString().trim();
 
 
@@ -181,30 +198,42 @@ public class db_conn extends AsyncTask<String, Void, String> {
     @Override
     protected void onPostExecute(String result_String) {
         super.onPostExecute(result_String);
-        String print_string = "";
         //String을 받아올 경우 함수를 종료시킨다.
         switch (result_String){
 
             //id랑 password 중 하나라도 미입력 시
             case "no_full":
-                //id가 없을 시,
+
+            //id가 없을 시
             case "no_id":
-                //비밀번호가 틀릴 시,
+
+            //비밀번호가 틀릴 시
             case "no_pass":
-                //회원가입 id중복확인 부분 id가 중복 일 경우
+
+            //회원가입 id중복확인 부분 id가 중복 일 경우
             case "exist":
-                //id가 중복이 아닐 경우
+
+            //id가 중복이 아닐 경우
             case "no_exist":
-                //insert 반환 부분
+
+            //insert 반환 부분
             case "insert_OK":
-                //매진, 매진임박 자판기가 없을 시
+
+            //매진, 매진임박 자판기가 없을 시
             case "no_marker":
-                //mysql query보낼때 에러뜰시
+
+            //mysql query보낼때 에러뜰시
             case "mysql_err":
-                //찾는 마커(자판기)가 없을 시
+
+            //찾는 마커(자판기)가 없을 시
             case "no_vending":
+
+                //알림창 띄우지 않고 종료
                 con.disconnect();
+
                 return;
+
+            //접속 실패 시
             case "conn_failed":
                 Toast.makeText(context, "Please Network connect", Toast.LENGTH_SHORT).show();
                 return ;

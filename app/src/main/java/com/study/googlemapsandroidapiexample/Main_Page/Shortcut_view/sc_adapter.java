@@ -17,6 +17,7 @@ public class Sc_adapter extends BaseAdapter{
     private ArrayList<Sc_list_item> sc_list;           //물품 리스트들을 담는 공간
     private TextView                name, line, count; //제품 명, 제품 라인, 제품 수량을 저장하는 공간
 
+    //생성자
     public Sc_adapter(Context context, ArrayList<Sc_list_item> sc_list) {
         this.context = context;
         this.sc_list = sc_list;

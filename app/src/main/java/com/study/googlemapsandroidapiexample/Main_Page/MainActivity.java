@@ -771,9 +771,41 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
         //-----------------------------레이아웃 셋팅 끝--------------------------------------------
 
+        //저장 소들 id가져오기!!!!!!
+        my_status       =   (TextView)    findViewById(R.id.my_status);
+        next_vending    =   (TextView)    findViewById(R.id.next_vending);
+        sc_lv           =   (ListView)    findViewById(R.id.sc_lv);
+        ok_button       =   (Button)      findViewById(R.id.ok_button);
+        close_button    =   (Button)      findViewById(R.id.close_button);
+        open_button     =   (ImageButton) findViewById(R.id.open_button);
 
         //네비게이션뷰 가져오기(왼쪽에서 오른쪽으로 슬라이드 할시, 나오는 창)
         NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
+
+        //로그인 한 결과값을 가져온다(사용자 정보)
+        Intent data = getIntent();
+
+        if (data.getStringExtra("user_info") != null) {
+
+            String str = data.getStringExtra("user_info");
+            //[0]=login_id [1]=name [2]=email [3]=imgsrc
+            user_info = str.split("/br/");
+
+            //네비게이션의 헤더부분 가져오기
+            View hView = navigationView.getHeaderView(0);
+
+            //id부분 가져오기(사용자에게는 안보이게 = unique값으로 유지)
+            user_id_tv_hide = (TextView) hView.findViewById(R.id.user_id_tv_hide);
+            user_id_tv_hide.setText(user_info[0]);
+
+            //이름부분 가져오기
+            user_name_tv = (TextView) hView.findViewById(R.id.user_name_tv);
+            user_name_tv.setText(user_info[1]);
+
+            //이메일부분 가져오기
+            user_email_tv = (TextView) hView.findViewById(R.id.user_email_tv);
+            user_email_tv.setText(user_info[2]);
+        }
 
         //네비게이션뷰의 메뉴들을 가져온다
         navi_menu = navigationView.getMenu();
@@ -789,23 +821,32 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                     //Tracking 버튼 활성화시 현재위치 계속 추적
                     case R.id.GPS_tracking:
+
                         if (gmap != null && listener != null) {
                             //토글 같은 느낌 켜져있으면 끄고 꺼져있으면 킨다
                             listener.location_button();
                         }
+
                         Toast.makeText(MainActivity.this, menuItem.getTitle(), Toast.LENGTH_LONG).show();
                         break;
 
                     //자판기 Tracking 버튼 활성화시, 주기적으로 가장 가까운 자판기 추적
                     case R.id.Closest_V_machine_tracking:
+
                         if (gmap != null && listener != null) {
                             listener.closest_vendingmachine_tracking_button();
                             Toast.makeText(MainActivity.this, menuItem.getTitle(), Toast.LENGTH_LONG).show();
                         }
+
                         break;
 
                     //작업지시서 보기
                     case R.id.order_list:
+
+                        //custom alert 보여주기 클래스 생성(작업지시서) / 함수 실행
+                        Order_sheet_alert order_sheet_alert = new Order_sheet_alert(MainActivity.this, user_info[0]);
+                        order_sheet_alert.create_table();
+
                         Toast.makeText(MainActivity.this, menuItem.getTitle(), Toast.LENGTH_LONG).show();
                         break;
 
@@ -815,8 +856,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         //기존 마커 지우기
                         get_set_package.getOriginMarkerlist().clear();
 
-                        //다음 가야할 위치 제거
-                        get_set_package.getNow_Marker().remove();
+
+                        //다음 가야할 위치 제거 하는 부분
+                        Marker marker = get_set_package.getNow_Marker();
+                        //만약 마커가 없을경우 넘어간다
+                        if(marker != null){
+                            marker.remove();
+                        }
 
                         //오른쪽 밑 레이아웃 지우기
                         findViewById(R.id.sc_layout).setVisibility(View.GONE);
@@ -893,38 +939,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
-        //저장 소들 id가져오기!!!!!!
-        my_status       = (TextView)    findViewById(R.id.my_status);
-        next_vending    = (TextView)    findViewById(R.id.next_vending);
-        sc_lv           = (ListView)    findViewById(R.id.sc_lv);
-        ok_button       = (Button)      findViewById(R.id.ok_button);
-        close_button    = (Button)      findViewById(R.id.close_button);
-        open_button     = (ImageButton) findViewById(R.id.open_button);
 
-        //로그인 한 결과값을 가져온다(사용자 정보)
-        Intent data = getIntent();
-
-        if (data.getStringExtra("user_info") != null) {
-
-            String str = data.getStringExtra("user_info");
-            //[0]=login_id [1]=name [2]=email [3]=imgsrc
-            user_info = str.split("/br/");
-
-            //네비게이션의 헤더부분 가져오기
-            View hView = navigationView.getHeaderView(0);
-
-            //id부분 가져오기(사용자에게는 안보이게 = unique값으로 유지)
-            user_id_tv_hide = (TextView) hView.findViewById(R.id.user_id_tv_hide);
-            user_id_tv_hide.setText(user_info[0]);
-
-            //이름부분 가져오기
-            user_name_tv = (TextView) hView.findViewById(R.id.user_name_tv);
-            user_name_tv.setText(user_info[1]);
-
-            //이메일부분 가져오기
-            user_email_tv = (TextView) hView.findViewById(R.id.user_email_tv);
-            user_email_tv.setText(user_info[2]);
-        }
 
         //자판기 갱신 버튼 클릭시,
         ok_button.setOnClickListener(new View.OnClickListener() {
@@ -1081,8 +1096,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             //받아온 값이 JSON객체로 있을 경우
             else {
                 //json 객체로 변환하여 json배열에 저장
-                JSONObject jsonObject = new JSONObject(result_str);
-                JSONArray json_result = jsonObject.getJSONArray("result");
+                JSONObject jsonObject  = new JSONObject(result_str);
+                JSONArray  json_result = jsonObject.getJSONArray("result");
 
                 //검색된 배열을 순차적으로 돈다
                 for (int i = 0; i < json_result.length(); i++) {
@@ -1091,7 +1106,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                     //vd_id, vd_name, vd_latitude, vd_longitude, vd_place, vd_supplement, vd_soldout 가 저장 되어 있음
                     JSONObject json_obj = json_result.getJSONObject(i);
-                    LatLng latLng = new LatLng(json_obj.getDouble("vd_latitude"), json_obj.getDouble("vd_longitude"));
+                    LatLng     latLng   = new LatLng(json_obj.getDouble("vd_latitude"), json_obj.getDouble("vd_longitude"));
+
+                    //문자열로 저장
                     vending_info += json_obj.getInt("vd_id");//+"/br/";
 
                     // 필요시 주석 제거후 사용!
