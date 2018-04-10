@@ -14,7 +14,7 @@ import java.net.URL;
 
 //인자1:doInBackground 2:onProgressUpdate 3:onPostExecute  들의 매개변수 타입결정
 //비동기적 쓰레드, 백그라운드 쓰레드와 UI쓰레드(메인 쓰레드)와 같이 쓰기위해 쓰임
-public class db_conn extends AsyncTask<String, Void, String> {
+public class DB_conn extends AsyncTask<String, Void, String> {
     private Context             context;                         //MainActivity this
     private BufferedReader      bufferedReader          = null;  //버퍼
     private Share_login_info    share_login_info_obj;            //로그인 정보
@@ -26,17 +26,17 @@ public class db_conn extends AsyncTask<String, Void, String> {
     //HTTP커넥션
     HttpURLConnection con;
 
-    //----------------------------------------생성자----------------------------------------------
-    public db_conn(Context context, Share_login_info share_login_info_obj){
+    //------------------------------------생성자 오버로딩------------------------------------------
+    public DB_conn(Context context, Share_login_info share_login_info_obj){
         this.context              = context;
         this.share_login_info_obj = share_login_info_obj;
     }
 
-    public db_conn(Context context){
+    public DB_conn(Context context){
         this.context = context;
     }
 
-    public db_conn(){}
+    public DB_conn(){}
     //-------------------------------------------------------------------------------------------
 
     //excute시, 실행되는 콜백함수 //이전에 받은 인자들을 설정된 자료형 배열로 받아온다
@@ -119,6 +119,14 @@ public class db_conn extends AsyncTask<String, Void, String> {
                             link += "&user_login_id=" + strings[1];
                         }
                         break;
+
+                    //강제 갱신 버튼을 클릭시, DB의 값을 변경한다.
+                    case "insert_vending":
+                        if(strings[1] != null){
+                            link += "?con=insert_vending";
+                            link += "&vending_id=" + strings[1];
+                        }
+                        break;
                 }
             }
 
@@ -158,7 +166,7 @@ public class db_conn extends AsyncTask<String, Void, String> {
                         //값을 가져오는 경우
 
                         //로그인, id중복체크, 유저 생성, id찾기, pw찾기,
-                        //자판기 아이콘 가져오기, 특정 자판기 정보 가져오기, 작업지시서 보기
+                        //자판기 아이콘 가져오기, 특정 자판기 정보 가져오기, 작업지시서 보기, 자판기 강제 갱신
                         case "login":
                         case "exist_id_check":
                         case "create_user_ok":
@@ -167,6 +175,7 @@ public class db_conn extends AsyncTask<String, Void, String> {
                         case "get_markers":
                         case "get_vending_info":
                         case "get_order_sheet":
+                        case "insert_vending":
 
                             //연결과 반환이 정상적으로 이루어 졌을시
                             //차곡차곡 채워 넣은 데이터를 앞뒤공백 제거하여 반환한다 ->

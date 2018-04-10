@@ -56,7 +56,7 @@ import com.study.googlemapsandroidapiexample.Main_Page.AlertDialog.AlertDialog_C
 import com.study.googlemapsandroidapiexample.Main_Page.AlertDialog.AlertDialog_list_item;
 import com.study.googlemapsandroidapiexample.R;
 import com.study.googlemapsandroidapiexample.Login_Page.*;
-import com.study.googlemapsandroidapiexample.db_conn;
+import com.study.googlemapsandroidapiexample.DB_conn;
 import com.study.googlemapsandroidapiexample.Main_Page.Shortcut_view.*;
 
 import org.json.JSONArray;
@@ -302,7 +302,7 @@ class locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
             if (!before_snippet.equals(closestMarker.getSnippet())) {
                 try {
                     //db 접속(try/catch 필수)
-                    db_conn db_conn_obj = new db_conn(context);
+                    DB_conn db_conn_obj = new DB_conn(context);
 
                     //db에 접속하여 반환된 결과값 초기호
                     String result_str   = db_conn_obj.execute("get_vending_info", closestMarker.getSnippet()).get();
@@ -514,7 +514,7 @@ class locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
 
                 try {
                     //db 접속 try/catch 필수
-                    db_conn db_conn_obj = new db_conn(context);
+                    DB_conn db_conn_obj = new DB_conn(context);
 
                     //서버의 결과값을 받아온다
                     String result_str = db_conn_obj.execute("get_vending_info", originMarkerlist.get(i).getSnippet()).get();
@@ -590,7 +590,7 @@ class locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
 //마커를 클릭했을때, 이벤트들을 모아놓은 클래스(마커 클릭, 클릭시 출력되는 view 설정)
 class mark_click_event implements GoogleMap.OnMarkerClickListener {
     private Context             context;            //MainActivity this
-    private db_conn             db_conn_obj;        //db접속 변수
+    private DB_conn db_conn_obj;        //db접속 변수
     private ArrayList<Marker>   originMarkerlist;   //마커들이 저장되어있는 배열
 
     //생성자
@@ -606,10 +606,9 @@ class mark_click_event implements GoogleMap.OnMarkerClickListener {
     //마커를 클릭했을시 이벤트 -> custom_alertDialog를 만들어서 띄워준다
     @Override
     public boolean onMarkerClick(Marker marker) {
-        //DB에 저장되어있는 마커들을 불러온다 ->user의 login_id를 기준으로
         try {
             //db접속 try/catch 필수
-            db_conn_obj = new db_conn(context);
+            db_conn_obj = new DB_conn(context);
 
             //서버의 결과값을 받아와 저장 한다
             String result_str = db_conn_obj.execute("get_vending_info", marker.getSnippet()).get();
@@ -687,7 +686,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ImageButton         open_button;
     private get_set_package     get_set_package;
     private mark_click_event    mark_click_event;
-    private db_conn             db_conn_obj;
+    private DB_conn db_conn_obj;
     private Menu                navi_menu;
     private GoogleMap           gmap;
 
@@ -847,7 +846,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         Order_sheet_alert order_sheet_alert = new Order_sheet_alert(MainActivity.this, user_info[0]);
                         order_sheet_alert.create_table();
 
-                        Toast.makeText(MainActivity.this, menuItem.getTitle(), Toast.LENGTH_LONG).show();
                         break;
 
                     //작업지시서 최신화 하기
@@ -859,6 +857,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                         //다음 가야할 위치 제거 하는 부분
                         Marker marker = get_set_package.getNow_Marker();
+
                         //만약 마커가 없을경우 넘어간다
                         if(marker != null){
                             marker.remove();
@@ -1083,7 +1082,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void draw_marker(){
         try {
             //db접속 try/catch 필수
-            db_conn_obj = new db_conn(this);
+            db_conn_obj = new DB_conn(this);
 
             //DB에 저장되어있는 마커들을 불러온다 ->user의 login_id를 기준으로
             String result_str = db_conn_obj.execute("get_markers", user_info[0]).get();

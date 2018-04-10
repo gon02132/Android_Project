@@ -3,14 +3,13 @@ package com.study.googlemapsandroidapiexample.Login_Page;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.study.googlemapsandroidapiexample.R;
-import com.study.googlemapsandroidapiexample.db_conn;
+import com.study.googlemapsandroidapiexample.DB_conn;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -19,7 +18,7 @@ import org.json.JSONObject;
 public class Serch_pass_Activity extends AppCompatActivity{
     private Button      back_bt, serch_bt;          //뒤로가기, 찾기 버튼
     private EditText    serch_id_et, serch_name_et; //ID, name 입력 란
-    private db_conn     conn;                       //DB연결 변수
+    private DB_conn conn;                       //DB연결 변수
 
     private long        fir_time, sec_time;         //2번눌러야 뒤로가기위한 변수
 
@@ -32,7 +31,7 @@ public class Serch_pass_Activity extends AppCompatActivity{
         serch_name_et   = (EditText)findViewById(R.id.serch_name_et);   //PASSWORD 입력란 가져오기
 
         //db 연결
-        conn = new db_conn(this);
+        conn = new DB_conn(this);
 
         //뒤로가기 버튼 클릭시 -> 로그인 메인페이지로 이동
         back_bt = (Button) findViewById(R.id.back_bt);

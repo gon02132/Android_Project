@@ -13,7 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.study.googlemapsandroidapiexample.R;
-import com.study.googlemapsandroidapiexample.db_conn;
+import com.study.googlemapsandroidapiexample.DB_conn;
 
 //유저 생성 PAGE
 public class Create_user_Acitivty extends AppCompatActivity{
@@ -21,7 +21,7 @@ public class Create_user_Acitivty extends AppCompatActivity{
     private Button      exist_id_check_bt, create_user_bt, create_cancel_bt;
     private EditText    id_input_et, pass_fir_et, pass_sec_et, name_et, email_et,phone_et, address_et;
     private TextView    serch_result, two_pass_check;
-    private db_conn     conn;
+    private DB_conn conn;
     private Integer     count = 0;
     private long        fir_time, sec_time;
 
@@ -44,7 +44,7 @@ public class Create_user_Acitivty extends AppCompatActivity{
             @Override
             public void onClick(View v) {
                 try {
-                    conn = new db_conn();
+                    conn = new DB_conn();
                     //중복확인 버튼 클릭시, doin함수에서 반환값을 받아온다
                     String s = conn.execute("exist_id_check",id_input_et.getText().toString()).get();
                     if(s.equals("exist")){
@@ -195,7 +195,7 @@ public class Create_user_Acitivty extends AppCompatActivity{
 
                     //db접속에서는 예외가 발생할 수 있으므로 try/catch문을 사용한다
                     try {
-                        conn = new db_conn();
+                        conn = new DB_conn();
                         //.get()을 할경우 doIn..함수에서 반환값이 돌아온다(하지만 처리량이 많을경우) 리턴값이 늦게받아질수도 있다
                         String s = conn.execute("create_user_ok",
                                 id_input_et.getText().toString(),

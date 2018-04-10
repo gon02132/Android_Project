@@ -11,9 +11,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.study.googlemapsandroidapiexample.DB_conn;
 import com.study.googlemapsandroidapiexample.R;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 
 public class AlertDialog_Custom_dialog {
@@ -22,15 +24,17 @@ public class AlertDialog_Custom_dialog {
     private ListView                            item_list;                  //상품 목록
     private ArrayList<AlertDialog_list_item>    list_itemArrayList;         //배열(상품 목록 출력에 관한)
     private Button                              ok_bt, cancel_bt;           //갱신 과 취소버튼
-    private String                              vending_name, vd_id_string; //자판기 이름, 자판기 id 문자열
+    private String                              vending_name, vd_id_str;    //자판기 이름
     private AlertDialog_MyListAdapter           myListAdapter;              //custom어뎁터
+    private DB_conn                             db_conn;                    //DB연결자
 
     //생성자
     public AlertDialog_Custom_dialog(Context context, ArrayList<AlertDialog_list_item> list_itemArrayList, String vending_name, String vd_id) {
-        this.context            = context;              //mainActivity this
-        this.list_itemArrayList = list_itemArrayList;   //item list(array)
-        this.vending_name       = vending_name;         //자판기 이름
-        this.vd_id_string       = vd_id;                //자판기 id
+        this.context            = context;                  //mainActivity this
+        this.list_itemArrayList = list_itemArrayList;       //item list(array)
+        this.vending_name       = vending_name;             //자판기 이름
+        this.vd_id_str          = vd_id;                    //자판기 id
+        this.db_conn            = new DB_conn(context);     //db연결자
     }
 
     public void callFunction() {
@@ -60,7 +64,7 @@ public class AlertDialog_Custom_dialog {
 
         //자판기 id 저장
         vd_id = (TextView)dig.findViewById(R.id.vd_id);
-        vd_id.setText(vd_id_string);
+        vd_id.setText(vd_id_str);
 
         //강제 갱신버튼 클릭 시
         ok_bt = (Button)dig.findViewById(R.id.okButton);
@@ -86,11 +90,19 @@ public class AlertDialog_Custom_dialog {
                                     }
                                 })
 
-                        //갱신 기능
+                        //강제 갱신 기능
                         .setNegativeButton("예",
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
+                                        try {
+                                            //값을 최신화하고 마커를 다시 그린다
+                                            db_conn.execute("insert_vending", vd_id_str).get();
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+
+
                                         Toast.makeText(context, "강제 갱신되었습니다.", Toast.LENGTH_SHORT).show();
 
                                         //현재 열려있는 자판기 정보도 닫는다.

@@ -38,7 +38,7 @@
             android:screenOrientation="landscape"/>
         <activity android:name=".Login_Page.Serch_result_pw_Activity"
             android:screenOrientation="landscape"/>
-
     </application>
+
 
 </manifest>

@@ -9,7 +9,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.study.googlemapsandroidapiexample.R;
-import com.study.googlemapsandroidapiexample.db_conn;
+import com.study.googlemapsandroidapiexample.DB_conn;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -17,7 +17,7 @@ import org.json.JSONObject;
 //ID 찾는 PAGE
 public class Serch_id_Activity extends AppCompatActivity{
     private Button      back_bt, serch_bt;  //뒤로가기, ID찾기 버튼
-    private db_conn     conn;               //db 연결 변수
+    private DB_conn conn;               //db 연결 변수
     private EditText    serch_name_et;      //찾고자 하는 이름 입력란
 
     private long fir_time, sec_time;        //뒤로가기 2번누르기를 위한 변수
@@ -31,7 +31,7 @@ public class Serch_id_Activity extends AppCompatActivity{
         serch_name_et = (EditText)findViewById(R.id.serch_name_et);
 
         //db 연결
-        conn = new db_conn(this);
+        conn = new DB_conn(this);
 
         //뒤로가기 버튼 클릭 시 ->Main Page로 이동한다.
         back_bt = (Button)findViewById(R.id.back_bt);

@@ -31,5 +31,4 @@ dependencies {
     compile 'com.android.support:design:26.0.0'
     compile 'de.hdodenhof:circleimageview:+'
     compile files('libs/picasso-2.5.2.jar')
-
 }
