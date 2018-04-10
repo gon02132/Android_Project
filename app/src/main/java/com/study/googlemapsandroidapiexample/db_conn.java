@@ -100,7 +100,7 @@ public class DB_conn extends AsyncTask<String, Void, String> {
                     case "get_markers":
                         if(strings[1] != null) {
                             link += "?con=get_markers";
-                            link += "&user_id=" + strings[1];
+                            link += "&user_login_id=" + strings[1];
                         }
                         break;
 
@@ -122,9 +122,10 @@ public class DB_conn extends AsyncTask<String, Void, String> {
 
                     //강제 갱신 버튼을 클릭시, DB의 값을 변경한다.
                     case "insert_vending":
-                        if(strings[1] != null){
+                        if(strings[1] != null && strings[2] != null){
                             link += "?con=insert_vending";
                             link += "&vending_id=" + strings[1];
+                            link += "&user_login_id=" + strings[2];
                         }
                         break;
                 }

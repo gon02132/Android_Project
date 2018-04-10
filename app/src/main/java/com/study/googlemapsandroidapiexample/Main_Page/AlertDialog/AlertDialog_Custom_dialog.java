@@ -15,7 +15,6 @@ import com.study.googlemapsandroidapiexample.DB_conn;
 import com.study.googlemapsandroidapiexample.R;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 
 public class AlertDialog_Custom_dialog {
@@ -24,17 +23,19 @@ public class AlertDialog_Custom_dialog {
     private ListView                            item_list;                  //상품 목록
     private ArrayList<AlertDialog_list_item>    list_itemArrayList;         //배열(상품 목록 출력에 관한)
     private Button                              ok_bt, cancel_bt;           //갱신 과 취소버튼
-    private String                              vending_name, vd_id_str;    //자판기 이름
+    private String                              vending_name, vd_id_str;    //자판기 이름, 자판기 id
+    private String                              user_login_id;              //보충기사 로그인 아이디
     private AlertDialog_MyListAdapter           myListAdapter;              //custom어뎁터
     private DB_conn                             db_conn;                    //DB연결자
 
     //생성자
-    public AlertDialog_Custom_dialog(Context context, ArrayList<AlertDialog_list_item> list_itemArrayList, String vending_name, String vd_id) {
+    public AlertDialog_Custom_dialog(Context context, ArrayList<AlertDialog_list_item> list_itemArrayList, String vending_name, String vd_id, String user_login_id) {
         this.context            = context;                  //mainActivity this
         this.list_itemArrayList = list_itemArrayList;       //item list(array)
         this.vending_name       = vending_name;             //자판기 이름
         this.vd_id_str          = vd_id;                    //자판기 id
         this.db_conn            = new DB_conn(context);     //db연결자
+        this.user_login_id      = user_login_id;            //보충기사 로그인 아이디
     }
 
     public void callFunction() {
@@ -96,8 +97,8 @@ public class AlertDialog_Custom_dialog {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         try {
-                                            //값을 최신화하고 마커를 다시 그린다
-                                            db_conn.execute("insert_vending", vd_id_str).get();
+                                            //값을 최신화하고 마커를 다시 그린다 자판기 id / 보충기사 login_id 를 인자로
+                                            db_conn.execute("insert_vending", vd_id_str, user_login_id).get();
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }

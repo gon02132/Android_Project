@@ -503,7 +503,9 @@ class locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
     //클릭한 위치로부터 반경x만큼 지정하여 그반경에 마커가 있는지 확인한다.
     @Override
     public void onMapLongClick(LatLng latLng) {
+
         for (int i = 0; i < originMarkerlist.size(); i++) {
+
             //반경에 마커가 있는경우 DB를통해 그마커의 상세정보들을 가져온다.
             //실수를 많이 줄경우, 주변 자판기와 겹칠우려가 있으므로 너무 많이 주지않으며 클릭시, 적당한 반경을 탐색하게 해야한다.
             if (Math.abs(originMarkerlist.get(i).getPosition().latitude - latLng.latitude) < 0.0002 &&
@@ -571,6 +573,8 @@ class locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
                         //다음 가야할 자판기를 최신화 시킨다.
                         before_snippet = originMarkerlist.get(i).getSnippet();
 
+                        next_vending.setText("Loading..");
+
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -590,13 +594,15 @@ class locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
 //마커를 클릭했을때, 이벤트들을 모아놓은 클래스(마커 클릭, 클릭시 출력되는 view 설정)
 class mark_click_event implements GoogleMap.OnMarkerClickListener {
     private Context             context;            //MainActivity this
-    private DB_conn db_conn_obj;        //db접속 변수
+    private DB_conn             db_conn_obj;        //db접속 변수
     private ArrayList<Marker>   originMarkerlist;   //마커들이 저장되어있는 배열
+    private String              user_login_id;      //유저 로그인 아이디
 
     //생성자
-    public mark_click_event(Context context, GoogleMap googleMap, ArrayList<Marker> originMarkerlist) {
+    public mark_click_event(Context context, GoogleMap googleMap, ArrayList<Marker> originMarkerlist, String user_login_id) {
         this.context            = context;
         this.originMarkerlist   = originMarkerlist;
+        this.user_login_id      = user_login_id;
 
         //마커 클릭을 활성화 시킨다
         googleMap.setOnMarkerClickListener(this);
@@ -661,7 +667,7 @@ class mark_click_event implements GoogleMap.OnMarkerClickListener {
                 }
 
                 //custom_dialog를 만들어서 보여준다
-                AlertDialog_Custom_dialog custom_dialog = new AlertDialog_Custom_dialog(context, list_itemArrayList, marker.getTitle(),json_result.getJSONObject(0).getString("vd_id"));
+                AlertDialog_Custom_dialog custom_dialog = new AlertDialog_Custom_dialog(context, list_itemArrayList, marker.getTitle(),json_result.getJSONObject(0).getString("vd_id"), user_login_id);
                 custom_dialog.callFunction();
             }
 
@@ -686,7 +692,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ImageButton         open_button;
     private get_set_package     get_set_package;
     private mark_click_event    mark_click_event;
-    private DB_conn db_conn_obj;
+    private DB_conn             db_conn_obj;
     private Menu                navi_menu;
     private GoogleMap           gmap;
 
@@ -743,7 +749,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
 
             //슬라이드를 시작했을 경우(열었을때 -> 닫았을때는 실행x)
-            //현재 상태바를 보이지않게 한다.
+            //현재 상태바를 보이지않게 한다.ㅁ
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 if (drawer_check) {
@@ -1059,7 +1065,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         draw_marker();
 
         //마커클릭 이벤트 클래스 생성
-        mark_click_event = new mark_click_event(this, googleMap, originMarkerlist);
+        mark_click_event = new mark_click_event(this, googleMap, originMarkerlist, user_info[0]);
 
         //매초 혹은 미터 마다 갱신될 class 생성
         listener = new locationlistener(this, originMarkerlist, gmap, sc_lv, my_status,next_vending, get_set_package, navi_menu);
