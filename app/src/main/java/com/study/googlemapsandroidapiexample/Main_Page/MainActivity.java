@@ -263,7 +263,10 @@ class locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
     }
 
     //가장 가까운 자판기 초기화
-    public void setClosestMarker(){ closestMarker=null; }
+    public void setClosestMarker()  { closestMarker = null; }
+
+    //마지막 현재위치 초기화
+    public void setLastlocation()   { lastlocation = null; }
 
     //프로그래머가 지정한 일정 시간 or 간 meter만큼 반복해서 실행되는 함수
     @Override
@@ -312,7 +315,8 @@ class locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
 
             //다음 가야할 장소에대해 execute로 DB정보를 가져온다
             //매Update마다 가져오는건 부담이 크기때문에 계속 동일한 장소를 가리킬시, 한번만 가져오도록한다
-            if (!before_snippet.equals(closestMarker.getSnippet())) {
+            //또한 마커가 하나이상 있을때만 받아오도록한다(예외처리)
+            if (!before_snippet.equals(closestMarker.getSnippet()) && originMarkerlist.size() > 1) {
                 try {
                     //db 접속(try/catch 필수)
                     DB_conn db_conn_obj = new DB_conn(context);
@@ -1087,10 +1091,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             get_set_package.getOriginMarkerlist().clear();
         }
 
-        //길찾기 함수 호출(일본에서 경로표시)
-        new Directions_Functions(gmap, get_set_package);
-
-
         //다음 가야할 위치 가져오기
         Marker marker = get_set_package.getNow_Marker();
 
@@ -1105,10 +1105,19 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         //다음가야할 길이 레이아웃 숨기기
         findViewById(R.id.next_vending_layout).setVisibility(View.GONE);
 
-        //다음 가야할 자판기 초기화
+        //길찾기 함수 호출(일본에서 경로표시)
+        new Directions_Functions(gmap, get_set_package);
+
+        //리스너가 있다면
         if(listener != null) {
+            //다음 가야할 자판기의 정보 초기화
             listener.setBefore_snippet("");
+
+            //가장 가까운 자판기 정보 초기화
             listener.setClosestMarker();
+
+            //이전의 자신의 위치 조기화
+            listener.setLastlocation();
         }
 
 
