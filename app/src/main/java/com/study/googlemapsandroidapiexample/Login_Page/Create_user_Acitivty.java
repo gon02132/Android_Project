@@ -21,7 +21,7 @@ public class Create_user_Acitivty extends AppCompatActivity{
     private Button      exist_id_check_bt, create_user_bt, create_cancel_bt;
     private EditText    id_input_et, pass_fir_et, pass_sec_et, name_et, email_et,phone_et, address_et;
     private TextView    serch_result, two_pass_check;
-    private DB_conn conn;
+    private DB_conn     conn;
     private Integer     count = 0;
     private long        fir_time, sec_time;
 

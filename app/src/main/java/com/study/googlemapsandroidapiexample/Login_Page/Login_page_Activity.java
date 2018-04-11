@@ -20,7 +20,7 @@ public class Login_page_Activity extends AppCompatActivity implements View.OnCli
 
     Button           login_bt, id_serch_bt, pass_serch_bt, create_id_bt; //로그인, 로그인찾기, 비밀번호찾기, 아이디 생성 버튼
     EditText         id_et, pass_et;                                     //ID, 비밀번호 입력란
-    DB_conn test_obj;                                           //db연결 object
+    DB_conn          test_obj;                                           //db연결 object
     Share_login_info share_login_info_obj;                               //연결 유지 함수
 
     private long     fir_time, sec_time;                                 //뒤로가기 2번누르기를 위한 변수

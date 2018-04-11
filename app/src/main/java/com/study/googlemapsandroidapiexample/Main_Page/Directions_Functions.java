@@ -1,13 +1,11 @@
 package com.study.googlemapsandroidapiexample.Main_Page;
 
 import android.annotation.SuppressLint;
-import android.app.FragmentManager;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -33,9 +31,9 @@ public class Directions_Functions extends FragmentActivity{
     private static final int LOCATION_REQUEST = 500;
     private GoogleMap mMap;
     private ArrayList<LatLng> japan_two_marker;
-    private get_set_package get_set_package;
+    private Get_set_package get_set_package;
 
-    public Directions_Functions(GoogleMap mMap, get_set_package get_set_package) {
+    public Directions_Functions(GoogleMap mMap, Get_set_package get_set_package) {
         this.mMap = mMap;
         this.get_set_package = get_set_package;
         japan_two_marker = new ArrayList<LatLng>();

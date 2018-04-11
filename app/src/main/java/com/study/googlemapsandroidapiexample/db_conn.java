@@ -19,6 +19,8 @@ public class DB_conn extends AsyncTask<String, Void, String> {
     private BufferedReader      bufferedReader          = null;  //버퍼
     private Share_login_info    share_login_info_obj;            //로그인 정보
 
+
+    private String router_string = "";
     //받아올 php 경로 선택 1:aws 2:autoset
     String link = "http://ec2-13-125-198-224.ap-northeast-2.compute.amazonaws.com/android_db_conn_source/conn.php";
     //String link  = "http://172.25.1.26/android_db_conn_source/conn.php";
