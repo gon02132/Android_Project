@@ -32,6 +32,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,11 +48,15 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.squareup.picasso.Picasso;
 import com.study.googlemapsandroidapiexample.Main_Page.AlertDialog.AlertDialog_Custom_dialog;
 import com.study.googlemapsandroidapiexample.Main_Page.AlertDialog.AlertDialog_list_item;
 import com.study.googlemapsandroidapiexample.R;
@@ -61,6 +66,8 @@ import com.study.googlemapsandroidapiexample.Main_Page.Shortcut_view.*;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 //공통 get set함수를 모아놓은 클래스
 class get_set_package {
@@ -255,6 +262,9 @@ class locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
         this.before_snippet = before_snippet;
     }
 
+    //가장 가까운 자판기 초기화
+    public void setClosestMarker(){ closestMarker=null; }
+
     //프로그래머가 지정한 일정 시간 or 간 meter만큼 반복해서 실행되는 함수
     @Override
     public void onLocationChanged(Location location) {
@@ -294,8 +304,11 @@ class locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
                 }
             }
 
-            //다음 가야할 마커 그리기
-            get_set_package.drawMarkers(closestMarker.getPosition(), closestMarker.getTitle(), closestMarker.getSnippet(), 0, false);
+            //만약 보충할 자판기가 없으면 다음 가야할 마커를 그리지 않는다.
+            if(originMarkerlist.size() > 1) {
+                //다음 가야할 마커 그리기
+                get_set_package.drawMarkers(closestMarker.getPosition(), closestMarker.getTitle(), closestMarker.getSnippet(), 0, false);
+            }
 
             //다음 가야할 장소에대해 execute로 DB정보를 가져온다
             //매Update마다 가져오는건 부담이 크기때문에 계속 동일한 장소를 가리킬시, 한번만 가져오도록한다
@@ -699,8 +712,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     //--------------------------------------------변수--------------------------------------------
     private String[]            user_info;
     private long                fir_time, sec_time;
-    private Boolean             drawer_check = true;
-    private ArrayList<Marker>   originMarkerlist = new ArrayList<Marker>();
+    private Boolean             drawer_check        = true;
+    private ArrayList<Marker>   originMarkerlist    = new ArrayList<Marker>();
+    private String              image_path         ="http://ec2-13-125-198-224.ap-northeast-2.compute.amazonaws.com/images/supplementer/";
+
 
     //--------------------------------------------이외--------------------------------------------
     private locationlistener    listener;
@@ -727,8 +742,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         //------------------------------레이아웃 셋팅-------------------------------------------------
 
-        Window win = getWindow(); //activity의 context정보 변수에 담기
-        win.setContentView(R.layout.main_page_activity_main); // 첫번째 layout을 추가한다.
+        //activity의 context정보 변수에 담기
+        Window win = getWindow();
+
+        // 첫번째 layout을 추가한다.
+        win.setContentView(R.layout.main_page_activity_main);
 
         //inflater 얻어오기
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -749,18 +767,18 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
 
             //슬라이드를 시작했을 경우(열었을때 -> 닫았을때는 실행x)
-            //현재 상태바를 보이지않게 한다.ㅁ
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 if (drawer_check) {
+                    //현재 상태바를 보이지않게 한다.
                     my_status.setVisibility(View.GONE);
                     drawer_check = false;
                 }
             }
 
+            //DrawLayout이 열렸을때 불리는 함수
             @Override
-            public void onDrawerOpened(View drawerView) {
-            }
+            public void onDrawerOpened(View drawerView) {}
 
             //DrawLayout을 닫는 행위를 할 경우
             //보이지않게 한 상태바를 다시 보이게 한다.
@@ -776,13 +794,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
         //-----------------------------레이아웃 셋팅 끝--------------------------------------------
 
-        //저장 소들 id가져오기!!!!!!
-        my_status       =   (TextView)    findViewById(R.id.my_status);
-        next_vending    =   (TextView)    findViewById(R.id.next_vending);
-        sc_lv           =   (ListView)    findViewById(R.id.sc_lv);
-        ok_button       =   (Button)      findViewById(R.id.ok_button);
-        close_button    =   (Button)      findViewById(R.id.close_button);
-        open_button     =   (ImageButton) findViewById(R.id.open_button);
+        //저장소들 id 가져오기!!!!!!
+        my_status       =   (TextView)          findViewById(R.id.my_status);
+        next_vending    =   (TextView)          findViewById(R.id.next_vending);
+        sc_lv           =   (ListView)          findViewById(R.id.sc_lv);
+        ok_button       =   (Button)            findViewById(R.id.ok_button);
+        close_button    =   (Button)            findViewById(R.id.close_button);
+        open_button     =   (ImageButton)       findViewById(R.id.open_button);
+
 
         //네비게이션뷰 가져오기(왼쪽에서 오른쪽으로 슬라이드 할시, 나오는 창)
         NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
@@ -790,14 +809,23 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         //로그인 한 결과값을 가져온다(사용자 정보)
         Intent data = getIntent();
 
+        //정상적으로 값을 가져왔다면
         if (data.getStringExtra("user_info") != null) {
 
+            //유저 정보를 가져온다
             String str = data.getStringExtra("user_info");
             //[0]=login_id [1]=name [2]=email [3]=imgsrc
             user_info = str.split("/br/");
 
             //네비게이션의 헤더부분 가져오기
             View hView = navigationView.getHeaderView(0);
+
+            //보충기사 사진 업데이트
+            Picasso.with(this)
+                    .load(image_path+user_info[0]+".png")
+                    //사진이 없을시 여기에 지정한 애로 출력됨
+                    .placeholder(R.drawable.face_ex)
+                    .into((CircleImageView) hView.findViewById(R.id.user_img_iv));
 
             //id부분 가져오기(사용자에게는 안보이게 = unique값으로 유지)
             user_id_tv_hide = (TextView) hView.findViewById(R.id.user_id_tv_hide);
@@ -857,31 +885,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     //작업지시서 최신화 하기
                     case R.id.refrash_order_list:
 
-                        //기존 마커 지우기
-                        get_set_package.getOriginMarkerlist().clear();
-
-
-                        //다음 가야할 위치 제거 하는 부분
-                        Marker marker = get_set_package.getNow_Marker();
-
-                        //만약 마커가 없을경우 넘어간다
-                        if(marker != null){
-                            marker.remove();
-                        }
-
-                        //오른쪽 밑 레이아웃 지우기
-                        findViewById(R.id.sc_layout).setVisibility(View.GONE);
-
-                        //마커 그리기
+                        //마커 최신화 / 갱신
                         draw_marker();
 
-                        //다음가야할 길이 레이아웃 숨기기
-                        findViewById(R.id.next_vending_layout).setVisibility(View.GONE);
-
-                        //다음 가야할 자판기 초기화
-                        listener.setBefore_snippet("");
-
-                        Toast.makeText(MainActivity.this, menuItem.getTitle(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(MainActivity.this, "갱신 완료", Toast.LENGTH_LONG).show();
                         break;
 
                     //일본 자판기 보여주기(경로알려주기)
@@ -951,25 +958,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onClick(View v) {
 
-                //기존 마커 지우기
-                get_set_package.getOriginMarkerlist().clear();
-
-                //마커 그리기
+                //마커 최신화 / 갱신
                 draw_marker();
 
-                //다음 가야할 위치 제거
-                get_set_package.getNow_Marker().remove();
-
-                //오른쪽 밑의 레이아웃 안보이게 하기
-                findViewById(R.id.sc_layout).setVisibility(View.GONE);
-
-                //다음가야할 길이 레이아웃 숨기기
-                findViewById(R.id.next_vending_layout).setVisibility(View.GONE);
-
-                //이전 자판기에대한 정보 초기화
-                listener.setBefore_snippet("");
-
-                Toast.makeText(MainActivity.this, "갱신완료!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "갱신완료", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -996,7 +988,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this); //최초 한번만 그리기
-
     }
 
     //최초 네트워크 확인 함수
@@ -1060,15 +1051,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         //get_set_package 클래스 생성
         get_set_package = new get_set_package(this, googleMap, originMarkerlist);
 
-        //길찾기 함수 호출(일본에서 경로표시)
-        new Directions_Functions(gmap, get_set_package);
-        draw_marker();
-
         //마커클릭 이벤트 클래스 생성
         mark_click_event = new mark_click_event(this, googleMap, originMarkerlist, user_info[0]);
 
         //매초 혹은 미터 마다 갱신될 class 생성
         listener = new locationlistener(this, originMarkerlist, gmap, sc_lv, my_status,next_vending, get_set_package, navi_menu);
+
+        //마커 최신화 / 갱신
+        draw_marker();
 
         //GPS가 켜져있다면 이 함수 실행
         initLocationManager();
@@ -1084,8 +1074,46 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(35.8963510, 128.6219001), 17));
     }
 
-    //마커 그리기 -> 자판기 갱신 시
-    private void draw_marker(){
+    //마커 최신화 / 갱신
+    public void draw_marker(){
+
+        //기존 마커들 지우기
+        if(gmap != null) {
+            gmap.clear();
+        }
+
+        //기존 마커들 저장소 지우기
+        if(get_set_package.getOriginMarkerlist() != null || get_set_package.getOriginMarkerlist().size() != 0) {
+            get_set_package.getOriginMarkerlist().clear();
+        }
+
+        //길찾기 함수 호출(일본에서 경로표시)
+        new Directions_Functions(gmap, get_set_package);
+
+
+        //다음 가야할 위치 가져오기
+        Marker marker = get_set_package.getNow_Marker();
+
+        //만약 마커가 없을경우 넘어간다 //있을경우 제거한다
+        if(marker != null){
+            marker.remove();
+        }
+
+        //오른쪽 밑 레이아웃 지우기
+        findViewById(R.id.sc_layout).setVisibility(View.GONE);
+
+        //다음가야할 길이 레이아웃 숨기기
+        findViewById(R.id.next_vending_layout).setVisibility(View.GONE);
+
+        //다음 가야할 자판기 초기화
+        if(listener != null) {
+            listener.setBefore_snippet("");
+            listener.setClosestMarker();
+        }
+
+
+
+
         try {
             //db접속 try/catch 필수
             db_conn_obj = new DB_conn(this);
@@ -1158,7 +1186,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
 
         switch (id) {
             //왼쪽 상단에 버튼을 클릭시(사용자 지정 id 아님) -> 내장되어있는 버튼(드래그시 발생하는 이벤트)

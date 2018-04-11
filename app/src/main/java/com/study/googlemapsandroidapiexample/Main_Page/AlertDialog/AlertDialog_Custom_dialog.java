@@ -1,5 +1,6 @@
 package com.study.googlemapsandroidapiexample.Main_Page.AlertDialog;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.study.googlemapsandroidapiexample.DB_conn;
+import com.study.googlemapsandroidapiexample.Main_Page.MainActivity;
 import com.study.googlemapsandroidapiexample.R;
 
 import java.util.ArrayList;
@@ -99,6 +101,10 @@ public class AlertDialog_Custom_dialog {
                                         try {
                                             //값을 최신화하고 마커를 다시 그린다 자판기 id / 보충기사 login_id 를 인자로
                                             db_conn.execute("insert_vending", vd_id_str, user_login_id).get();
+
+                                            //마커 최신화(갱신)
+                                            ((MainActivity)context).draw_marker();
+
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
