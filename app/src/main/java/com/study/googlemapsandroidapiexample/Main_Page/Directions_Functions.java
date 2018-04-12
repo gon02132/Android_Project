@@ -39,6 +39,7 @@ public class Directions_Functions extends FragmentActivity{
 
     //생성자
     public Directions_Functions(GoogleMap mMap, Get_set_package get_set_package) {
+
         this.mMap               = mMap;
         this.get_set_package    = get_set_package;
         japan_two_marker        = new ArrayList<LatLng>();

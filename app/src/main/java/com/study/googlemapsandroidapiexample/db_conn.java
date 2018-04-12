@@ -297,12 +297,12 @@ public class DB_conn extends AsyncTask<String, Void, String> {
 
                             //실제로 마커를 구글맵에 그린다
                             get_set_package.drawMarkers(latLng, json_obj.getString("vd_name"), vending_info, json_obj.getInt("vd_soldout"), false);
-
                         }
                     }
                 }catch (Exception e){
                     Toast.makeText(context, "DB_get_markers_err", Toast.LENGTH_SHORT).show();
                 }
+
                 break;
 
             case "get_vending_info":

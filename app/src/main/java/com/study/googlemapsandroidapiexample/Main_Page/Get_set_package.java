@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
+import android.util.Log;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -85,6 +86,7 @@ public class Get_set_package {
 
             // 구글맵에 마커 생성 + 마커배열 추가
             originMarkerlist.add(googleMap.addMarker(markerOptions));
+            Log.e(">>>>>>>>>>>",originMarkerlist.size()+"");
         }
     }
 

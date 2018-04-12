@@ -11,6 +11,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
@@ -80,6 +81,7 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
     //가장 가까운 자판기 추적 버튼 클릭 시
     private boolean             closest_vendingmachine_tracking_button  = false;
     //-----------------------------------------------
+    private boolean             refresh                                 = false;
 
     //생성자
     public Locationlistener(Context context, ArrayList<Marker> originMarkerlist, GoogleMap gmap, ListView sc_lv, TextView my_status, TextView next_vending, Get_set_package get_set_package, Menu navi_menu) {
@@ -110,6 +112,12 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
     //프로그래머가 지정한 일정 시간 or 간 meter만큼 반복해서 실행되는 함수
     @Override
     public void onLocationChanged(Location location) {
+        if(refresh == false){
+            refresh = true;
+        }else if(refresh == true && originMarkerlist.size() < 2) {
+            ((MainActivity) context).loading();
+            refresh = false;
+        }
 
         //위도 경도 고도
         Double lattitude = location.getLatitude();
@@ -403,6 +411,7 @@ class Mark_click_event implements GoogleMap.OnMarkerClickListener {
     private ArrayList<Marker>   originMarkerlist;   //마커들이 저장되어있는 배열
     private String              user_login_id;      //유저 로그인 아이디
     private Handler             handler;            //핸둘러!
+
     //생성자
     public Mark_click_event(Context context, GoogleMap googleMap, ArrayList<Marker> originMarkerlist, String user_login_id, Handler handler) {
         this.context            = context;
@@ -467,7 +476,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     //-------------------------------------화면에 출력되는 애--------------------------------------
     private TextView            user_name_tv, user_email_tv, user_id_tv_hide, my_status, next_vending;
     private ListView            sc_lv;
-    private Button              ok_button,close_button;
+    private Button              ok_button,    close_button;
     private ImageButton         open_button;
     private Get_set_package     get_set_package;
     private Mark_click_event    mark_click_event;
@@ -698,30 +707,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         //마커 최신화 / 갱신
                         draw_marker();
 
-                        //핸들러 생성
-                        task = new Runnable() {
-                            @Override
-                            public void run() {
-
-                                //로딩 화면생성
-                                handler.sendEmptyMessage(1);
-                                try {
-                                    //2초 지연
-                                    Thread.sleep(2000);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-                                //로딩화면 제거
-                                handler.sendEmptyMessage(2);
-                            }
-                        };
-
-                        //쓰레드 생성
-                        thread = new Thread(task);
-
-                        //쓰레드 실행
-                        thread.start();
-
                         break;
 
                     //일본 자판기 보여주기(경로알려주기)
@@ -794,29 +779,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 //마커 최신화 / 갱신
                 draw_marker();
 
-                //핸들러 생성
-                Runnable task = new Runnable() {
-                    @Override
-                    public void run() {
-
-                        //로딩 화면생성
-                        handler.sendEmptyMessage(1);
-                        try {
-                            //2초 지연
-                            Thread.sleep(2000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        //로딩화면 제거
-                        handler.sendEmptyMessage(2);
-                    }
-                };
-
-                //쓰레드 생성
-                Thread thread = new Thread(task);
-
-                //쓰레드 실행
-                thread.start();
             }
         });
 
@@ -930,8 +892,61 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
+    //자판기 갱신시, 생길수 있는 로딩시간에 호출되는 함수
+    public void loading(){
+        Runnable task;
+
+        //핸들러 생성
+        task = new Runnable() {
+            @Override
+            public void run() {
+
+                //로딩 화면생성
+                handler.sendEmptyMessage(1);
+                try {
+                    //5초 지연
+                    Thread.sleep(6500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                //로딩화면 제거
+                handler.sendEmptyMessage(2);
+            }
+        };
+
+        //쓰레드 생성
+        Thread thread = new Thread(task);
+
+        //쓰레드 실행
+        thread.start();
+    }
+
     //마커 최신화 / 갱신
     public void draw_marker(){
+        Runnable task;
+            //핸들러 생성
+            task = new Runnable() {
+                @Override
+                public void run() {
+
+                    //로딩 화면생성
+                    handler.sendEmptyMessage(1);
+                    try {
+                        //2초 지연
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    //로딩화면 제거
+                    handler.sendEmptyMessage(2);
+                }
+            };
+
+        //쓰레드 생성
+        Thread thread = new Thread(task);
+
+        //쓰레드 실행
+        thread.start();
 
         //기존 마커들 지우기
         if(gmap != null) {
@@ -957,9 +972,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         //다음가야할 길이 레이아웃 숨기기
         findViewById(R.id.next_vending_layout).setVisibility(View.GONE);
 
-        //길찾기 함수 호출(일본에서 경로표시)
-        new Directions_Functions(gmap, get_set_package);
-
         //리스너가 있다면
         if(listener != null) {
             //다음 가야할 자판기의 정보 초기화
@@ -975,9 +987,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         try {
             //db접속 try/catch 필수
             db_conn_obj = new DB_conn(this,get_set_package);
-
             //DB에 저장되어있는 마커들을 불러온다 ->user의 login_id를 기준으로
             db_conn_obj.execute("get_markers", user_info[0]);
+
+            //길찾기 함수 호출(일본에서 경로표시)
+            new Directions_Functions(gmap, get_set_package);
 
 
         } catch (Exception e) {
