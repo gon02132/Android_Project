@@ -27,36 +27,43 @@ import java.util.HashMap;
 import java.util.List;
 
 //길찾기 함수 -> github에서 제공중
-public class Directions_Functions extends FragmentActivity{
-    private static final int LOCATION_REQUEST = 500;
-    private GoogleMap mMap;
-    private ArrayList<LatLng> japan_two_marker;
-    private Get_set_package get_set_package;
+//한국의 경우 정부에서 Googlemap길찾기 기능을 거부해서 받지못함
+//일본(Go japan)버튼을 누를시 polyline으로 길 경로가 나옴
+//생성자에 필요한 초기화 작업외에는 github에서 소스를 가져옴
 
+public class Directions_Functions extends FragmentActivity{
+    private static final int    LOCATION_REQUEST = 500;
+    private GoogleMap           mMap;
+    private ArrayList<LatLng>   japan_two_marker;
+    private Get_set_package     get_set_package;
+
+    //생성자
     public Directions_Functions(GoogleMap mMap, Get_set_package get_set_package) {
-        this.mMap = mMap;
-        this.get_set_package = get_set_package;
-        japan_two_marker = new ArrayList<LatLng>();
+        this.mMap               = mMap;
+        this.get_set_package    = get_set_package;
+        japan_two_marker        = new ArrayList<LatLng>();
         japan_two_marker.add(new LatLng(33.588288, 130.399311));
         japan_two_marker.add(new LatLng(33.589084, 130.390576));
 
+        //내 위치(임시) 추가
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.icon(BitmapDescriptorFactory.fromBitmap(get_set_package.resizeMapIcons("my_temp_location", 70, 80)));
         markerOptions.position(japan_two_marker.get(0));
         mMap.addMarker(markerOptions);
 
+        //내위치 강조 추가
         markerOptions = new MarkerOptions();
         markerOptions.icon(BitmapDescriptorFactory.fromBitmap(get_set_package.resizeMapIcons("now", 75, 85)));
         markerOptions.position(japan_two_marker.get(0));
         mMap.addMarker(markerOptions);
 
-
-
+        //가야할 자판기 추가
         markerOptions = new MarkerOptions();
         markerOptions.icon(BitmapDescriptorFactory.fromBitmap(get_set_package.resizeMapIcons("japangi2", 50, 60)));
         markerOptions.position(japan_two_marker.get(1));
         mMap.addMarker(markerOptions);
 
+        //현재 위치와 가야할 자판기의 위치 사이에 길경로를 그린다.
         String url = getRequestUrl(japan_two_marker.get(0), japan_two_marker.get(1));
         TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
         taskRequestDirections.execute(url);

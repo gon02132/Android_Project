@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 //공통 get set함수를 모아놓은 클래스
-class Get_set_package {
+public class Get_set_package {
     private Context             context;            //MainActivity this
     private GoogleMap           googleMap;          //구글맵 객체
     private ArrayList<Marker>   originMarkerlist;   //구글맵에 그려진 마커들이 저장된 배열

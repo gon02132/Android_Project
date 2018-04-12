@@ -18,26 +18,27 @@ import com.study.googlemapsandroidapiexample.DB_conn;
 //유저 생성 PAGE
 public class Create_user_Acitivty extends AppCompatActivity{
 
-    private Button      exist_id_check_bt, create_user_bt, create_cancel_bt;
-    private EditText    id_input_et, pass_fir_et, pass_sec_et, name_et, email_et,phone_et, address_et;
-    private TextView    serch_result, two_pass_check;
+    //--------------------------회원가입에 필요한 화면에 표시되는 기능들!------------------------------
+    private Button      exist_id_check_bt,  create_user_bt, create_cancel_bt;
+    private EditText    id_input_et,        pass_fir_et,    pass_sec_et,    name_et, email_et,phone_et, address_et;
+    private TextView    serch_result,       two_pass_check;
     private DB_conn     conn;
-    private Integer     count = 0;
-    private long        fir_time, sec_time;
+    private long        fir_time,           sec_time;
+    //----------------------------------------------------------------------------------------------
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_user);
 
-        id_input_et = (EditText)findViewById(R.id.id_input_tv); //ID 입력 란
-        name_et     = (EditText)findViewById(R.id.name_et);     //name 입력 란
-        email_et    = (EditText)findViewById(R.id.emil_et);     //email 입력 란
-        phone_et    = (EditText)findViewById(R.id.phone_et);    //전화번호 입력 란
-        address_et  = (EditText)findViewById(R.id.address_et);  //주소 입력 란
+        id_input_et       = (EditText)findViewById(R.id.id_input_tv);       //ID 입력 란
+        name_et           = (EditText)findViewById(R.id.name_et);           //name 입력 란
+        email_et          = (EditText)findViewById(R.id.emil_et);           //email 입력 란
+        phone_et          = (EditText)findViewById(R.id.phone_et);          //전화번호 입력 란
+        address_et        = (EditText)findViewById(R.id.address_et);        //주소 입력 란
 
-        two_pass_check  = (TextView)findViewById(R.id.two_pass_check);      //두개의 비밀번호가 일치하는지 보여주는 란
-        serch_result    = (TextView)findViewById(R.id.serch_result);        //ID 중복 검색 결과 보여주는 란
+        two_pass_check    = (TextView)findViewById(R.id.two_pass_check);    //두개의 비밀번호가 일치하는지 보여주는 란
+        serch_result      = (TextView)findViewById(R.id.serch_result);      //ID 중복 검색 결과 보여주는 란
 
         exist_id_check_bt = (Button)findViewById(R.id.exist_id_check_bt);   //ID 중복 검사 버튼
         exist_id_check_bt.setOnClickListener(new View.OnClickListener() {

@@ -3,41 +3,76 @@ package com.study.googlemapsandroidapiexample;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.ListView;
 import android.widget.Toast;
 
-import com.study.googlemapsandroidapiexample.Login_Page.Share_login_info;
+import com.google.android.gms.maps.model.LatLng;
+import com.study.googlemapsandroidapiexample.Main_Page.*;
+import com.study.googlemapsandroidapiexample.Main_Page.AlertDialog.AlertDialog_Custom_dialog;
+import com.study.googlemapsandroidapiexample.Main_Page.AlertDialog.AlertDialog_list_item;
+import com.study.googlemapsandroidapiexample.Main_Page.Shortcut_view.Sc_custom_listview;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 //인자1:doInBackground 2:onProgressUpdate 3:onPostExecute  들의 매개변수 타입결정
 //비동기적 쓰레드, 백그라운드 쓰레드와 UI쓰레드(메인 쓰레드)와 같이 쓰기위해 쓰임
 public class DB_conn extends AsyncTask<String, Void, String> {
+
     private Context             context;                         //MainActivity this
     private BufferedReader      bufferedReader          = null;  //버퍼
-    private Share_login_info    share_login_info_obj;            //로그인 정보
+    private Get_set_package     get_set_package;                 //함수 저장 변수
 
+    private String              router_string           = "";    //백그라운드 UI작업 구분자
+    private String              second_router;                   //같은 구분자를 쓰며 다른 UI이 작업이 필요한 경우 얘가 쓰임
 
-    private String router_string = "";
+//--------------------------------------UI작업때 쓰이는 변수들---------------------------------------
+    private ListView            sc_lv;                           //Short_cut 리스트뷰   ->get_vending_info/short_cut
+    private String              marker_title;                    //마커의 타이틀        ->get_vending_info/alert
+    private String              user_login_id;                   //유저 로그인 아이디   ->get_vending_info/alert
+
+//--------------------------------------------------------------------------------------------------
     //받아올 php 경로 선택 1:aws 2:autoset
-    String link = "http://ec2-13-125-198-224.ap-northeast-2.compute.amazonaws.com/android_db_conn_source/conn.php";
+    private String              link = "http://ec2-13-125-198-224.ap-northeast-2.compute.amazonaws.com/android_db_conn_source/conn.php";
     //String link  = "http://172.25.1.26/android_db_conn_source/conn.php";
 
     //HTTP커넥션
-    HttpURLConnection con;
+    private HttpURLConnection   con;
 
     //------------------------------------생성자 오버로딩------------------------------------------
-    public DB_conn(Context context, Share_login_info share_login_info_obj){
-        this.context              = context;
-        this.share_login_info_obj = share_login_info_obj;
-    }
-
+    //Activity의 작업이 필요할 경우
     public DB_conn(Context context){
         this.context = context;
     }
 
+    //get_marker 구분자로 불릴시 사용
+    public DB_conn(Context context, Get_set_package get_set_package){
+        this.context            = context;
+        this.get_set_package    = get_set_package;
+    }
+
+    //get_vending_info 구분자로 불릴시 사용 -> short_cut
+    public DB_conn(Context context, ListView sc_lv, String second_router){
+        this.context            = context;
+        this.sc_lv              = sc_lv;
+        this.second_router      = second_router;
+    }
+
+    //get_vending_info 구분자로 불릴시 사용 -> alert_dialog
+    public DB_conn(Context context, String marker_title, String user_login_id, String second_router){
+        this.context            = context;
+        this. marker_title      = marker_title;
+        this. user_login_id     = user_login_id;
+        this.second_router      = second_router;
+    }
+
+    //ui작업 및 추가/삭제/업데이트 기능이 필요 없는 경우
     public DB_conn(){}
     //-------------------------------------------------------------------------------------------
 
@@ -49,6 +84,10 @@ public class DB_conn extends AsyncTask<String, Void, String> {
             //구별 인자값의 널값 확인 - 예외처리
             if(strings[0] != null) {
 
+                //백그라운드 ui작업을 위해 구분자를 만들어 놓는다
+                router_string = strings[0];
+
+                //구분자로 구분한다!
                 switch (strings[0]){
 
                     //로그인 버튼 클릭시 넘어가는 인자값들
@@ -134,7 +173,7 @@ public class DB_conn extends AsyncTask<String, Void, String> {
             }
 
             URL url = new URL(link);
-            con = (HttpURLConnection)url.openConnection();
+            con     = (HttpURLConnection)url.openConnection();
 
             //연결 성공시
             if(con != null) {
@@ -150,10 +189,10 @@ public class DB_conn extends AsyncTask<String, Void, String> {
                 if(con.getResponseCode() == HttpURLConnection.HTTP_OK) {
 
                     //문자열 빌더 생성
-                    StringBuilder sb = new StringBuilder();
+                    StringBuilder sb    = new StringBuilder();
 
                     //buffer에 직접 씌울수 없으므로 IS리더를 사용한다 //캐릭터자료형은 utf8
-                    bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream(),"UTF-8"));
+                    bufferedReader      = new BufferedReader(new InputStreamReader(con.getInputStream(),"UTF-8"));
 
                     //차곡차곡 가져온 데이터를 한줄씩 채워넣는다
                     String line;
@@ -204,53 +243,167 @@ public class DB_conn extends AsyncTask<String, Void, String> {
         }
     }
 
+    //백그라운드에서 ui 작업 할 수 있는 공간
     //doInBackground함수에서 반한되는 값이 전달되는 콜백 함수(반환된후 자동실행)
-    //화면에 그려지는 역할은 여기서 해야함 - 로그인의 경우 get으로 받아서 프론트에서 그냥 다 계산 함
-    //->이 계산이 끝나야 다음 화면의 작업이 진행되기 때문
     @Override
     protected void onPostExecute(String result_String) {
         super.onPostExecute(result_String);
-        //String을 받아올 경우 함수를 종료시킨다.
-        switch (result_String){
 
-            //id랑 password 중 하나라도 미입력 시
-            case "no_full":
+        //각 excute의 결과를 ui에 적용시킨다
+        switch (router_string){
+            case "login":
+                break;
 
-            //id가 없을 시
-            case "no_id":
+            case "exist_id_check":
+                break;
 
-            //비밀번호가 틀릴 시
-            case "no_pass":
+            case "create_user_ok":
+                break;
 
-            //회원가입 id중복확인 부분 id가 중복 일 경우
-            case "exist":
+            case "serch_id":
+                break;
 
-            //id가 중복이 아닐 경우
-            case "no_exist":
+            case "serch_pass":
+                break;
 
-            //insert 반환 부분
-            case "insert_OK":
+            case "get_markers":
+                try{
+                    //받아온 값이 없거나 mysql구문의 에러의 경우 아무것도 실행하지 않고 다음으로 넘어간다
+                    if (result_String.equals("no_marker") || result_String.equals("mysql_err")) {
+                        Toast.makeText(context, "no marker or mysql_err", Toast.LENGTH_SHORT).show();
+                    }
 
-            //매진, 매진임박 자판기가 없을 시
-            case "no_marker":
+                    //받아온 값이 JSON객체로 있을 경우
+                    else {
+                        //json 객체로 변환하여 json배열에 저장
+                        JSONObject jsonObject   = new JSONObject(result_String);
+                        JSONArray json_result   = jsonObject.getJSONArray("result");
 
-            //mysql query보낼때 에러뜰시
-            case "mysql_err":
+                        //검색된 배열을 순차적으로 돈다
+                        for (int i = 0; i < json_result.length(); i++) {
 
-            //찾는 마커(자판기)가 없을 시
-            case "no_vending":
+                            String vending_info = "";
 
-                //알림창 띄우지 않고 종료
-                con.disconnect();
+                            //vd_id, vd_name, vd_latitude, vd_longitude, vd_place, vd_supplement, vd_soldout 가 저장 되어 있음
+                            JSONObject json_obj = json_result.getJSONObject(i);
+                            LatLng latLng       = new LatLng(json_obj.getDouble("vd_latitude"), json_obj.getDouble("vd_longitude"));
 
-                return;
+                            //문자열로 저장
+                            vending_info += json_obj.getInt("vd_id");//+"/br/";
 
-            //접속 실패 시
-            case "conn_failed":
-                Toast.makeText(context, "Please Network connect", Toast.LENGTH_SHORT).show();
-                return ;
+                            // 필요시 주석 제거후 사용!
+                            //vending_info += json_obj.getString("vd_place")+"/br/";
+                            //vending_info += json_obj.getString("vd_supplement");
+
+                            //실제로 마커를 구글맵에 그린다
+                            get_set_package.drawMarkers(latLng, json_obj.getString("vd_name"), vending_info, json_obj.getInt("vd_soldout"), false);
+
+                        }
+                    }
+                }catch (Exception e){
+                    Toast.makeText(context, "DB_get_markers_err", Toast.LENGTH_SHORT).show();
+                }
+                break;
+
+            case "get_vending_info":
+                try{
+                    //에러상황들 예외처리
+                    if (result_String.equals("no_vending")) {
+                        Toast.makeText(context, "no vending machine", Toast.LENGTH_SHORT).show();
+                        return;
+                    } else if (result_String.equals("no_vending1")) {
+                        Toast.makeText(context, "1no vending machine", Toast.LENGTH_SHORT).show();
+                        return;
+                    } else if (result_String.equals("no_vending2")) {
+                        Toast.makeText(context, "2no vending machine", Toast.LENGTH_SHORT).show();
+                        return;
+                    } else if (result_String.equals("no_vending3")) {
+                        Toast.makeText(context, "3no vending machine", Toast.LENGTH_SHORT).show();
+                        return;
+                    } else if (result_String.equals("no_vending4")) {
+                        Toast.makeText(context, "4no vending machine", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    //값들을 제대로 받아 왔을 시,
+                    else {
+
+                        //short_cut을 업데이트하는 라우터로 들어왔다면
+                        switch (second_router){
+
+                            case "short_cut":
+                            //json 객체로 변환하여 json배열에 저장
+                            JSONObject jsonObject = new JSONObject(result_String);
+
+                            //생성자에서 sc_lv로 받아온 값이 널이 아니면 실행
+                            if (sc_lv != null) {
+                                //오른쪽 밑에 보여주는 listview를 custom하여 보여준다
+                                Sc_custom_listview sc_custom = new Sc_custom_listview(context, jsonObject, sc_lv);
+
+                                //custom Listview 만들기!!
+                                sc_custom.change_listview();
+                            }
+
+                            break;
+
+                            case "alert_dialog":
+
+
+                                //특정 자판기의 아이템들을 담을 배열 선언
+                                ArrayList<AlertDialog_list_item> list_itemArrayList = new ArrayList<AlertDialog_list_item>();
+
+                                //json 객체로 변환하여 json배열에 저장
+                                jsonObject              = new JSONObject(result_String);
+
+                                //실제 반복문을 도는 알맹이를 배열로 가져온다
+                                JSONArray json_result   = jsonObject.getJSONArray("result");
+
+                                //검색된 배열을 순차적으로 돈다
+                                for (int i = 0; i < json_result.length(); i++) {
+
+                                    //[0]=vd_id [1]=vd_name [2]z=drink_name [3]=drink_path [4]=drink_stook [5]=drink_line [6]=note
+                                    JSONObject json_obj = json_result.getJSONObject(i);
+                                    //인자값 : 제품명,이미지경로,제품수량,제품라인
+
+                                    //작업 지시가 없는 자판기의 경우 -> 맨 첫 줄은 공백으로 놔둔다
+                                    if(json_obj.getString("note") == null || json_obj.getString("note").equals("null")){
+                                        list_itemArrayList.add(new AlertDialog_list_item(" ",json_obj.getString("drink_name"), json_obj.getString("drink_path"), json_obj.getInt("drink_stook"), json_obj.getInt("drink_line")));
+                                    }
+
+                                    //작업 지시서가 있는 자판기의 경우 -> 맨 첫 줄은 작업지시 내용을 출력하게 한다.
+                                    else {
+                                        list_itemArrayList.add(new AlertDialog_list_item(json_obj.getString("note"), json_obj.getString("drink_name"), json_obj.getString("drink_path"), json_obj.getInt("drink_stook"), json_obj.getInt("drink_line")));
+                                    }
+                                }
+
+                                //생성자로 올바른 값을 받았다면 custom alertdialog를 만들어서 띄운다
+                                if(marker_title != "" && user_login_id != "") {
+                                    //custom_dialog를 만들어서 보여준다
+                                    AlertDialog_Custom_dialog custom_dialog = new AlertDialog_Custom_dialog(context, list_itemArrayList, marker_title, json_result.getJSONObject(0).getString("vd_id"), user_login_id);
+                                    custom_dialog.callFunction();
+                                }else{
+                                    Toast.makeText(context, "no_title or user_login_id", Toast.LENGTH_SHORT).show();
+                                }
+
+                            break;
+                        }
+
+                    }
+                }catch (Exception e){
+                    Toast.makeText(context, "DB_get_vending_info_err", Toast.LENGTH_SHORT).show();
+                }
+                break;
+
+            case "get_order_sheet":
+                break;
+
+            case "insert_vending":
+                break;
+
         }
+
         //연결 해제
         con.disconnect();
     }
 }
+

@@ -18,12 +18,12 @@ import org.json.JSONObject;
 //로그인 MAIN PAGE
 public class Login_page_Activity extends AppCompatActivity implements View.OnClickListener{
 
-    Button           login_bt, id_serch_bt, pass_serch_bt, create_id_bt; //로그인, 로그인찾기, 비밀번호찾기, 아이디 생성 버튼
-    EditText         id_et, pass_et;                                     //ID, 비밀번호 입력란
-    DB_conn          test_obj;                                           //db연결 object
-    Share_login_info share_login_info_obj;                               //연결 유지 함수
+    Button           login_bt,  id_serch_bt, pass_serch_bt, create_id_bt; //로그인, 로그인찾기, 비밀번호찾기, 아이디 생성 버튼
+    EditText         id_et,     pass_et;                                  //ID, 비밀번호 입력란
+    DB_conn          test_obj;                                            //db연결 object
+    Share_login_info share_login_info_obj;                                //연결 유지 함수
 
-    private long     fir_time, sec_time;                                 //뒤로가기 2번누르기를 위한 변수
+    private long     fir_time,  sec_time;                                 //뒤로가기 2번누르기를 위한 변수
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,7 +96,7 @@ public class Login_page_Activity extends AppCompatActivity implements View.OnCli
                 //ID와 PASSWORD를 서버에 날려 결과값을 받아온다.
                 id_et       = (EditText)findViewById(R.id.id_et);
                 pass_et     = (EditText)findViewById(R.id.pass_et);
-                test_obj    = new DB_conn(Login_page_Activity.this, share_login_info_obj);
+                test_obj    = new DB_conn(Login_page_Activity.this);
                 //doInBackground 실행(인자를 2개로 넘겨준다 // ID,비밀번호)
                 try {
                     //doin함수에서 반환되는 값을 가져와서 에러가 있을 경우 처리를 한다.

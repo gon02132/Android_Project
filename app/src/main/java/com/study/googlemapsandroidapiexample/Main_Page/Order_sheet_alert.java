@@ -28,8 +28,8 @@ import java.util.ArrayList;
 public class Order_sheet_alert {
 
     //기본 변수들
-    private Context     context;
-    private String      user_login_id;
+    private Context                 context;
+    private String                  user_login_id;
 
     //테이블 속성 관련 변수 들
     private TableLayout             order_sheet_layout, title_sheet_layout;
@@ -51,8 +51,8 @@ public class Order_sheet_alert {
 
     //생성자
     public Order_sheet_alert(Context context, String user_login_id){
-        this.context = context;
-        this.user_login_id = user_login_id;
+        this.context        = context;
+        this.user_login_id  = user_login_id;
 
     }
 
@@ -67,8 +67,8 @@ public class Order_sheet_alert {
         dig.setContentView(R.layout.orderseet_table_view);
 
         //작업지시서 레이아웃
-        order_sheet_layout = dig.findViewById(R.id.order_sheet_layout);
-        title_sheet_layout = dig.findViewById(R.id.title_sheet_layout);
+        order_sheet_layout  = dig.findViewById(R.id.order_sheet_layout);
+        title_sheet_layout  = dig.findViewById(R.id.title_sheet_layout);
 
         //작업지시서의 좌우 스크롤뷰(머리, 몸통 부분)
         scroll_view_top     = (HorizontalScrollView) dig.findViewById(R.id.scroll_view_top);
@@ -82,7 +82,7 @@ public class Order_sheet_alert {
             DB_conn db_conn_obj = new DB_conn(context);
 
             //db에 접속하여 반환된 결과값 초기호
-            String result_str = db_conn_obj.execute("get_order_sheet", user_login_id).get();
+            String result_str   = db_conn_obj.execute("get_order_sheet", user_login_id).get();
 
 
             //받아온 값이 없거나 mysql구문의 에러의 경우 아무것도 실행하지 않고 다음으로 넘어간다
@@ -216,9 +216,9 @@ public class Order_sheet_alert {
 //---------------------------몸통)자판기 숫자(보충 필요 량) 들어가는 곳--------------------------------
 
                     //각 음료 이름에 맞는 보충 필요량 받아 오기
-                    String now_val = json_object.getString("drink_name");
+                    String now_val      = json_object.getString("drink_name");
 
-                    int sp_check_int = json_object.getInt("sp_check");
+                    int sp_check_int    = json_object.getInt("sp_check");
                     //만약 보충완료된 자판기라면 중앙선을 긋는다.
                     if(sp_check_int == 1) {
 

@@ -16,11 +16,11 @@ import org.json.JSONObject;
 
 //ID 찾는 PAGE
 public class Serch_id_Activity extends AppCompatActivity{
-    private Button      back_bt, serch_bt;  //뒤로가기, ID찾기 버튼
-    private DB_conn     conn;               //db 연결 변수
-    private EditText    serch_name_et;      //찾고자 하는 이름 입력란
+    private Button      back_bt,  serch_bt;     //뒤로가기, ID찾기 버튼
+    private DB_conn     conn;                   //db 연결 변수
+    private EditText    serch_name_et;          //찾고자 하는 이름 입력란
 
-    private long fir_time, sec_time;        //뒤로가기 2번누르기를 위한 변수
+    private long        fir_time, sec_time;     //뒤로가기 2번누르기를 위한 변수
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

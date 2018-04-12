@@ -16,11 +16,11 @@ import org.json.JSONObject;
 
 //PASSWORD 찾는 PAGE
 public class Serch_pass_Activity extends AppCompatActivity{
-    private Button      back_bt, serch_bt;          //뒤로가기, 찾기 버튼
-    private EditText    serch_id_et, serch_name_et; //ID, name 입력 란
-    private DB_conn     conn;                       //DB연결 변수
+    private Button      back_bt,     serch_bt;          //뒤로가기, 찾기 버튼
+    private EditText    serch_id_et, serch_name_et;     //ID, name 입력 란
+    private DB_conn     conn;                           //DB연결 변수
 
-    private long        fir_time, sec_time;         //2번눌러야 뒤로가기위한 변수
+    private long        fir_time,    sec_time;         //2번눌러야 뒤로가기위한 변수
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

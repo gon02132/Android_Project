@@ -15,7 +15,7 @@ public class Serch_result_id_Activity extends AppCompatActivity{
     private Button      serch_pw_bt,back_login_bt; //비밀번호 찾기, 뒤로가기 버튼
     private TextView    result_id_tv;              //결과값이 출력되는 TextView
 
-    private long        fir_time, sec_time;        //2번눌러야 뒤로가기위한 변수
+    private long        fir_time,   sec_time;      //2번눌러야 뒤로가기위한 변수
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
