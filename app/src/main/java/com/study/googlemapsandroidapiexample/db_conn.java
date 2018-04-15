@@ -39,7 +39,7 @@ public class DB_conn extends AsyncTask<String, Void, String> {
 
 //--------------------------------------------------------------------------------------------------
     //받아올 php 경로 선택 1:aws 2:autoset
-    private String              link = "http://ec2-13-125-198-224.ap-northeast-2.compute.amazonaws.com/android_db_conn_source/conn.php";
+    private String              link = "http://13.125.134.167/android_db_conn_source/conn.php";
     //String link  = "http://172.25.1.26/android_db_conn_source/conn.php";
 
     //HTTP커넥션
@@ -266,6 +266,7 @@ public class DB_conn extends AsyncTask<String, Void, String> {
             case "serch_pass":
                 break;
 
+            //모든 자판기들을 가져와 맵에 뿌려주는구문
             case "get_markers":
                 try{
                     //받아온 값이 없거나 mysql구문의 에러의 경우 아무것도 실행하지 않고 다음으로 넘어간다
@@ -305,6 +306,7 @@ public class DB_conn extends AsyncTask<String, Void, String> {
 
                 break;
 
+            //short_cut 생성 구문
             case "get_vending_info":
                 try{
                     //에러상황들 예외처리
@@ -328,9 +330,10 @@ public class DB_conn extends AsyncTask<String, Void, String> {
                     //값들을 제대로 받아 왔을 시,
                     else {
 
-                        //short_cut을 업데이트하는 라우터로 들어왔다면
+                        //shortcut / alert_dialog 의 router
                         switch (second_router){
 
+                            //short_cut을 업데이트곳
                             case "short_cut":
                             //json 객체로 변환하여 json배열에 저장
                             JSONObject jsonObject = new JSONObject(result_String);
@@ -346,14 +349,23 @@ public class DB_conn extends AsyncTask<String, Void, String> {
 
                             break;
 
+                            //특정 자판기의 정보(customalert)보여주는 곳
                             case "alert_dialog":
-
 
                                 //특정 자판기의 아이템들을 담을 배열 선언
                                 ArrayList<AlertDialog_list_item> list_itemArrayList = new ArrayList<AlertDialog_list_item>();
 
                                 //json 객체로 변환하여 json배열에 저장
                                 jsonObject              = new JSONObject(result_String);
+
+                                //자판기의 돈 상태를 가져온다
+                                JSONArray coin_arr   = jsonObject.getJSONArray("coin");
+                                for(int i =0; i<coin_arr.length(); i++){
+                                    //[0]=coin_var [1]=vd_id [2]=1000 [3]=500 [4]=100 [5]=50 [6]=10 [7]=5 [8]=1
+                                    JSONObject json_obj = coin_arr.getJSONObject(i);
+                                    Log.e("<<<<",json_obj.getString("1000")+"/"+json_obj.getString("500")+"/"+json_obj.getString("100"));
+
+                                }
 
                                 //실제 반복문을 도는 알맹이를 배열로 가져온다
                                 JSONArray json_result   = jsonObject.getJSONArray("result");

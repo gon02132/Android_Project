@@ -54,15 +54,15 @@ public class Get_set_package {
         //통일되게 사이즈를 재설정하여 아이콘을 만든다.
         if (status == 1) {
             //resize함수로 사이즈를 통일한다
-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("japangi", 50, 60)));
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("japangi", 80, 90)));
         } else if (status == 2) {
-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("japangi2", 50, 60)));
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("japangi2", 80, 90)));
         } else if (status == 3) {
-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("japangi3", 50, 60)));
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("japangi3", 80, 90)));
         } else if (status == 0) {
-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("now", 50, 60)));
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("now", 80, 90)));
         } else {//없을 경우(예외처리)
-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("x2", 50, 60)));
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("x2", 80, 90)));
         }
 
         //다음 가야할 자판기를 그려 줄때 호출되는 함수

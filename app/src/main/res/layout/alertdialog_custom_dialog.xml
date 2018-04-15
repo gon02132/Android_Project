@@ -14,10 +14,10 @@
             android:id="@+id/vending_name"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:background="#84B4CD"
+            android:background="#566270"
             android:gravity="center"
             android:text="자판기 명"
-            android:textColor="#ffffff"
+            android:textColor="#FFFFFF"
             android:textSize="16dp" />
 
         <View
@@ -55,10 +55,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="#84B4CD"
+                android:background="#566270"
                 android:layout_margin="5dp"
                 android:gravity="center"
-                android:text="강제 갱신"
+                android:text="보충 완료"
                 android:textColor="#FFFFFF"
                 android:textSize="16dp" />
 
@@ -68,7 +68,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="#84B4CD"
+                android:background="#566270"
                 android:layout_margin="5dp"
                 android:gravity="center"
                 android:text="취소"

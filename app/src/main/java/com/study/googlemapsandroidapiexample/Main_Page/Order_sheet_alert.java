@@ -10,7 +10,6 @@ import android.view.Gravity;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.HorizontalScrollView;
-import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -81,9 +80,8 @@ public class Order_sheet_alert {
             //db 접속(try/catch 필수)
             DB_conn db_conn_obj = new DB_conn(context);
 
-            //db에 접속하여 반환된 결과값 초기호
+            //db에 접속하여 반환된 결과값 초기화
             String result_str   = db_conn_obj.execute("get_order_sheet", user_login_id).get();
-
 
             //받아온 값이 없거나 mysql구문의 에러의 경우 아무것도 실행하지 않고 다음으로 넘어간다
             if (result_str.equals("no_marker") || result_str.equals("mysql_err")) {
@@ -104,34 +102,33 @@ public class Order_sheet_alert {
                     tr = new TableRow(context);
 
                     //"자판기 명" TD 생성
-                    draw_td(3,450, "자판기 명", false);
+                    draw_td(3,600, "자판기 명", false);
 
                     //------작업지시 TD 넣는 공간------
 
                     //"작업 지시" TD 생성
-                    draw_td(3,500, "작업 지시", false);
-
+                    draw_td(3,700, "작업 지시", false);
 
                     //받아온 값만큼 반복한다.
                     for (int i = 0; i < json_result_set.length(); i++) {
-
                         //drk_name, stock 가 저장되어 있음
                         JSONObject json_object = json_result_set.getJSONObject(i);
-
-                        //한번만 초기화 시킨다(기본 2번반복한다)
-                        if(a==0) {
-                            //차량 재고를 배열에 저장해둔다(맨밑에 출력하기위해)
-                            car_stock.add(json_object.getInt("stock"));
-                        }
 
                         //현재 모든 제품들의 이름들을 가져온다.
                         String drk_name = json_object.getString("drk_name");
 
-                        //제품들을 배열에 넣는다
-                        product_val.add(drk_name);
 
-                        //각 제품들의 보충 필요량들을 0으로 초기화한다
-                        product_count.add(0);
+                        //한번만 초기화 시킨다
+                        if(a==0) {
+                            //차량 재고를 배열에 저장해둔다(맨밑에 출력하기위해)
+                            car_stock.add(json_object.getInt("stock"));
+
+                            //제품들을 배열에 넣는다
+                            product_val.add(drk_name);
+
+                            //각 제품들의 보충 필요량들을 0으로 초기화한다
+                            product_count.add(0);
+                        }
 
                         //현재 소유중인 제품들의 명들을 차례차례 출력한다.
                         draw_td(1,0, drk_name,false);
@@ -149,10 +146,8 @@ public class Order_sheet_alert {
                 }
 
 //--------------------------------------------몸통 부분 ---------------------------------------------
-
                 //제품들 가져오기
                 JSONArray  json_result = jsonObject.getJSONArray("result");
-
                 //새로운 자판기의 이름이 나오면 TR을 새롭게 만들게 하기위한 비교용 String
                 String before_vending = "";
 
@@ -161,7 +156,7 @@ public class Order_sheet_alert {
 
                 //받아온 값만큼 반복한다.
                 for(int i = 0; i < json_result.length(); i++){
-
+                    Log.e("<<<<",1+" ");
                     //sp_name, vd_name, drink_name, drink_path, sp_val, drink_line, note, sp_check 가 저장되어 있음
                     JSONObject json_object = json_result.getJSONObject(i);
 
@@ -170,7 +165,7 @@ public class Order_sheet_alert {
 
                     //만약 새로운 자판기 라면 TR태그를 새로만든다.
                     if(!before_vending.equals(now_vending)) {
-
+                        Log.e("<<<<",2+" ");
 //----------------------------------몸통)자판기 명 들어가는 곳----------------------------------------
                         //처음 통과시 tr이 준비되지 않았으므로 통과시키기 위함
                         if(tr != null){
@@ -180,6 +175,7 @@ public class Order_sheet_alert {
                         //테이블의 TR태그를 만든다
                         tr = new TableRow(context);
 
+                        Log.e("<<<<",3+" ");
                         //이전 자판기 변수를 현재자판기로 바꾼다
                         before_vending = now_vending;
 
@@ -190,26 +186,38 @@ public class Order_sheet_alert {
                         }else {
                             draw_td(1, 0, json_object.getString("vd_name"), false);
                         }
-
+                        Log.e("<<<<",4+" ");
 //------------------------------------몸통)자판기 작업지시 작성 공간----------------------------------
 
                         String note_str = json_object.getString("note");
+                        int    sp_check = json_object.getInt("sp_check");
 
+            //---------------------------------작업지시서--------------------------------------------
                         //작업지시가 없을경우 공백 TD 생성
                         if(note_str.equals("null")){
-                            draw_td(1,0," ",false);
+
+                            //보충이 완료된 자판기인 경우 -> 배경색 회색으로
+                            if(sp_check == 1){
+                                draw_td(1,0," ",true);
+                            }
+
+                            //보충해야될 자판기인 경우 -> 흰 배경색으로
+                            else{
+                                draw_td(1,0," ",false);
+                            }
+                            Log.e("<<<<",5+" ");
                         }
 
                         //작업지시가 있을경우 내용 TD 생성
                         else {
 
                             //만약 보충 완료된 자판기라면 가운데줄 추가 / 아니라면 추가X
-                            if(json_object.getInt("sp_check") == 1) {
+                            if(sp_check == 1) {
                                 draw_td(1, 0, note_str, true);
                             }else{
                                 draw_td(1, 0, note_str, false);
                             }
-
+                            Log.e("<<<<",6+" ");
                         }
                     }
 
@@ -219,36 +227,43 @@ public class Order_sheet_alert {
                     String now_val      = json_object.getString("drink_name");
 
                     int sp_check_int    = json_object.getInt("sp_check");
+
                     //만약 보충완료된 자판기라면 중앙선을 긋는다.
                     if(sp_check_int == 1) {
 
                         //보충 필요량 출력 TD 생성
                         draw_td(2,product_val.indexOf(now_val)+2,json_object.getString("sp_val"),true);
-
+                        Log.e("<<<<",7+" ");
                     }
 
                     else {
 
                         //보충 필요량 출력 TD 생성
                         draw_td(2, product_val.indexOf(now_val) + 2, json_object.getString("sp_val"),false);
-
+                        Log.e("<<<<",8+" ");
                     }
 
                     //보충 완료된 자판기는 합계에서 뺀다
                     if(sp_check_int != 1) {
                         //해당 제품의 합계를 구한다
-                        Integer before_count = product_count.get(product_val.indexOf(now_val));
-                        product_count.set(product_val.indexOf(now_val), before_count + json_object.getInt("sp_val"));
-                    }
+                        Log.e("<<<<","A");
+                        Log.e("<<<<", product_count.size()+"//"+product_val.size());
 
+                        Integer before_count = product_count.get(product_val.indexOf(now_val));
+                        Log.e("<<<<","B");
+                        product_count.set(product_val.indexOf(now_val), before_count + json_object.getInt("sp_val"));
+                        Log.e("<<<<","C");
+                    }
+                    Log.e("<<<<",9+" ");
                 }
+
 
                 //TR이 하나라도 생성되어 있다면,
                 //현재 테이블에 TR을 추가한다
                 if(tr != null) {
                     order_sheet_layout.addView(tr);
                 }
-
+                Log.e("<<<<",10+" ");
                 //----합계 출력 공간----
 
                 //테이블의 TR태그를 만든다
@@ -263,16 +278,16 @@ public class Order_sheet_alert {
                     draw_td(2,i+2, product_count.get(i)+"",false);
 
                 }
-
+                Log.e("<<<<",11+" ");
                 //테이블에 TR 적용
                 order_sheet_layout.addView(tr);
 
-
+                Log.e("<<<<",12+" ");
                 //테이블의 TR태그를 만든다
                 tr = new TableRow(context);
                 //합계 글자 TD 생성
                 draw_td(1,0,"차량 재고",false);
-
+                Log.e("<<<<",13+" ");
                 //자동차 재고를 차례차례 출력한다.
                 for(int i = 0; i<car_stock.size(); i++) {
                     draw_td(2, i+2,car_stock.get(i)+"",false);
@@ -281,7 +296,7 @@ public class Order_sheet_alert {
                 order_sheet_layout.addView(tr);
 
             }
-
+            Log.e("<<<<",14+" ");
         }catch (Exception e){
             Log.e("<<<<<<<<<<<",e.toString());
             Toast.makeText(context, "Order_sheet_alert Activty err", Toast.LENGTH_SHORT).show();
@@ -310,15 +325,19 @@ public class Order_sheet_alert {
         //여백 지정
         textView.setPadding(5,5,5,5);
 
-        //배경색 지정
-        textView.setBackgroundColor(Color.parseColor("#FFFFFF"));
-
         //문자 중앙정렬
         textView.setGravity(Gravity.CENTER);
 
+        //매진임박 자판기인 경우, 배경색을 다르게 한다
         //가로선이 필요한 경우 가로선을 긋는다
         if(strike ==true){
+            textView.setBackgroundColor(Color.parseColor("#707070"));
             textView.setPaintFlags(textView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        }
+
+        //매진임박이 아닌경우
+        else{
+            textView.setBackgroundColor(Color.parseColor("#FFFFFF"));
         }
 
         //속성이 따로 없을 시,

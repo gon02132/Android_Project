@@ -81,6 +81,7 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
     //가장 가까운 자판기 추적 버튼 클릭 시
     private boolean             closest_vendingmachine_tracking_button  = false;
     //-----------------------------------------------
+
     private boolean             refresh                                 = false;
 
     //생성자
@@ -112,9 +113,15 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
     //프로그래머가 지정한 일정 시간 or 간 meter만큼 반복해서 실행되는 함수
     @Override
     public void onLocationChanged(Location location) {
+
+        //다음 함수 호출까지 마커가 생성되지 않았다면 로딩 화면을띄워준다(마커가 생성될 때까지 반복)
+        //첫번째 함수호출 시 에는 무시한다
         if(refresh == false){
             refresh = true;
-        }else if(refresh == true && originMarkerlist.size() < 2) {
+        }
+
+        //두번째 함수 호출시 로딩화면 출력
+        else if(refresh == true && originMarkerlist.size() < 2) {
             ((MainActivity) context).loading();
             refresh = false;
         }
@@ -489,7 +496,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private long                fir_time, sec_time;
     private Boolean             drawer_check        = true;
     private ArrayList<Marker>   originMarkerlist    = new ArrayList<Marker>();
-    private String              image_path          ="http://ec2-13-125-198-224.ap-northeast-2.compute.amazonaws.com/images/supplementer/";
+    private String              image_path          ="http://ec2-13-125-134-167.ap-northeast-2.compute.amazonaws.com/images/supplementer/";
 
 
     //--------------------------------------------이외--------------------------------------------
@@ -921,15 +928,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         thread.start();
     }
 
-    //마커 최신화 / 갱신
+    //마커 최신화 / 갱신 -> 새로고침, 자판기 갱신, 보충완료 버튼 클릭시
     public void draw_marker(){
+
+ //----------------------------------로딩화면 생성----------------------------------------
         Runnable task;
             //핸들러 생성
             task = new Runnable() {
                 @Override
                 public void run() {
 
-                    //로딩 화면생성
                     handler.sendEmptyMessage(1);
                     try {
                         //2초 지연
@@ -947,6 +955,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         //쓰레드 실행
         thread.start();
+//---------------------------------------------------------------------------------------
 
         //기존 마커들 지우기
         if(gmap != null) {
