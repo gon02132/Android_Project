@@ -260,10 +260,13 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
             //msg ="좌표: [ " + lattitude + ":" + longitude+"]\n"; //현재 위치의 좌표 출력 //주석 제거시 표현
             //msg+="고도: "+String.format("%.1f",altitude)+"m\n"; //고도의 세계표준을 한국표준으로 바꾸는걸 모르겟엉.. 쓸꺼면 걍써 잘 되니까...
 
-            msg += addr + "\n";          //주소
-            msg += nowDate + "\n";       //현재 날짜
-            msg += SkmPerHour + "km/h";  //현재 km/h
-
+            msg += addr + "\n";             //주소
+            msg += nowDate + "\n";          //현재 날짜
+            msg += SkmPerHour + "km/h";     //현재 km/h
+            for(int i=0; i<addr.length()-SkmPerHour.length()-10; i++) {
+                msg += "   ";               //오른쪽 맨 밑에 보여주기 위한 공백 만들기
+            }
+            msg += "my status";             //내 상태창임을 알려주는 문자열 출력
             //추가된 자판기가 하나이상 있을경우 실행
             if (originMarkerlist.size() > 1 && closestMarker != null) {
                 double next_meter = get_set_package.getmeter(originMarkerlist.get(0).getPosition(), closestMarker.getPosition());

@@ -8,9 +8,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.study.googlemapsandroidapiexample.Main_Page.MainActivity;
 import com.study.googlemapsandroidapiexample.R;
 import com.study.googlemapsandroidapiexample.DB_conn;
+import com.study.googlemapsandroidapiexample.Firebase_Page.*;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -18,17 +22,24 @@ import org.json.JSONObject;
 //로그인 MAIN PAGE
 public class Login_page_Activity extends AppCompatActivity implements View.OnClickListener{
 
-    Button           login_bt,  id_serch_bt, pass_serch_bt, create_id_bt; //로그인, 로그인찾기, 비밀번호찾기, 아이디 생성 버튼
-    EditText         id_et,     pass_et;                                  //ID, 비밀번호 입력란
-    DB_conn          test_obj;                                            //db연결 object
-    Share_login_info share_login_info_obj;                                //연결 유지 함수
+    private Button           login_bt,  id_serch_bt, pass_serch_bt, create_id_bt; //로그인, 로그인찾기, 비밀번호찾기, 아이디 생성 버튼
+    private EditText         id_et,     pass_et;                                  //ID, 비밀번호 입력란
+    private DB_conn          test_obj;                                            //db연결 object
+    private Share_login_info share_login_info_obj;                                //연결 유지 함수
 
-    private long     fir_time,  sec_time;                                 //뒤로가기 2번누르기를 위한 변수
+    private String           user_token;                                          //현재 유저의 토큰 저장소
+    private long             fir_time,  sec_time;                                 //뒤로가기 2번누르기를 위한 변수
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        //파이어베이스에 토큰을 저장(알림을 위한 기능)
+        FirebaseMessaging.getInstance().subscribeToTopic("news");
+
+        //해당 토큰의 정보를 갱신하기위해 토컨을 받아온다(현재 토큰 검색)
+        user_token = FirebaseInstanceId.getInstance().getToken();
 
         //이전에 로그인 했는지 확인 하기 위한 class 생성
         share_login_info_obj = new Share_login_info(this);
@@ -40,7 +51,8 @@ public class Login_page_Activity extends AppCompatActivity implements View.OnCli
             Intent intent = new Intent(Login_page_Activity.this, MainActivity.class);
 
             //저장되어있는 사용자 정보와함께 다음 페이지로 이동한다.
-            intent.putExtra("user_info", share_login_info_obj.get_login_info());
+            intent.putExtra("user_info" , share_login_info_obj.get_login_info());
+            intent.putExtra("user_token", user_token);
             startActivity(intent);
             finish();
         }
@@ -148,7 +160,8 @@ public class Login_page_Activity extends AppCompatActivity implements View.OnCli
                             share_login_info_obj.set_login_info(print_string);
                             Intent intent_2 = new Intent(this, MainActivity.class);
                             //user_info파일에 보충기사의 정보를 저장한다.
-                            intent_2.putExtra("user_info", print_string);
+                            intent_2.putExtra("user_info" , print_string);
+                            intent_2.putExtra("user_token", user_token);
                             startActivity(intent_2);
                             finish();
 

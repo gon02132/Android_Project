@@ -48,19 +48,19 @@ public class Directions_Functions extends FragmentActivity{
 
         //내 위치(임시) 추가
         MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(get_set_package.resizeMapIcons("my_temp_location", 70, 80)));
+        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(get_set_package.resizeMapIcons("my_temp_location", 80, 90)));
         markerOptions.position(japan_two_marker.get(0));
         mMap.addMarker(markerOptions);
 
         //내위치 강조 추가
         markerOptions = new MarkerOptions();
-        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(get_set_package.resizeMapIcons("now", 75, 85)));
+        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(get_set_package.resizeMapIcons("now", 85, 95)));
         markerOptions.position(japan_two_marker.get(0));
         mMap.addMarker(markerOptions);
 
         //가야할 자판기 추가
         markerOptions = new MarkerOptions();
-        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(get_set_package.resizeMapIcons("japangi2", 50, 60)));
+        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(get_set_package.resizeMapIcons("japangi2", 80, 90)));
         markerOptions.position(japan_two_marker.get(1));
         mMap.addMarker(markerOptions);
 

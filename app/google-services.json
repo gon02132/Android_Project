@@ -1,0 +1,99 @@
+{
+  "project_info": {
+    "project_number": "687466499412",
+    "firebase_url": "https://affable-fabric-199108.firebaseio.com",
+    "project_id": "affable-fabric-199108",
+    "storage_bucket": "affable-fabric-199108.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:687466499412:android:7fcd444e1b183e0e",
+        "android_client_info": {
+          "package_name": "com.study.firebase_test"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "687466499412-s2c0ug7svcua6s4kolcklknbfh0ph89k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.study.firebase_test",
+            "certificate_hash": "fe25db73dcbd7b622c1f3beae054804357a568e1"
+          }
+        },
+        {
+          "client_id": "687466499412-0q4egjf9ob0c1mo6itbu4p39he23j67r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXDP5T2Q6RLFFnV0thrEqkF5c8LROxGJU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "687466499412-0q4egjf9ob0c1mo6itbu4p39he23j67r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:687466499412:android:69e593b855d834fb",
+        "android_client_info": {
+          "package_name": "com.study.googlemapsandroidapiexample"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "687466499412-sk2nk3jh6fdrldn5r9tkr44sfj537m25.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.study.googlemapsandroidapiexample",
+            "certificate_hash": "fe25db73dcbd7b622c1f3beae054804357a568e1"
+          }
+        },
+        {
+          "client_id": "687466499412-0q4egjf9ob0c1mo6itbu4p39he23j67r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXDP5T2Q6RLFFnV0thrEqkF5c8LROxGJU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "687466499412-0q4egjf9ob0c1mo6itbu4p39he23j67r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
