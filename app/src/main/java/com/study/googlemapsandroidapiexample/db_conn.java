@@ -95,8 +95,8 @@ public class DB_conn extends AsyncTask<String, Void, String> {
                         if(strings[1] != null && strings[2] != null) {
                             //인자: 컨트롤러,이름,비밀번호 php를 통하여 쿼리 조회
                             link += "?con=select_all";
-                            link += "&id=" + strings[1];
-                            link += "&password=" + strings[2];
+                            link += "&id="              + strings[1];
+                            link += "&password="        + strings[2];
                         }
                         break;
 
@@ -105,26 +105,26 @@ public class DB_conn extends AsyncTask<String, Void, String> {
                         if(strings[1] != null) {
                             //인자: 컨트롤러,이름,비밀번호 php를 통하여 쿼리 조회
                             link += "?con=exist_id_check";
-                            link += "&id=" + strings[1];
+                            link += "&id="              + strings[1];
                         }
                         break;
 
                     //회원가입 버튼 클릭시(모든 조건이 올바르게 들어가있는 상태) - 예외처리 필요없음
                     case "create_user_ok":
-                        link += "?con=create_user_ok";
-                        link += "&id=" + strings[1];
-                        link += "&password=" + strings[2];
-                        link += "&name=" + strings[3];
-                        link += "&email=" + strings[4];
-                        link += "&phone=" + strings[5];
-                        link += "&address=" + strings[6];
+                            link += "?con=create_user_ok";
+                            link += "&id="              + strings[1];
+                            link += "&password="        + strings[2];
+                            link += "&name="            + strings[3];
+                            link += "&email="           + strings[4];
+                            link += "&phone="           + strings[5];
+                            link += "&address="         + strings[6];
                         break;
 
                     //id찾기 버튼 클릭시
                     case "serch_id":
                         if(strings[1] != null) {
                             link += "?con=serch_id";
-                            link += "&serch_name=" + strings[1];
+                            link += "&serch_name="      + strings[1];
                         }
                         break;
 
@@ -132,8 +132,8 @@ public class DB_conn extends AsyncTask<String, Void, String> {
                     case "serch_pass":
                         if(strings[1] != null && strings[2] != null) {
                             link += "?con=serch_pass";
-                            link += "&serch_id=" + strings[1];
-                            link += "&serch_name=" + strings[2];
+                            link += "&serch_id="        + strings[1];
+                            link += "&serch_name="      + strings[2];
                         }
                         break;
 
@@ -141,7 +141,7 @@ public class DB_conn extends AsyncTask<String, Void, String> {
                     case "get_markers":
                         if(strings[1] != null) {
                             link += "?con=get_markers";
-                            link += "&user_login_id=" + strings[1];
+                            link += "&user_login_id="   + strings[1];
                         }
                         break;
 
@@ -149,7 +149,7 @@ public class DB_conn extends AsyncTask<String, Void, String> {
                     case "get_vending_info":
                         if(strings[1] != null){
                             link += "?con=get_vending_info";
-                            link += "&vending_id=" + strings[1];
+                            link += "&vending_id="      + strings[1];
                         }
                         break;
 
@@ -157,7 +157,7 @@ public class DB_conn extends AsyncTask<String, Void, String> {
                     case "get_order_sheet":
                         if(strings[1] != null){
                             link += "?con=get_order_sheet";
-                            link += "&user_login_id=" + strings[1];
+                            link += "&user_login_id="   + strings[1];
                         }
                         break;
 
@@ -165,13 +165,24 @@ public class DB_conn extends AsyncTask<String, Void, String> {
                     case "insert_vending":
                         if(strings[1] != null && strings[2] != null){
                             link += "?con=insert_vending";
-                            link += "&vending_id=" + strings[1];
-                            link += "&user_login_id=" + strings[2];
+                            link += "&vending_id="      + strings[1];
+                            link += "&user_login_id="   + strings[2];
+                        }
+                        break;
+
+                    //토큰을 update하기 위해 가져온 값으로 DB를 수정한다.
+                    case "token":
+                        if(strings[1] != null && strings[2] != null && strings[3] != null){
+                            link += "?con=token";
+                            link += "&token="           + strings[1];
+                            link += "&user_info_id="    + strings[2];
+                            link += "&name="            + strings[3];
                         }
                         break;
                 }
             }
 
+            //URL을 연결한다!
             URL url = new URL(link);
             con     = (HttpURLConnection)url.openConnection();
 
@@ -208,7 +219,8 @@ public class DB_conn extends AsyncTask<String, Void, String> {
                         //값을 가져오는 경우
 
                         //로그인, id중복체크, 유저 생성, id찾기, pw찾기,
-                        //자판기 아이콘 가져오기, 특정 자판기 정보 가져오기, 작업지시서 보기, 자판기 강제 갱신
+                        //자판기 아이콘 가져오기, 특정 자판기 정보 가져오기, 작업지시서 보기, 자판기 강제 갱신,
+                        //토큰 업데이트
                         case "login":
                         case "exist_id_check":
                         case "create_user_ok":
@@ -218,6 +230,7 @@ public class DB_conn extends AsyncTask<String, Void, String> {
                         case "get_vending_info":
                         case "get_order_sheet":
                         case "insert_vending":
+                        case "token":
 
                             //연결과 반환이 정상적으로 이루어 졌을시
                             //차곡차곡 채워 넣은 데이터를 앞뒤공백 제거하여 반환한다 ->
@@ -360,7 +373,9 @@ public class DB_conn extends AsyncTask<String, Void, String> {
 
                                 //자판기의 돈 상태를 가져온다
                                 JSONArray coin_arr   = jsonObject.getJSONArray("coin");
+
                                 for(int i =0; i<coin_arr.length(); i++){
+
                                     //[0]=coin_var [1]=vd_id [2]=1000 [3]=500 [4]=100 [5]=50 [6]=10 [7]=5 [8]=1
                                     JSONObject json_obj = coin_arr.getJSONObject(i);
                                     Log.e("<<<<",json_obj.getString("1000")+"/"+json_obj.getString("500")+"/"+json_obj.getString("100"));
@@ -369,6 +384,7 @@ public class DB_conn extends AsyncTask<String, Void, String> {
 
                                 //실제 반복문을 도는 알맹이를 배열로 가져온다
                                 JSONArray json_result   = jsonObject.getJSONArray("result");
+
 
                                 //검색된 배열을 순차적으로 돈다
                                 for (int i = 0; i < json_result.length(); i++) {
@@ -379,12 +395,46 @@ public class DB_conn extends AsyncTask<String, Void, String> {
 
                                     //작업 지시가 없는 자판기의 경우 -> 맨 첫 줄은 공백으로 놔둔다
                                     if(json_obj.getString("note") == null || json_obj.getString("note").equals("null")){
-                                        list_itemArrayList.add(new AlertDialog_list_item(" ",json_obj.getString("drink_name"), json_obj.getString("drink_path"), json_obj.getInt("drink_stook"), json_obj.getInt("drink_line")));
+                                        list_itemArrayList.add(new AlertDialog_list_item("작업 지시서가 없는 자판기 입니다",json_obj.getString("drink_name"), json_obj.getString("drink_path"), json_obj.getInt("drink_stook"), json_obj.getInt("drink_line")));
                                     }
 
                                     //작업 지시서가 있는 자판기의 경우 -> 맨 첫 줄은 작업지시 내용을 출력하게 한다.
                                     else {
-                                        list_itemArrayList.add(new AlertDialog_list_item(json_obj.getString("note"), json_obj.getString("drink_name"), json_obj.getString("drink_path"), json_obj.getInt("drink_stook"), json_obj.getInt("drink_line")));
+
+                                        //첫번째 반복문이 아니며, 작업지시서가 있는 경우
+                                        if(i != 0 && !json_obj.getString("note").equals(" ") && json_obj.getString("note") != null){
+
+                                            //첫번째 작업지시서를 가져온다.
+                                            AlertDialog_list_item temp = list_itemArrayList.get(0);
+
+                                            //첫번째 작업지시서에 아무거도 작성되어 있지 않다면
+                                            if(temp.getNote().equals("작업 지시서가 없는 자판기 입니다")){
+
+                                                //첫번째 textview를 새로 덮어 씌워서 저장한다
+                                                list_itemArrayList.set(0,new AlertDialog_list_item(json_obj.getString("note"), temp.getName(), temp.getImg_path(), temp.getCount(), temp.getDrink_line()));
+
+                                            }
+
+                                            //작업지시서에 작업지시가 작성되어 있다면
+                                            else {
+
+                                                //이전 textview에 덧붙여서 저장한다
+                                                list_itemArrayList.set(0, new AlertDialog_list_item(temp.getNote() + "\r\n" + json_obj.getString("note"), temp.getName(), temp.getImg_path(), temp.getCount(), temp.getDrink_line()));
+
+                                            }
+
+                                            //현재 반복문의 결과값을 저장 한다.
+                                            list_itemArrayList.add(new AlertDialog_list_item(json_obj.getString("note"), json_obj.getString("drink_name"), json_obj.getString("drink_path"), json_obj.getInt("drink_stook"), json_obj.getInt("drink_line")));
+                                        }
+
+                                        //작업지시서가 없는경우
+                                        else {
+
+                                            //작업지시에는 아무거도 작성하지 않고 값만 저장한다.
+                                            list_itemArrayList.add(new AlertDialog_list_item(" ", json_obj.getString("drink_name"), json_obj.getString("drink_path"), json_obj.getInt("drink_stook"), json_obj.getInt("drink_line")));
+
+                                        }
+
                                     }
                                 }
 
@@ -410,6 +460,9 @@ public class DB_conn extends AsyncTask<String, Void, String> {
                 break;
 
             case "insert_vending":
+                break;
+
+            case "token":
                 break;
 
         }

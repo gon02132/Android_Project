@@ -91,9 +91,14 @@ public class AlertDialog_MyListAdapter extends BaseAdapter {
         }
 
         //---------------------이외의 경우 제품 리스트들을 보여준다.----------------------------------
+
+        //재사용을 하기위한 view를 설정한다/ 만약 view가 없다면 생성하고
+        //있다면 이전에 사용하던 view를 재사용한다
         else if (convertView.findViewById(R.id.product_count) == null) {
+
             //custom화 시킨 view를 보여준다.
             convertView = LayoutInflater.from(context).inflate(R.layout.alertdialog_list_item, null);
+
         }
 
         //첫번째 위치는 작업지시를 보는 라인이기때문에 position을 -1로해야 첫번째 부터 시작한다.

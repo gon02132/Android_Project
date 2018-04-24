@@ -3,18 +3,17 @@ package com.study.googlemapsandroidapiexample.Login_Page;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.study.googlemapsandroidapiexample.Main_Page.MainActivity;
 import com.study.googlemapsandroidapiexample.R;
 import com.study.googlemapsandroidapiexample.DB_conn;
-import com.study.googlemapsandroidapiexample.Firebase_Page.*;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -38,8 +37,6 @@ public class Login_page_Activity extends AppCompatActivity implements View.OnCli
         //파이어베이스에 토큰을 저장(알림을 위한 기능)
         FirebaseMessaging.getInstance().subscribeToTopic("news");
 
-        //해당 토큰의 정보를 갱신하기위해 토컨을 받아온다(현재 토큰 검색)
-        user_token = FirebaseInstanceId.getInstance().getToken();
 
         //이전에 로그인 했는지 확인 하기 위한 class 생성
         share_login_info_obj = new Share_login_info(this);
@@ -52,7 +49,6 @@ public class Login_page_Activity extends AppCompatActivity implements View.OnCli
 
             //저장되어있는 사용자 정보와함께 다음 페이지로 이동한다.
             intent.putExtra("user_info" , share_login_info_obj.get_login_info());
-            intent.putExtra("user_token", user_token);
             startActivity(intent);
             finish();
         }
@@ -134,6 +130,7 @@ public class Login_page_Activity extends AppCompatActivity implements View.OnCli
                             Toast.makeText(this, "mysql에러! 구문을 재확인 하십쇼", Toast.LENGTH_SHORT).show();
                             return;
 
+                        //성공적으로 값을 받아왔다면 다음 페이지로 넘어간다.
                         default:
                             //json 객체로 변환하여 json배열에 저장
                             JSONObject jsonObject = new JSONObject(result_String);
@@ -150,11 +147,29 @@ public class Login_page_Activity extends AppCompatActivity implements View.OnCli
                             int i = 0;
                             //id,name,email.imgsrc
                             JSONObject c = json_result.getJSONObject(i);
+
+                            //로그인후 사용, 토큰 저장때 사용을 하기위해 문자열로 일단 저장 해 둔다
+                            String user_login_id = c.getString("login_id");
+                            String user_name     = c.getString("name");
+
+                            //로그인 후 사용할 유저 정보를 모아두는 String
                             String print_string = "";
-                            print_string += c.getString("login_id")+"/br/"; //로그인 id
-                            print_string += c.getString("name")+"/br/";     //보충기사 이름
-                            print_string += c.getString("email")+"/br/";    //이메일
+
+                            print_string += user_login_id              +"/br/";   //로그인 id
+                            print_string += user_name                  +"/br/";   //보충기사 이름
+                            print_string += c.getString("email") +"/br/";   //이메일
                             print_string += c.getString("imgsrc")+"/br/";   //보충기사 사진
+
+                            //현재 토큰을 검색하여 저장한다
+                            user_token = FirebaseInstanceId.getInstance().getToken();
+
+                            //검색된 토큰을 토대로 token_info 테이블을 최신화 하는 과정
+                            //시작 시 초기화를 할 경우, 토큰이 미처 생성되지 않으므로 로그인 버튼을 누를시,
+                            //현재 정보를 가지고 생성된 토큰 테이블을 다시 초기화한다.
+                            //P.S execute는 객체를 항상 새로 생성해야 된다! -> 아니면 에러뜸
+                            test_obj    = new DB_conn(Login_page_Activity.this);
+                            test_obj.execute("token", user_token, user_login_id, user_name);
+
 
                             //얘는 휴대폰을 꺼도 접속유지를위한애
                             share_login_info_obj.set_login_info(print_string);
@@ -170,6 +185,7 @@ public class Login_page_Activity extends AppCompatActivity implements View.OnCli
                 }catch (Exception e){
                     //conn 에러 잡는 부분
                     Toast.makeText(this, "Login_Page_Activity err", Toast.LENGTH_SHORT).show();
+                    Log.e("<><>",e.toString());
                 }
                 break;
         }
