@@ -34,18 +34,34 @@ public class Sc_custom_listview {
             //제품들이 저장되어있는 JSON배열을 가져온다.
             JSONArray json_result = json_obj.getJSONArray("result");
 
-            //검색된 배열을 순차적으로 돈다
-            String note_str = json_result.getJSONObject(0).getString("note");
+            //작업지시가 하나라도 있는경우 true로 바뀐다
+            Boolean note_check = false;
 
-            //만약 작업지시가 있는 경우, 첫번째 list에는 작업지시내용을 보여준다.
-            if(!note_str.equals("null")){
-                sc_list_items.add(new Sc_list_item(note_str,"!!", ""));
+            //작업 지시가 있다면 맨위에 먼저 추가한다
+            for (int i = 0; i < json_result.length(); i++) {
+                //검색된 배열을 순차적으로 돈다
+
+                String note_str = json_result.getJSONObject(i).getString("note");
+
+                //만약 작업지시가 있는 경우, 맨 윗부분들에는 작업지시내용을 보여준다.
+                if(!note_str.equals("null")){
+                    sc_list_items.add(new Sc_list_item(note_str,"!!", ""));
+
+                    //작업 지시가 있다는 것을 알려줌
+                    note_check = true;
+                }
+            }
+
+            //작업지시가 없는 자판기의 경우 맨위에 작업지시가 없는 자판기임을 알려준다.
+            if(note_check == false){
+                sc_list_items.add(new Sc_list_item("작업 지시가 없는 자판기","X", ""));
             }
 
             //실제 내용들이 들어가는 반복문
             for (int i = 0; i < json_result.length(); i++) {
                 //[0]=vd_id [1]=vd_name [2]=drink_name [3]=drink_path [4]=drink_stook [5]=drink_line [6]=note
                 JSONObject json_obj = json_result.getJSONObject(i);
+
                 sc_list_items.add(new Sc_list_item(json_obj.getString("drink_name"), json_obj.getString("drink_line"), json_obj.getString("drink_stook")));
             }
 

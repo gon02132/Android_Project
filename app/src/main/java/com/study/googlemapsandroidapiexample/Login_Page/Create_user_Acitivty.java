@@ -191,7 +191,7 @@ public class Create_user_Acitivty extends AppCompatActivity{
                 //인자만큼 db에 저장!! -> 인자:id,pass
                 if(hexColor1.equals("#0000ff")
                         && hexColor2.equals("#0000ff")
-                        && name_et.getText().toString().length()>0
+                        && name_et .getText().toString().length()>0
                         && email_et.getText().toString().length()>0){
 
                     //db접속에서는 예외가 발생할 수 있으므로 try/catch문을 사용한다
@@ -199,12 +199,12 @@ public class Create_user_Acitivty extends AppCompatActivity{
                         conn = new DB_conn();
                         //.get()을 할경우 doIn..함수에서 반환값이 돌아온다(하지만 처리량이 많을경우) 리턴값이 늦게받아질수도 있다
                         String s = conn.execute("create_user_ok",
-                                id_input_et.getText().toString(),
-                                pass_sec_et.getText().toString(),
-                                name_et.getText().toString(),
-                                email_et.getText().toString(),
-                                phone_et.getText().toString(),
-                                address_et.getText().toString()).get();
+                                id_input_et .getText().toString(),
+                                pass_sec_et .getText().toString(),
+                                name_et     .getText().toString(),
+                                email_et    .getText().toString(),
+                                phone_et    .getText().toString(),
+                                address_et  .getText().toString()).get();
 
                         //DB에 insert되었다면 생성완료 알림 후 Mainpage로 이동
                         if(s.equals("insert_OK")){

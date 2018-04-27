@@ -63,10 +63,10 @@ public class Login_page_Activity extends AppCompatActivity implements View.OnCli
         create_id_bt    = (Button)findViewById(R.id.create_id_bt);      //ID생성 버튼
 
         //리스너 등록
-        login_bt.setOnClickListener(this);
-        id_serch_bt.setOnClickListener(this);
-        pass_serch_bt.setOnClickListener(this);
-        create_id_bt.setOnClickListener(this);
+        login_bt        .setOnClickListener(this);
+        id_serch_bt     .setOnClickListener(this);
+        pass_serch_bt   .setOnClickListener(this);
+        create_id_bt    .setOnClickListener(this);
 
 
     }
@@ -107,9 +107,12 @@ public class Login_page_Activity extends AppCompatActivity implements View.OnCli
                 test_obj    = new DB_conn(Login_page_Activity.this);
                 //doInBackground 실행(인자를 2개로 넘겨준다 // ID,비밀번호)
                 try {
+
                     //doin함수에서 반환되는 값을 가져와서 에러가 있을 경우 처리를 한다.
                     String result_String = test_obj.execute("login", id_et.getText().toString(), pass_et.getText().toString()).get();
+
                     switch (result_String){
+
                         //id랑 password 중 하나라도 미입력 시
                         case "no_full":
                             Toast.makeText(this, "빈 칸이 있습니다", Toast.LENGTH_SHORT).show();
@@ -143,8 +146,11 @@ public class Login_page_Activity extends AppCompatActivity implements View.OnCli
                                 Toast.makeText(this, "데이터베이스 입력값 오류", Toast.LENGTH_SHORT).show();
                                 return;
                             }
+
                             //모든 예외처리 통과시 이 구문이 실행됨
+
                             int i = 0;
+
                             //id,name,email.imgsrc
                             JSONObject c = json_result.getJSONObject(i);
 

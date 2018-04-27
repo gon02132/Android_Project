@@ -53,7 +53,7 @@ public class Serch_pass_Activity extends AppCompatActivity{
                 try {
 
                     //입력된 ID와 NAME을 가져온다
-                    String serch_id_str = serch_id_et.getText().toString();
+                    String serch_id_str   = serch_id_et  .getText().toString();
                     String serch_name_str = serch_name_et.getText().toString();
 
                     //빈칸이 아닐경우

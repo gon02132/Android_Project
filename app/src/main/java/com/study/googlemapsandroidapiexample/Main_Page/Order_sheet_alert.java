@@ -21,7 +21,10 @@ import com.study.googlemapsandroidapiexample.DB_conn;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 //작업지시서 만들어지는 class
 public class Order_sheet_alert {
@@ -55,6 +58,7 @@ public class Order_sheet_alert {
 
     }
 
+    //테이블 생성!
     @SuppressLint("WrongViewCast")
     public void create_table() {
         final Dialog dig = new Dialog(context);
@@ -77,11 +81,18 @@ public class Order_sheet_alert {
         dig.show();
 
         try {
+
+            /* 현재 날짜 구하는 함수 포멧은 ex) 2018-04-25 로 문자열로 변환되어 출력됨
+            SimpleDateFormat df = new SimpleDateFormat("yyy-MM-dd", Locale.KOREA);
+            String str_date = df.format(new Date());
+            Log.e("<><>",str_date);
+*/
+
             //db 접속(try/catch 필수)
             DB_conn db_conn_obj = new DB_conn(context);
 
             //db에 접속하여 반환된 결과값 초기화
-            String result_str   = db_conn_obj.execute("get_order_sheet", user_login_id).get();
+            String result_str   = db_conn_obj.execute("get_order_sheet", user_login_id, "2018-04-06").get();
 
             //받아온 값이 없거나 mysql구문의 에러의 경우 아무것도 실행하지 않고 다음으로 넘어간다
             if (result_str.equals("no_marker") || result_str.equals("mysql_err")) {
@@ -151,10 +162,10 @@ public class Order_sheet_alert {
                 JSONArray  json_result = jsonObject.getJSONArray("result");
 
                 //새로운 자판기의 이름이 나오면 TR을 새롭게 만들게 하기위한 비교용 String
-                String before_vending = "";
+                String before_vending  = "";
 
                 //작업지시가 축적되어 출력될 공간
-                String save_note = "";
+                String save_note       = "";
 
                 //테이블의 TR태그를 초기화 한다
                 tr = null;
@@ -166,15 +177,15 @@ public class Order_sheet_alert {
                 for(int i = 0; i < json_result.length(); i++){
 
                     //sp_name, vd_name, drink_name, drink_path, sp_val, drink_line, note, sp_check 가 저장되어 있음
-                    JSONObject json_object = json_result.getJSONObject(i);
+                    JSONObject json_object  = json_result.getJSONObject(i);
 
                     //현재 자판기의 이름을 가져온다.
-                    String now_vending = json_object.getString("vd_name");
+                    String now_vending      = json_object.getString("vd_name");
 
                     //각 음료 이름에 맞는 보충 필요량 받아 오기
-                    String now_val      = json_object.getString("drink_name");
+                    String now_val          = json_object.getString("drink_name");
 
-                    sp_check_int    = json_object.getInt("sp_check");
+                    sp_check_int            = json_object.getInt("sp_check");
 
 
 
@@ -305,8 +316,6 @@ public class Order_sheet_alert {
                         draw_td(2, json_result_set.length() + 1, save_note, false);
                     }
 
-                    //다음 사용을 위해 모아놓는 String은 초기화 해둔다
-                    save_note = "";
                 }
 
                 //만약 작업지시가 없는 자판기의경우 공백을 출력한다.
@@ -321,9 +330,6 @@ public class Order_sheet_alert {
                     else{
                         draw_td(2, json_result_set.length() + 1, save_note, false);
                     }
-
-                    //다음 사용을 위해 모아놓는 String은 초기화 해둔다
-                    save_note = "";
 
                 }
 //-------------------------------------------------------------------------------------------------
@@ -352,12 +358,15 @@ public class Order_sheet_alert {
 
                 //테이블의 TR태그를 만든다
                 tr = new TableRow(context);
+
                 //합계 글자 TD 생성
                 draw_td(1,0,"차량 재고",false);
+
                 //자동차 재고를 차례차례 출력한다.
                 for(int i = 0; i<car_stock.size(); i++) {
                     draw_td(2, i + 1,car_stock.get(i)+"",false);
                 }
+
                 //테이블에 TR 적용
                 order_sheet_layout.addView(tr);
 

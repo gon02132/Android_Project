@@ -1,6 +1,7 @@
 package com.study.googlemapsandroidapiexample;
 
 import android.content.Context;
+import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ListView;
@@ -158,6 +159,8 @@ public class DB_conn extends AsyncTask<String, Void, String> {
                         if(strings[1] != null){
                             link += "?con=get_order_sheet";
                             link += "&user_login_id="   + strings[1];
+                            link += "&order_date="      + strings[2];
+
                         }
                         break;
 
@@ -359,7 +362,6 @@ public class DB_conn extends AsyncTask<String, Void, String> {
                                 //custom Listview 만들기!!
                                 sc_custom.change_listview();
                             }
-
                             break;
 
                             //특정 자판기의 정보(customalert)보여주는 곳
@@ -424,6 +426,11 @@ public class DB_conn extends AsyncTask<String, Void, String> {
                                             }
 
                                             //현재 반복문의 결과값을 저장 한다.
+                                            list_itemArrayList.add(new AlertDialog_list_item(json_obj.getString("note"), json_obj.getString("drink_name"), json_obj.getString("drink_path"), json_obj.getInt("drink_stook"), json_obj.getInt("drink_line")));
+                                        }
+
+                                        //첫번째 반복문(첫번째 라인)에 작업지시가 있는경우 set이아니라 add로 추가를 한다
+                                        else if(i == 0 && !json_obj.getString("note").equals(" ") && json_obj.getString("note") != null){
                                             list_itemArrayList.add(new AlertDialog_list_item(json_obj.getString("note"), json_obj.getString("drink_name"), json_obj.getString("drink_path"), json_obj.getInt("drink_stook"), json_obj.getInt("drink_line")));
                                         }
 

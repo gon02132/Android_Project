@@ -19,16 +19,16 @@ import com.study.googlemapsandroidapiexample.R;
 import java.util.ArrayList;
 
 public class AlertDialog_MyListAdapter extends BaseAdapter {
-    private Context context;                        //activity를 가져온다
-    private ArrayList<AlertDialog_list_item> list_item_Arraylist;            //출력 될 arraylist
-    private TextView name, count, drink_line, note;  //한 공간마다의 저장소들
-    private ImageView drk_img;                        //음료 이미지
-    private String img_url;                        //서버 주소
+    private Context                             context;                        //activity를 가져온다
+    private ArrayList<AlertDialog_list_item>    list_item_Arraylist;            //출력 될 arraylist
+    private TextView                            name, count, drink_line, note;  //한 공간마다의 저장소들
+    private ImageView                           drk_img;                        //음료 이미지
+    private String                              img_url;                        //서버 주소
 
     //생성자
     public AlertDialog_MyListAdapter(Context context, ArrayList<AlertDialog_list_item> list_item_Arraylist) {
-        this.context = context;
-        this.list_item_Arraylist = list_item_Arraylist;
+        this.context                = context;
+        this.list_item_Arraylist    = list_item_Arraylist;
 
         //이미지를 가져오기위해 서버의 주소를 가져온다
         img_url = "http://13.125.134.167/";
@@ -120,7 +120,7 @@ public class AlertDialog_MyListAdapter extends BaseAdapter {
 
             //실 보충 수량은 까만색으로 뚜렷하게, 글자 크게
             sp.setSpan(new ForegroundColorSpan(Color.BLACK), 0, temp.length() - 3, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            sp.setSpan(new AbsoluteSizeSpan(50), 0, temp.length() - 3, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            sp.setSpan(new AbsoluteSizeSpan(50),             0, temp.length() - 3, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
             //최대 보충수량은 글씨크기를 작게한다, 색상은 기본 색상(회색)으로
             sp.setSpan(new AbsoluteSizeSpan(18), temp.length() - 3, temp.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);

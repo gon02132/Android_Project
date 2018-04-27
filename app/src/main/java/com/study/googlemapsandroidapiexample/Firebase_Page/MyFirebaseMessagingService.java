@@ -45,7 +45,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.japangi)         //알림 영역에 보여질 아이콘
+                .setSmallIcon(R.drawable.japangi)           //알림 영역에 보여질 아이콘
                 .setContentTitle("공지사항")                //알림영역의 제목
                 .setContentText(messageBody)                //알림 영역의 내용
                 .setAutoCancel(true)                        //알림 눌렀을때 자동으로 사라지게 할것인지

@@ -361,8 +361,8 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
 
             //반경에 마커가 있는경우 DB를통해 그마커의 상세정보들을 가져온다.
             //실수를 많이 줄경우, 주변 자판기와 겹칠우려가 있으므로 너무 많이 주지않으며 클릭시, 적당한 반경을 탐색하게 해야한다.
-            if (Math.abs(originMarkerlist.get(i).getPosition().latitude - latLng.latitude) < 0.0002 &&
-                    Math.abs(originMarkerlist.get(i).getPosition().longitude - latLng.longitude) < 0.0002) {
+            if (Math.abs(originMarkerlist.get(i).getPosition().latitude  - latLng.latitude)  < 0.0002 &&
+                Math.abs(originMarkerlist.get(i).getPosition().longitude - latLng.longitude) < 0.0002) {
 
                 //클릭한 자판기의 지명을 출력한다.
                 Toast.makeText(context, originMarkerlist.get(i).getTitle() + "", Toast.LENGTH_SHORT).show();
@@ -378,14 +378,14 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
                     if(((Activity) context).findViewById(R.id.open_button).getVisibility() == View.GONE){
                         //보충완료,닫기버튼을 보이게 한다.(강제형변환으로 액티비티를 접근한다. ->이게 최선이에요 ㅠㅠ)
                         //순서대로 : 오른쪽 밑 레이아웃. 갱신버튼, 닫기버튼
-                        (((Activity) context).findViewById(R.id.sc_layout)).setVisibility(View.VISIBLE);
-                        (((Activity) context).findViewById(R.id.ok_button)).setVisibility(View.VISIBLE);
+                        (((Activity) context).findViewById(R.id.sc_layout))   .setVisibility(View.VISIBLE);
+                        (((Activity) context).findViewById(R.id.ok_button))   .setVisibility(View.VISIBLE);
                         (((Activity) context).findViewById(R.id.close_button)).setVisibility(View.VISIBLE);
                     }
 
                     //다음가야할 정보 출력공간을 보이게 한다.
                     //오른쪽 위 레이아웃
-                    if((((Activity) context).findViewById(R.id.next_vending_layout)).getVisibility() == View.GONE) {
+                    if((((Activity) context).findViewById(R.id.next_vending_layout)) .getVisibility() == View.GONE) {
                         (((Activity) context).findViewById(R.id.next_vending_layout)).setVisibility(View.VISIBLE);
                     }
 
@@ -503,8 +503,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     //--------------------------------------------이외--------------------------------------------
-    private Locationlistener    listener;
-    private Share_login_info    share_login_info_obj;
+    private Locationlistener    listener;               //사용자 지정 트리거 마다 실행되는 함수
+    private Share_login_info    share_login_info_obj;   //로그인 상태 저장 객체
     private ImageView           loading_iv;             //로딩 화면 iv
     private Handler             handler;                //로딩Thread handler
 
@@ -821,7 +821,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public boolean connect_check() {
 
         //현재 사용중인 네트워크를 가져온다.
-        ConnectivityManager cm = (ConnectivityManager) this.getSystemService(this.CONNECTIVITY_SERVICE);
+        ConnectivityManager cm      = (ConnectivityManager) this.getSystemService(this.CONNECTIVITY_SERVICE);
         NetworkInfo activityNetwork = cm.getActiveNetworkInfo();
 
         //네트워크에 연결 되어있는지 확인
@@ -876,13 +876,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         gmap.getUiSettings().setCompassEnabled(false);
 
         //Get_set_package 클래스 생성
-        get_set_package = new Get_set_package(this, googleMap, originMarkerlist);
+        get_set_package     = new Get_set_package(this, googleMap, originMarkerlist);
 
         //마커클릭 이벤트 클래스 생성
-        mark_click_event = new Mark_click_event(this, googleMap, originMarkerlist, user_info[0], handler);
+        mark_click_event    = new Mark_click_event(this, googleMap, originMarkerlist, user_info[0], handler);
 
         //매초 혹은 미터 마다 갱신될 class 생성
-        listener = new Locationlistener(this, originMarkerlist, gmap, sc_lv, my_status,next_vending, get_set_package, navi_menu);
+        listener            = new Locationlistener(this, originMarkerlist, gmap, sc_lv, my_status,next_vending, get_set_package, navi_menu);
 
         //마커 최신화 / 갱신
         draw_marker();
