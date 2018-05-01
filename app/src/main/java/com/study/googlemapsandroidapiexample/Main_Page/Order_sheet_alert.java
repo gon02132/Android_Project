@@ -92,7 +92,7 @@ public class Order_sheet_alert {
             DB_conn db_conn_obj = new DB_conn(context);
 
             //db에 접속하여 반환된 결과값 초기화
-            String result_str   = db_conn_obj.execute("get_order_sheet", user_login_id, "2018-04-06").get();
+            String result_str   = db_conn_obj.execute("get_order_sheet", user_login_id, "2018-04-28").get();
 
             //받아온 값이 없거나 mysql구문의 에러의 경우 아무것도 실행하지 않고 다음으로 넘어간다
             if (result_str.equals("no_marker") || result_str.equals("mysql_err")) {

@@ -159,7 +159,7 @@ public class DB_conn extends AsyncTask<String, Void, String> {
                         if(strings[1] != null){
                             link += "?con=get_order_sheet";
                             link += "&user_login_id="   + strings[1];
-                            link += "&order_date="      + strings[2];
+                            link += "&serch_date="      + strings[2];
 
                         }
                         break;
