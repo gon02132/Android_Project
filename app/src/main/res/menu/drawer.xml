@@ -20,6 +20,12 @@
                 android:id="@+id/order_list"
                 android:icon="@drawable/ic_attachment"
                 android:title="작업지시서 보기" />
+
+            <item
+                android:id="@+id/serch_order_list"
+                android:icon="@drawable/calendar"
+                android:title="작업지시서 찾기" />
+
             <item
                 android:id="@+id/refrash_order_list"
                 android:icon="@drawable/ic_image"

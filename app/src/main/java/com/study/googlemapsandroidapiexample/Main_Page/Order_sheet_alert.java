@@ -32,6 +32,7 @@ public class Order_sheet_alert {
     //기본 변수들
     private Context                 context;
     private String                  user_login_id;
+    private String                  date_String;           //특정날자를 검색 했을 시, 이 날자로 검색한다
 
     //테이블 속성 관련 변수 들
     private TableLayout             order_sheet_layout, title_sheet_layout;
@@ -51,13 +52,19 @@ public class Order_sheet_alert {
     private ArrayList<Integer>      product_count   = new ArrayList<>();
 
 
-    //생성자
+    //-------------------------------------생성자----------------------------------
     public Order_sheet_alert(Context context, String user_login_id){
         this.context        = context;
         this.user_login_id  = user_login_id;
-
+        this.date_String    = "";
     }
 
+    //---생성자 오버로딩-- 특정 날짜를 클릭하여 보는 작업지시서의 경우
+    public Order_sheet_alert(Context context, String user_login_id, String date){
+        this.context               = context;
+        this.user_login_id         = user_login_id;
+        this.date_String           = date;
+    }
     //테이블 생성!
     @SuppressLint("WrongViewCast")
     public void create_table() {
@@ -81,21 +88,30 @@ public class Order_sheet_alert {
         dig.show();
 
         try {
-
-            /* 현재 날짜 구하는 함수 포멧은 ex) 2018-04-25 로 문자열로 변환되어 출력됨
-            SimpleDateFormat df = new SimpleDateFormat("yyy-MM-dd", Locale.KOREA);
-            String str_date = df.format(new Date());
-            Log.e("<><>",str_date);
-*/
+            //DB에서 쿼리결과String을 받아올 애
+            String result_str = "";
 
             //db 접속(try/catch 필수)
             DB_conn db_conn_obj = new DB_conn(context);
+            //특정 날짜를 검색하지 않는 경우
+            if(date_String.equals("") || date_String.equals(" ") || date_String == null) {
 
-            //db에 접속하여 반환된 결과값 초기화
-            String result_str   = db_conn_obj.execute("get_order_sheet", user_login_id, "2018-04-28").get();
+                //현재 날짜 구하는 함수 포멧은 ex) 2018-04-25 로 문자열로 변환되어 출력됨
+                SimpleDateFormat df = new SimpleDateFormat("yyy-MM-dd", Locale.KOREA);
+                String str_date     = df.format(new Date());
+
+                //db에 접속하여 반환된 결과값 초기화
+                result_str = db_conn_obj.execute("get_order_sheet", user_login_id, str_date).get();
+            }
+
+            //특정 날짜를 검색하는 경우
+            else{
+                //db에 접속하여 반환된 결과값 초기화
+                result_str = db_conn_obj.execute("get_order_sheet", user_login_id, date_String).get();
+            }
 
             //받아온 값이 없거나 mysql구문의 에러의 경우 아무것도 실행하지 않고 다음으로 넘어간다
-            if (result_str.equals("no_marker") || result_str.equals("mysql_err")) {
+            if (result_str.equals("no_marker") || result_str.equals("mysql_err") || result_str.equals("") || result_str == null) {
                 Toast.makeText(context, "no marker or mysql_err", Toast.LENGTH_SHORT).show();
             }
 
@@ -160,7 +176,6 @@ public class Order_sheet_alert {
 //--------------------------------------------몸통 부분 ---------------------------------------------
                 //제품들 가져오기
                 JSONArray  json_result = jsonObject.getJSONArray("result");
-
                 //새로운 자판기의 이름이 나오면 TR을 새롭게 만들게 하기위한 비교용 String
                 String before_vending  = "";
 
@@ -175,7 +190,6 @@ public class Order_sheet_alert {
 
                 //받아온 값만큼 반복한다.
                 for(int i = 0; i < json_result.length(); i++){
-
                     //sp_name, vd_name, drink_name, drink_path, sp_val, drink_line, note, sp_check 가 저장되어 있음
                     JSONObject json_object  = json_result.getJSONObject(i);
 
@@ -186,8 +200,6 @@ public class Order_sheet_alert {
                     String now_val          = json_object.getString("drink_name");
 
                     sp_check_int            = json_object.getInt("sp_check");
-
-
 
                     //만약 새로운 자판기 라면 TR태그를 새로만든다.
                     if(!before_vending.equals(now_vending)) {
@@ -237,7 +249,6 @@ public class Order_sheet_alert {
                             order_sheet_layout.addView(tr);
 
                         }
-
                         //테이블의 TR태그를 만든다
                         tr = new TableRow(context);
 
@@ -254,7 +265,6 @@ public class Order_sheet_alert {
                     }
 
 //---------------------------몸통)자판기 숫자(보충 필요 량) 들어가는 곳--------------------------------
-
                     //작업지시가 들어있는 테이블을 가져온다.
                     String note = json_object.getString("note");
 
@@ -272,7 +282,6 @@ public class Order_sheet_alert {
                         }
 
                     }
-
                     //만약 보충완료된 자판기라면 중앙선을 긋는다.
                     if(sp_check_int == 1) {
 
@@ -296,7 +305,6 @@ public class Order_sheet_alert {
 
                     last_check_int = sp_check_int;
                 }
-
                 //----------------------------------------작업지시서 들어가는 공간 2------------------------------------
                 //이전에 반복문에서 처리하지 못한 마지막 행의 작업지시서를 초기화한다
                 //함수로 해서 재사용 해도 되지만 2개 밖에 없기 때문에, 그리고 동적으로 값이 자주 바뀌지 않기 때문에
@@ -333,7 +341,6 @@ public class Order_sheet_alert {
 
                 }
 //-------------------------------------------------------------------------------------------------
-
                 //TR이 하나라도 생성되어 있다면,
                 //현재 테이블에 TR을 추가한다
                 if(tr != null) {
@@ -346,7 +353,6 @@ public class Order_sheet_alert {
 
                 //합계 글자 TD 생성
                 draw_td(1,0,"보충 필요량 합계",false);
-
                 for(int i = 0; i<json_result_set.length(); i++){
 
                     //합계 TD 만들기

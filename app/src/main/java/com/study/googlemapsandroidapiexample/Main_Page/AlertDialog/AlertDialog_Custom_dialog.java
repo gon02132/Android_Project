@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -40,6 +41,7 @@ public class AlertDialog_Custom_dialog {
     }
 
     public void callFunction() {
+
         //Dialog 객체 생성
         final Dialog dig = new Dialog(context);
 

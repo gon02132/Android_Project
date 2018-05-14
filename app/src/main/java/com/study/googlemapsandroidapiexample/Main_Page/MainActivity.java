@@ -49,8 +49,10 @@ import com.google.android.gms.maps.model.Marker;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 import com.squareup.picasso.Picasso;
+import com.study.googlemapsandroidapiexample.Main_Page.CalendarDialog.Create_AlertDialog;
 import com.study.googlemapsandroidapiexample.R;
 import com.study.googlemapsandroidapiexample.Login_Page.*;
 import com.study.googlemapsandroidapiexample.DB_conn;
@@ -487,26 +489,29 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private TextView            user_name_tv, user_email_tv, user_id_tv_hide, my_status, next_vending;
     private ListView            sc_lv;
     private Button              ok_button,    close_button;
-    private ImageButton         open_button;
-    private Get_set_package     get_set_package;
-    private Mark_click_event    mark_click_event;
-    private DB_conn             db_conn_obj;
-    private Menu                navi_menu;
-    private GoogleMap           gmap;
+    private ImageButton         open_button;                //shortcut에 close버튼을 눌렀을때 나오는 이미지 버튼을 조종한다
+    private Get_set_package     get_set_package;            //공통 get set함수를 모아클래스로 만들어 사용한다.
+    private Mark_click_event    mark_click_event;           //비록 사용하지 않는 변수이지만 예외처리겸 객체로써 잡아 놓고 있다.
+    private DB_conn             db_conn_obj;                //서버의 DB에 접속 할때마다 이 객체를 사용한다.
+    private Menu                navi_menu;                  //네비게이션바의 모든 객체들을 조종할 수 있다.
+    private GoogleMap           gmap;                       //하나의 googlemaps으로 모든 클래스에서 참조하여 쓴다
 
     //--------------------------------------------변수--------------------------------------------
-    private String[]            user_info;
-    private long                fir_time, sec_time;
-    private Boolean             drawer_check        = true;
+    private String[]            user_info;                  //현재 로그인 되어 있는 유저의 정보(id,name..)들을 가져온다
+    private long                fir_time, sec_time;         //두번 뒤로가기를 눌렀을때 종료되도록 해주는 변수 둘
+    private Boolean             drawer_check        = true; //슬라이드를 열고 닫게 할 수 있다.
     private ArrayList<Marker>   originMarkerlist    = new ArrayList<Marker>();
-    private String              image_path          ="http://ec2-13-125-134-167.ap-northeast-2.compute.amazonaws.com/images/supplementer/";
+
+    //주소는 능동적으로 바뀔 수 있다!
+    private String              image_path          =
+            "http://ec2-13-125-134-167.ap-northeast-2.compute.amazonaws.com/images/supplementer/";
 
 
     //--------------------------------------------이외--------------------------------------------
-    private Locationlistener    listener;               //사용자 지정 트리거 마다 실행되는 함수
-    private Share_login_info    share_login_info_obj;   //로그인 상태 저장 객체
-    private ImageView           loading_iv;             //로딩 화면 iv
-    private Handler             handler;                //로딩Thread handler
+    private Locationlistener    listener;                   //사용자 지정 트리거 마다 실행되는 함수
+    private Share_login_info    share_login_info_obj;       //로그인 상태 저장 객체
+    private ImageView           loading_iv;                 //로딩 화면 iv
+    private Handler             handler;                    //로딩Thread handler
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -709,6 +714,37 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         Order_sheet_alert order_sheet_alert = new Order_sheet_alert(MainActivity.this, user_info[0]);
                         order_sheet_alert.create_table();
 
+                        break;
+
+                    //작업지시서 달력으로 검색하여 보기
+                    case R.id.serch_order_list:
+
+                        //핸들러 생성
+                        Runnable task2 = new Runnable() {
+                            @Override
+                            public void run() {
+
+                                //로딩 화면생성
+                                handler.sendEmptyMessage(1);
+                                try {
+                                    //1초 지연
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                //로딩화면 제거
+                                handler.sendEmptyMessage(2);
+                            }
+                        };
+
+                        //쓰레드 생성
+                        Thread thread2 = new Thread(task2);
+
+                        //쓰레드 실행
+                        thread2.start();
+
+                        Create_AlertDialog create_alertDialog = new Create_AlertDialog(MainActivity.this, user_info[0]);
+                        create_alertDialog.callFunction();
                         break;
 
                     //작업지시서 최신화 하기
@@ -997,10 +1033,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         try {
+
+            //현재 날짜 구하는 함수 포멧은 ex) 2018-04-25 로 문자열로 변환되어 출력됨
+            SimpleDateFormat df = new SimpleDateFormat("yyy-MM-dd", Locale.KOREA);
+            String str_date     = df.format(new Date());
             //db접속 try/catch 필수
             db_conn_obj = new DB_conn(this,get_set_package);
             //DB에 저장되어있는 마커들을 불러온다 ->user의 login_id를 기준으로
-            db_conn_obj.execute("get_markers", user_info[0]);
+            db_conn_obj.execute("get_markers", user_info[0], str_date);
+            //db_conn_obj.execute("get_markers", user_info[0], "2018-05-10");
 
             //길찾기 함수 호출(일본에서 경로표시)
             new Directions_Functions(gmap, get_set_package);

@@ -1,19 +1,23 @@
 package com.study.googlemapsandroidapiexample;
 
 import android.content.Context;
-import android.graphics.Paint;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.prolificinteractive.materialcalendarview.CalendarDay;
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.study.googlemapsandroidapiexample.Main_Page.*;
 import com.study.googlemapsandroidapiexample.Main_Page.AlertDialog.AlertDialog_Custom_dialog;
 import com.study.googlemapsandroidapiexample.Main_Page.AlertDialog.AlertDialog_list_item;
+import com.study.googlemapsandroidapiexample.Main_Page.CalendarDialog.EventDecorator;
 import com.study.googlemapsandroidapiexample.Main_Page.Shortcut_view.Sc_custom_listview;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -38,6 +42,7 @@ public class DB_conn extends AsyncTask<String, Void, String> {
     private String              marker_title;                    //마커의 타이틀        ->get_vending_info/alert
     private String              user_login_id;                   //유저 로그인 아이디   ->get_vending_info/alert
 
+    private MaterialCalendarView materialCalendarView;           //달력에 여러 작업을 하기위한 viee ->CalendarDialog/Create_AlertDialog
 //--------------------------------------------------------------------------------------------------
     //받아올 php 경로 선택 1:aws 2:autoset
     private String              link = "http://13.125.134.167/android_db_conn_source/conn.php";
@@ -54,23 +59,29 @@ public class DB_conn extends AsyncTask<String, Void, String> {
 
     //get_marker 구분자로 불릴시 사용
     public DB_conn(Context context, Get_set_package get_set_package){
-        this.context            = context;
-        this.get_set_package    = get_set_package;
+        this.context                = context;
+        this.get_set_package        = get_set_package;
+    }
+
+    //달력 수정을 할때 사용
+    public DB_conn(Context context, MaterialCalendarView materialCalendarView){
+        this.context                = context;
+        this.materialCalendarView   = materialCalendarView;
     }
 
     //get_vending_info 구분자로 불릴시 사용 -> short_cut
     public DB_conn(Context context, ListView sc_lv, String second_router){
-        this.context            = context;
-        this.sc_lv              = sc_lv;
-        this.second_router      = second_router;
+        this.context                = context;
+        this.sc_lv                  = sc_lv;
+        this.second_router          = second_router;
     }
 
     //get_vending_info 구분자로 불릴시 사용 -> alert_dialog
     public DB_conn(Context context, String marker_title, String user_login_id, String second_router){
-        this.context            = context;
-        this. marker_title      = marker_title;
-        this. user_login_id     = user_login_id;
-        this.second_router      = second_router;
+        this.context                = context;
+        this. marker_title          = marker_title;
+        this. user_login_id         = user_login_id;
+        this.second_router          = second_router;
     }
 
     //ui작업 및 추가/삭제/업데이트 기능이 필요 없는 경우
@@ -140,9 +151,10 @@ public class DB_conn extends AsyncTask<String, Void, String> {
 
                     //구글맵이 로딩되고 초기 마커들의 정보를 DB에서 가져온다
                     case "get_markers":
-                        if(strings[1] != null) {
+                        if(strings[1] != null && strings[2] != null) {
                             link += "?con=get_markers";
                             link += "&user_login_id="   + strings[1];
+                            link += "&order_date="      + strings[2];
                         }
                         break;
 
@@ -180,6 +192,14 @@ public class DB_conn extends AsyncTask<String, Void, String> {
                             link += "&token="           + strings[1];
                             link += "&user_info_id="    + strings[2];
                             link += "&name="            + strings[3];
+                        }
+                        break;
+
+                    //작업지시서의 날짜들을 가져오기위해
+                    case "calendar_get_Day":
+                        if(strings[1] != null){
+                            link += "?con=calendar_get_Day";
+                            link += "&user_info_id="     + strings[1];
                         }
                         break;
                 }
@@ -223,7 +243,7 @@ public class DB_conn extends AsyncTask<String, Void, String> {
 
                         //로그인, id중복체크, 유저 생성, id찾기, pw찾기,
                         //자판기 아이콘 가져오기, 특정 자판기 정보 가져오기, 작업지시서 보기, 자판기 강제 갱신,
-                        //토큰 업데이트
+                        //토큰 업데이트,         작업지시서 날짜 가져오기
                         case "login":
                         case "exist_id_check":
                         case "create_user_ok":
@@ -234,6 +254,7 @@ public class DB_conn extends AsyncTask<String, Void, String> {
                         case "get_order_sheet":
                         case "insert_vending":
                         case "token":
+                        case "calendar_get_Day":
 
                             //연결과 반환이 정상적으로 이루어 졌을시
                             //차곡차곡 채워 넣은 데이터를 앞뒤공백 제거하여 반환한다 ->
@@ -298,7 +319,6 @@ public class DB_conn extends AsyncTask<String, Void, String> {
 
                         //검색된 배열을 순차적으로 돈다
                         for (int i = 0; i < json_result.length(); i++) {
-
                             String vending_info = "";
 
                             //vd_id, vd_name, vd_latitude, vd_longitude, vd_place, vd_supplement, vd_soldout 가 저장 되어 있음
@@ -386,7 +406,7 @@ public class DB_conn extends AsyncTask<String, Void, String> {
 
                                 //실제 반복문을 도는 알맹이를 배열로 가져온다
                                 JSONArray json_result   = jsonObject.getJSONArray("result");
-
+                                Log.e("<><>",json_result.toString());
 
                                 //검색된 배열을 순차적으로 돈다
                                 for (int i = 0; i < json_result.length(); i++) {
@@ -464,6 +484,7 @@ public class DB_conn extends AsyncTask<String, Void, String> {
                 break;
 
             case "get_order_sheet":
+                Log.e("<><>",result_String);
                 break;
 
             case "insert_vending":
@@ -472,6 +493,49 @@ public class DB_conn extends AsyncTask<String, Void, String> {
             case "token":
                 break;
 
+            case "calendar_get_Day":
+                //값이 없는 경우 아무것도 하지 않는다
+                if(result_String.equals("no_date") || result_String == "" || result_String == " " ||result_String == null){
+                    Toast.makeText(context, "No date Please check", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                //값이 있는 경우
+                else{
+                    try {
+                        //json 객체로 변환하여 json배열에 저장
+                        JSONObject jsonObject   = new JSONObject(result_String);
+                        JSONArray json_result   = jsonObject.getJSONArray("result");
+
+                        //동그란 빨간점들이 저장되는 공간
+                        ArrayList<CalendarDay> dates = new ArrayList<>();
+
+                        //검색된 배열을 순차적으로 돈다
+                        for (int i = 0; i < json_result.length(); i++) {
+                            //order_date가 저장되어 있음
+                            JSONObject json_obj = json_result.getJSONObject(i);
+
+                            //[0]=년, [1]=월, [2]=일
+                            String[] date_arr= json_obj.getString("order_date").split("-");
+                            int year  = Integer.parseInt(date_arr[0]);
+                            int month =  Integer.parseInt(date_arr[1])-1; // 왠지는 몰라도 달이 0부터 시작함.. 그래서 1빼야함
+                            int day =  Integer.parseInt(date_arr[2]);
+
+                            //원을 그리고 싶은 날짜를 지정한다
+                            dates.add(CalendarDay.from(year,month,day));
+                        }
+
+                        //배열에 저장된 날짜들에 빨간 점을 전부 그린다
+                        materialCalendarView.addDecorator(new EventDecorator(context, Color.RED, dates));
+
+                        //배경색만 지정하고 싶은경우 얘를쓴다
+                        //materialCalendarView.addDecorator(new EventDecorator(context, dates));'
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                break;
         }
 
         //연결 해제
