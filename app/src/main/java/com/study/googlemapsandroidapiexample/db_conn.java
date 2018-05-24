@@ -8,6 +8,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.study.googlemapsandroidapiexample.Main_Page.*;
@@ -37,6 +38,7 @@ public class DB_conn extends AsyncTask<String, Void, String> {
     private String              router_string           = "";    //백그라운드 UI작업 구분자
     private String              second_router;                   //같은 구분자를 쓰며 다른 UI이 작업이 필요한 경우 얘가 쓰임
 
+    private ArrayList<Marker>   vending_stack;                   //롱클릭시 저장되는 마커 배열들
 //--------------------------------------UI작업때 쓰이는 변수들---------------------------------------
     private ListView            sc_lv;                           //Short_cut 리스트뷰   ->get_vending_info/short_cut
     private String              marker_title;                    //마커의 타이틀        ->get_vending_info/alert
@@ -58,9 +60,10 @@ public class DB_conn extends AsyncTask<String, Void, String> {
     }
 
     //get_marker 구분자로 불릴시 사용
-    public DB_conn(Context context, Get_set_package get_set_package){
+    public DB_conn(Context context, Get_set_package get_set_package, ArrayList<Marker> vending_stack){
         this.context                = context;
         this.get_set_package        = get_set_package;
+        this.vending_stack          = vending_stack;
     }
 
     //달력 수정을 할때 사용
@@ -252,7 +255,6 @@ public class DB_conn extends AsyncTask<String, Void, String> {
                         case "get_markers":
                         case "get_vending_info":
                         case "get_order_sheet":
-                        case "insert_vending":
                         case "token":
                         case "calendar_get_Day":
 
@@ -260,7 +262,8 @@ public class DB_conn extends AsyncTask<String, Void, String> {
                             //차곡차곡 채워 넣은 데이터를 앞뒤공백 제거하여 반환한다 ->
                             // get()으로 받는 쪽으로 반환, onPostExcute함수 자동 실행
                             return sb.toString().trim();
-
+                        case "insert_vending":
+                            return strings[1];
 
                         default:
                             return "conn_fail";
@@ -335,6 +338,57 @@ public class DB_conn extends AsyncTask<String, Void, String> {
                             //실제로 마커를 구글맵에 그린다
                             get_set_package.drawMarkers(latLng, json_obj.getString("vd_name"), vending_info, json_obj.getInt("vd_soldout"), false);
                         }
+
+
+                        //새로고침하여 저장된 배열을가져온다
+                        ArrayList<Marker> origin_marker = get_set_package.getOriginMarkerlist();
+
+                        //마커가 있는지 없는지 확인하는 변수
+                        boolean temp_check = false;
+
+                        //롱클릭 배열에 저장되있는 원소만큼 반복 한다
+                        for(int i=0; i<vending_stack.size(); i++){
+
+                            //자판기 배열에 저장되어 있는 원소만큼 반복한다
+                            for(int j=0; j<origin_marker.size(); j++){
+
+                                //롱클릭 스택에 있는 원소가 새로 생성된 자판기 배열에도 있다면 true로 반환한다
+                                if(vending_stack.get(i).getPosition().equals(origin_marker.get(j).getPosition())){
+                                    temp_check = true;
+                                    break;
+                                }
+                            }
+
+                            //만약 배열이 일치하지 않는다면 스택배열의 원소는 삭제한다
+                            if(!temp_check){
+                                vending_stack.remove(i);
+                            }
+
+                        }
+
+                        //스택배열의 값만 복사할 배열을 생성
+                        ArrayList<Marker> temp_stack = new ArrayList<Marker>();
+
+                        //값만 복사한다
+                        temp_stack.addAll(vending_stack);
+
+                        //기존의 스택 배열은 지운다(안지울시 값이 2배씩 늘어나서 결국 터짐)
+                        vending_stack.clear();
+
+                        //복사한 값을 가지고 마커를 그린다(vending_stack배열에 다시 차곡차곡 쌓임)
+                        for(int i=0; i<temp_stack.size(); i++){
+
+                            //첫번째 원소인경우 빨간색으로 그린다
+                            if(i == 0){
+                                get_set_package.drawMarkers(temp_stack.get(i).getPosition(), temp_stack.get(i).getTitle(), temp_stack.get(i).getSnippet(), -1, false);
+                            }
+
+                            //두번째 원소인 경우 파란색으로 그린다
+                            else{
+                                get_set_package.drawMarkers(temp_stack.get(i).getPosition(), temp_stack.get(i).getTitle(), temp_stack.get(i).getSnippet(), -2, false);
+                            }
+                        }
+
                     }
                 }catch (Exception e){
                     Toast.makeText(context, "DB_get_markers_err", Toast.LENGTH_SHORT).show();
@@ -488,6 +542,7 @@ public class DB_conn extends AsyncTask<String, Void, String> {
                 break;
 
             case "insert_vending":
+                Log.e("<><>",result_String+"/<>/");
                 break;
 
             case "token":

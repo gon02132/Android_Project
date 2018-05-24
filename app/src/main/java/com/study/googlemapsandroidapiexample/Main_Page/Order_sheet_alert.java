@@ -98,8 +98,8 @@ public class Order_sheet_alert {
 
                 //현재 날짜 구하는 함수 포멧은 ex) 2018-04-25 로 문자열로 변환되어 출력됨
                 SimpleDateFormat df = new SimpleDateFormat("yyy-MM-dd", Locale.KOREA);
-                String str_date     = df.format(new Date());
-
+                //String str_date     = df.format(new Date());
+                String str_date     = "2018-05-16";
                 //db에 접속하여 반환된 결과값 초기화
                 result_str = db_conn_obj.execute("get_order_sheet", user_login_id, str_date).get();
             }

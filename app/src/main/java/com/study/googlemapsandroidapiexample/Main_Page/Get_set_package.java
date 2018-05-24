@@ -22,13 +22,15 @@ public class Get_set_package {
     private Context             context;            //MainActivity this
     private GoogleMap           googleMap;          //구글맵 객체
     private ArrayList<Marker>   originMarkerlist;   //구글맵에 그려진 마커들이 저장된 배열
+    private ArrayList<Marker>   vending_stack;      //가야할 자판기들의 배열(롱클릭으로 지정한 것들)
     private Marker              next_Marker;        //다음 가야할 위치의 마커
 
-    //생성자
-    public Get_set_package(Context context, GoogleMap googleMap, ArrayList<Marker> originMarkerlist) {
+    //기본 생성자
+    public Get_set_package(Context context, GoogleMap googleMap, ArrayList<Marker> originMarkerlist, ArrayList<Marker> vending_stack) {
         this.context            = context;
         this.googleMap          = googleMap;
         this.originMarkerlist   = originMarkerlist;
+        this.vending_stack      = vending_stack;
     }
 
     //현재 그려진 모든 마커들 가져오기
@@ -39,9 +41,14 @@ public class Get_set_package {
     //다음 가야할 마커 가져오기
     public Marker getNow_Marker() {return next_Marker;}
 
+    //가야할 자판기들의 배열 초기화
+    public void set_vending_stack(ArrayList<Marker> vending_stack){this.vending_stack = vending_stack;}
+
+    //가야할 자판기들의 배열 반환
+    public ArrayList<Marker> get_vending_stack(){return vending_stack;}
+
     //마커 그리기
     public void drawMarkers(LatLng latLng, String vd_name, String vending_info, Integer status, boolean draggable) {
-        //최초 마커를 생성하는 경우 처음 그려주는 행위
 
         MarkerOptions markerOptions = new MarkerOptions();  //마커 옵션들을 설정할 수있게 해주는 함수 호출\
         markerOptions.position(latLng);                     //마커의 현재 위도와 경도
@@ -49,7 +56,7 @@ public class Get_set_package {
         markerOptions.snippet(vending_info);                //내용
         markerOptions.draggable(draggable);                 //드래그 허용
 
-        //1=매진임박 2=매진 3=라인변경
+        //1=매진임박 2=매진 3=라인변경  -1=바로 다음가야할 자판기 -2=가야할 자판기
         //resizeMapIcons함수를 사용하여 각각의 다른 사이즈의 사진이 들어와도
         //통일되게 사이즈를 재설정하여 아이콘을 만든다.
         if (status == 1) {
@@ -59,14 +66,17 @@ public class Get_set_package {
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("japangi2", 80, 90)));
         } else if (status == 3) {
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("japangi3", 80, 90)));
-        } else if (status == 0) {
+        } else if (status == -1) {
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("now", 80, 90)));
-        } else {//없을 경우(예외처리)
+        }else if(status == -2){
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("next", 80, 90)));
+        }
+        else {//없을 경우(예외처리)
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("x2", 80, 90)));
         }
 
         //다음 가야할 자판기를 그려 줄때 호출되는 함수
-        if (status == 0) {
+        if (status == -1) {
 
             //다음 가야할 자판기가 이미 그려져 있는 경우 맵에서 지운다.
             if (next_Marker != null) {
@@ -75,6 +85,15 @@ public class Get_set_package {
 
             //다음 가야할 자판기를 다시 맵에 그린다.
             next_Marker = googleMap.addMarker(markerOptions);
+
+            vending_stack.add(next_Marker);
+        }
+
+        //롱클릭으로 가야할 자판기를 지정 한 경우(2번째 이상)
+        else if(status == -2){
+            //롱클릭 배열에 저장하며 맵에 그린다
+            vending_stack.add(googleMap.addMarker(markerOptions));
+            //googleMap.addMarker(markerOptions);
         }
 
         //이외에는 자판기들이 추가 된다!
