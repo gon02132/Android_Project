@@ -19,18 +19,23 @@ import java.util.List;
 
 //공통 get set함수를 모아놓은 클래스
 public class Get_set_package {
-    private Context             context;            //MainActivity this
-    private GoogleMap           googleMap;          //구글맵 객체
-    private ArrayList<Marker>   originMarkerlist;   //구글맵에 그려진 마커들이 저장된 배열
-    private ArrayList<Marker>   vending_stack;      //가야할 자판기들의 배열(롱클릭으로 지정한 것들)
+    private Context             context;                        //MainActivity this
+    private GoogleMap           googleMap,        minimap;      //구글맵 객체
+    private ArrayList<Marker>   originMarkerlist, mini_list;    //구글맵에 그려진 마커들이 저장된 배열
+    private ArrayList<Marker>   vending_stack,    mini_stack;   //가야할 자판기들의 배열(롱클릭으로 지정한 것들)
+
     private Marker              next_Marker;        //다음 가야할 위치의 마커
+    private Marker              mini_next_Marker;   //미니맵의 다음 가야할 위치의 마커
 
     //기본 생성자
-    public Get_set_package(Context context, GoogleMap googleMap, ArrayList<Marker> originMarkerlist, ArrayList<Marker> vending_stack) {
+    public Get_set_package(Context context, GoogleMap googleMap, GoogleMap minimap, ArrayList<Marker> originMarkerlist, ArrayList<Marker> mini_list, ArrayList<Marker> vending_stack, ArrayList<Marker> mini_stack) {
         this.context            = context;
         this.googleMap          = googleMap;
+        this.minimap            = minimap;
         this.originMarkerlist   = originMarkerlist;
+        this.mini_list          = mini_list;
         this.vending_stack      = vending_stack;
+        this.mini_stack         = mini_stack;
     }
 
     //현재 그려진 모든 마커들 가져오기
@@ -38,14 +43,19 @@ public class Get_set_package {
         return originMarkerlist;
     }
 
-    //다음 가야할 마커 가져오기
-    public Marker getNow_Marker() {return next_Marker;}
-
-    //가야할 자판기들의 배열 초기화
-    public void set_vending_stack(ArrayList<Marker> vending_stack){this.vending_stack = vending_stack;}
+    //현재 그려진 모든 마커들 가져오기(미니맵)
+    public ArrayList<Marker> getMini_list() {
+        return mini_list;
+    }
 
     //가야할 자판기들의 배열 반환
     public ArrayList<Marker> get_vending_stack(){return vending_stack;}
+
+    //가야할 자판기들의 배열 반환(미니맵)
+    public ArrayList<Marker> get_mini_stack(){return mini_stack;}
+
+    //다음 가야할 마커 가져오기
+    public Marker getNow_Marker() {return next_Marker;}
 
     //마커 그리기
     public void drawMarkers(LatLng latLng, String vd_name, String vending_info, Integer status, boolean draggable) {
@@ -81,19 +91,24 @@ public class Get_set_package {
             //다음 가야할 자판기가 이미 그려져 있는 경우 맵에서 지운다.
             if (next_Marker != null) {
                 next_Marker.remove();
+                //mini_next_Marker.remove();
             }
 
             //다음 가야할 자판기를 다시 맵에 그린다.
             next_Marker = googleMap.addMarker(markerOptions);
+           // mini_next_Marker = minimap.addMarker(markerOptions);
 
+            //다음가야하는 마커들을 저장한 배열
             vending_stack.add(next_Marker);
+           // mini_stack.add(mini_next_Marker);
+
         }
 
         //롱클릭으로 가야할 자판기를 지정 한 경우(2번째 이상)
         else if(status == -2){
             //롱클릭 배열에 저장하며 맵에 그린다
             vending_stack.add(googleMap.addMarker(markerOptions));
-            //googleMap.addMarker(markerOptions);
+          //  mini_stack.add(minimap.addMarker(markerOptions));
         }
 
         //이외에는 자판기들이 추가 된다!
@@ -101,11 +116,12 @@ public class Get_set_package {
             //리스트의 경우 0의자리는 자신의 위치를 나타내므로 더미로 초기화를 시켜준다
             if (originMarkerlist.size() == 0) {
                 originMarkerlist.add(googleMap.addMarker(markerOptions));
+             //   mini_list.add(minimap.addMarker(markerOptions));
             }
 
             // 구글맵에 마커 생성 + 마커배열 추가
             originMarkerlist.add(googleMap.addMarker(markerOptions));
-            Log.e(">>>>>>>>>>>",originMarkerlist.size()+"");
+         //   mini_list.add(minimap.addMarker(markerOptions));
         }
     }
 

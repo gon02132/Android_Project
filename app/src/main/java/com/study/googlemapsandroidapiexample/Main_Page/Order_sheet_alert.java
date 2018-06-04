@@ -10,6 +10,7 @@ import android.view.Gravity;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.HorizontalScrollView;
+import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -65,6 +66,7 @@ public class Order_sheet_alert {
         this.user_login_id         = user_login_id;
         this.date_String           = date;
     }
+
     //테이블 생성!
     @SuppressLint("WrongViewCast")
     public void create_table() {
@@ -99,7 +101,8 @@ public class Order_sheet_alert {
                 //현재 날짜 구하는 함수 포멧은 ex) 2018-04-25 로 문자열로 변환되어 출력됨
                 SimpleDateFormat df = new SimpleDateFormat("yyy-MM-dd", Locale.KOREA);
                 //String str_date     = df.format(new Date());
-                String str_date     = "2018-05-16";
+                //String str_date     = "2018-05-16";
+                String str_date     = "2018-06-05";
                 //db에 접속하여 반환된 결과값 초기화
                 result_str = db_conn_obj.execute("get_order_sheet", user_login_id, str_date).get();
             }
@@ -154,7 +157,7 @@ public class Order_sheet_alert {
 
                         //현재 소유중인 제품들의 명들을 차례차례 출력한다.
                         draw_td(1,0, drk_name,false);
-
+                        //draw_td_image(1,0, drk_name);
 
                     }
 
@@ -448,6 +451,44 @@ public class Order_sheet_alert {
 
         //TR에 넣기
         tr.addView(textView);
+    }
+
+    //td추가하기(선택자, 크기or위치, 출력할 문자열, 중앙선 긋기)
+    public void draw_td_image(int select , int count, String img_select){
+        //TextView 생성
+        ImageView imageView = new ImageView(context);
+
+        //여백 지정
+        imageView.setPadding(5,5,5,5);
+
+        //속성이 따로 없을 시,
+        if(select == 1){
+            //속성 생성
+            params = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
+        }
+
+        //특정 위치에 추가하고 싶을 시,
+        if(select == 2) {
+            //속성 생성
+            params = new TableRow.LayoutParams(count);
+        }
+
+        //특정 크기로 추가하고 싶을 시,
+        if(select == 3){
+            params = new TableRow.LayoutParams(count, TableRow.LayoutParams.WRAP_CONTENT);
+        }
+
+        //마진 주기
+        params.setMargins(margin_size,margin_size,margin_size,margin_size);
+
+        //속성지정
+        imageView.setLayoutParams(params);
+
+        //값 넣기
+        imageView.setImageResource(R.drawable.test);
+
+        //TR에 넣기
+        tr.addView(imageView);
     }
 
 }

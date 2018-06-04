@@ -54,7 +54,7 @@ public class Sc_custom_listview {
 
             //작업지시가 없는 자판기의 경우 맨위에 작업지시가 없는 자판기임을 알려준다.
             if(note_check == false){
-                sc_list_items.add(new Sc_list_item("작업 지시가 없는 자판기","X", ""));
+                sc_list_items.add(new Sc_list_item("작업 지시가 없습니다","X", ""));
             }
 
             //실제 내용들이 들어가는 반복문

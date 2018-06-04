@@ -39,6 +39,8 @@ public class DB_conn extends AsyncTask<String, Void, String> {
     private String              second_router;                   //같은 구분자를 쓰며 다른 UI이 작업이 필요한 경우 얘가 쓰임
 
     private ArrayList<Marker>   vending_stack;                   //롱클릭시 저장되는 마커 배열들
+    private ArrayList<Marker>   mini_stack;                      //롱클릭시 저장되는 마커 배열들(미니맵)
+
 //--------------------------------------UI작업때 쓰이는 변수들---------------------------------------
     private ListView            sc_lv;                           //Short_cut 리스트뷰   ->get_vending_info/short_cut
     private String              marker_title;                    //마커의 타이틀        ->get_vending_info/alert
@@ -60,10 +62,11 @@ public class DB_conn extends AsyncTask<String, Void, String> {
     }
 
     //get_marker 구분자로 불릴시 사용
-    public DB_conn(Context context, Get_set_package get_set_package, ArrayList<Marker> vending_stack){
+    public DB_conn(Context context, Get_set_package get_set_package, ArrayList<Marker> vending_stack, ArrayList<Marker> mini_stack){
         this.context                = context;
         this.get_set_package        = get_set_package;
         this.vending_stack          = vending_stack;
+        this.mini_stack             = mini_stack;
     }
 
     //달력 수정을 할때 사용
@@ -343,11 +346,11 @@ public class DB_conn extends AsyncTask<String, Void, String> {
                         //새로고침하여 저장된 배열을가져온다
                         ArrayList<Marker> origin_marker = get_set_package.getOriginMarkerlist();
 
-                        //마커가 있는지 없는지 확인하는 변수
-                        boolean temp_check = false;
-
                         //롱클릭 배열에 저장되있는 원소만큼 반복 한다
                         for(int i=0; i<vending_stack.size(); i++){
+
+                            //마커가 있는지 없는지 확인하는 변수
+                            boolean temp_check = false;
 
                             //자판기 배열에 저장되어 있는 원소만큼 반복한다
                             for(int j=0; j<origin_marker.size(); j++){
@@ -357,11 +360,15 @@ public class DB_conn extends AsyncTask<String, Void, String> {
                                     temp_check = true;
                                     break;
                                 }
+
                             }
 
                             //만약 배열이 일치하지 않는다면 스택배열의 원소는 삭제한다
+                            //그리고 반복문도 마저 종료한다(한번에 한개의 자판기만 보충 가능 하기 때문)
                             if(!temp_check){
                                 vending_stack.remove(i);
+                                mini_stack.remove(i);
+                                break;
                             }
 
                         }
@@ -374,6 +381,7 @@ public class DB_conn extends AsyncTask<String, Void, String> {
 
                         //기존의 스택 배열은 지운다(안지울시 값이 2배씩 늘어나서 결국 터짐)
                         vending_stack.clear();
+                        mini_stack.clear();
 
                         //복사한 값을 가지고 마커를 그린다(vending_stack배열에 다시 차곡차곡 쌓임)
                         for(int i=0; i<temp_stack.size(); i++){
