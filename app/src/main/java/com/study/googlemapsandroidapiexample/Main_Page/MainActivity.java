@@ -54,6 +54,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.squareup.picasso.Picasso;
 import com.study.googlemapsandroidapiexample.Main_Page.CalendarDialog.Create_AlertDialog;
 import com.study.googlemapsandroidapiexample.R;
@@ -65,7 +66,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 //로케이션리스너 생성 클래스
 class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickListener {
 
-    private GoogleMap           gmap,      minimap;             //구글 지도
+    private GoogleMap           gmap, minimap;                  //구글 지도
     private TextView            my_status, next_vending;        //내 정보(왼쪽 위에 표시되는 tv), 다음 자판기까지의 거리
     private Context             context;                        //MainActivity this
     private Get_set_package     get_set_package;                //내가 만든 getset패키지 함수!
@@ -79,21 +80,21 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
     private String              before_snippet = "";            //db접속을 최소화 하기위한 String
 
     private Location            lastlocation;                   //최초 한번만 update되는 함수가 호출되어
-                                                                //생기는 에러를 방지하기위한 변수
+    //생기는 에러를 방지하기위한 변수
 
     //-----한번만 실행되게 하기위한 Boolean 변수들-----
     //GPS추적 버튼 클릭시
-    private boolean             location_button                         = false;
+    private boolean location_button                         = false;
 
     //가장 가까운 자판기 추적 버튼 클릭 시
-    private boolean             closest_vendingmachine_tracking_button  = false;
+    private boolean closest_vendingmachine_tracking_button  = false;
 
     //맨 처음에 카메라를 현재 위치로 잡았다면 이후는 잡지 않는다
-    private boolean             camera_move_check                       = false;
+    private boolean camera_move_check                       = false;
     //-----------------------------------------------
 
     //아무 자판기도 찾지 못하였을경우 로딩창을 생성 하기위한 변수
-    private boolean             refresh                                 = false;
+    private boolean refresh                                 = false;
 
     //생성자
     public Locationlistener(Context context, ArrayList<Marker> originMarkerlist, ArrayList<Marker> mini_list, ArrayList<Marker> vending_stack, ArrayList<Marker> mini_stack, GoogleMap gmap, GoogleMap minimap, ListView sc_lv, TextView my_status, TextView next_vending, Get_set_package get_set_package, Menu navi_menu) {
@@ -122,23 +123,26 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
     }
 
     //가장 가까운 자판기 초기화
-    public void setClosestMarker()  { closestMarker = null; }
+    public void setClosestMarker() {
+        closestMarker = null;
+    }
 
     //마지막 현재위치 초기화
-    public void setLastlocation()   { lastlocation = null; }
+    public void setLastlocation() {
+        lastlocation = null;
+    }
 
     //프로그래머가 지정한 일정 시간 or 간 meter만큼 반복해서 실행되는 함수
     @Override
     public void onLocationChanged(Location location) {
-
         //다음 함수 호출까지 마커가 생성되지 않았다면 로딩 화면을띄워준다(마커가 생성될 때까지 반복)
         //첫번째 함수호출 시 에는 무시한다
-        if(refresh == false){
+        if (refresh == false) {
             refresh = true;
         }
 
         //두번째 함수 호출시 로딩화면 출력
-        else if(refresh == true && originMarkerlist.size() < 2) {
+        else if (refresh == true && originMarkerlist.size() < 2) {
             ((MainActivity) context).loading();
             refresh = false;
         }
@@ -159,12 +163,13 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
         }
 
         //가장가까운자판기(미니맵)을 가져온다
-        if(temp_marker == null && mini_list.size() > 1){
+        //미니맵을 보여줄지 안보여줄지 결정해준다
+        if (temp_marker == null && mini_list.size() > 1) {
             temp_marker = mini_list.get(1);
         }
 
         //특정 m안에 자판기가 있는경우에는 따로 반복문을 돌리지 않는다. + 미니맵을 보여준다
-        if(temp_marker != null && get_set_package.getmeter(mini_list.get(0).getPosition(), temp_marker.getPosition()) > 250) {
+        if (temp_marker != null && get_set_package.getmeter(mini_list.get(0).getPosition(), temp_marker.getPosition()) > 250) {
 
             //현재위치와 가장 가까운 마커를 찾는 과정
             for (int i = 1; i < mini_list.size(); i++) {
@@ -178,14 +183,14 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
 
             }
             //특정 m밖에 있다면 미니맵을 없앤다
-            ((MainActivity)context).findViewById(R.id.minimap_side).setVisibility(View.GONE);
-            ((MainActivity)context).findViewById(R.id.minimap_layout).setVisibility(View.GONE);
+            //((MainActivity) context).findViewById(R.id.minimap_side).setVisibility(View.GONE);
+            //((MainActivity) context).findViewById(R.id.minimap_layout).setVisibility(View.GONE);
         }
 
         //특정 m안에 있다면 미니맵을 보여준다.
-        else{
-            ((MainActivity)context).findViewById(R.id.minimap_side).setVisibility(View.VISIBLE);
-            ((MainActivity)context).findViewById(R.id.minimap_layout).setVisibility(View.VISIBLE);
+        else {
+            //((MainActivity) context).findViewById(R.id.minimap_side).setVisibility(View.VISIBLE);
+            //((MainActivity) context).findViewById(R.id.minimap_layout).setVisibility(View.VISIBLE);
         }
 
 
@@ -193,17 +198,17 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
         if (closest_vendingmachine_tracking_button) {
 
             //롱클릭 배열에 원소가 하나라도 있으면 전부 비운다
-            if(vending_stack.size() > 0) {
+            if (vending_stack.size() > 0) {
 
-                //첫번째 자리는 다음 가야할 자판기이므로 두번째자리부터 맵에서 지운다
-                for(int i=1; i<vending_stack.size(); i++){
+                //롱클릭으로 지정한 마커들을 지운다
+                for (int i = 0; i < vending_stack.size(); i++) {
                     vending_stack.get(i).remove();
                 }
-                for(int i=1; i<mini_stack.size(); i++){
+                for (int i = 0; i < mini_stack.size(); i++) {
                     mini_stack.get(i).remove();
                 }
 
-                //배열의 원소들을 깔끔하게 지운다
+                //롱클릭 배열의 원소들을 비운다
                 vending_stack.clear();
                 mini_stack.clear();
 
@@ -232,22 +237,8 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
 
             //만약 보충할 자판기가 있다면 마커를 그린다
             if (originMarkerlist.size() > 1) {
-
                 //다음 가야할 마커 그리기
                 get_set_package.drawMarkers(closestMarker.getPosition(), closestMarker.getTitle(), closestMarker.getSnippet(), -1, false);
-
-                //롱클릭 저장배열의 첫번째 위치는 다음 가야할 마커 임으로 항상 초기화 해준다
-                //저장배열에 아무거도 없을시, 추가한다
-                if(vending_stack.size() == 0){
-                    vending_stack.add(closestMarker);
-                    mini_stack.add(closestMarker);
-                }
-
-                //만약 롱클릭 저장배열에 무언가 저장 되어있다면 0번째에 저장한다
-                else{
-                    vending_stack.set(0,closestMarker);
-                    mini_stack.set(0,closestMarker);
-                }
 
             }
 
@@ -274,9 +265,9 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
 
                     //보충완료,닫기버튼을 보이게 한다.(강제형변환으로 액티비티를 접근한다. ->이게 최선이에요 ㅠㅠ)
                     //순서대로 : 열기버튼,sortcutlayout,확인버튼,닫기버튼
-                    if ((((Activity) context).findViewById(R.id.open_button)).getVisibility() == View.GONE) {
-                        (((Activity) context).findViewById(R.id.sc_layout)).setVisibility(View.VISIBLE);
-                        (((Activity) context).findViewById(R.id.ok_button)).setVisibility(View.VISIBLE);
+                    if ((((Activity) context).findViewById(R.id.open_button)) .getVisibility() == View.GONE) {
+                        (((Activity) context).findViewById(R.id.sc_layout))   .setVisibility(View.VISIBLE);
+                        (((Activity) context).findViewById(R.id.ok_button))   .setVisibility(View.VISIBLE);
                         (((Activity) context).findViewById(R.id.close_button)).setVisibility(View.VISIBLE);
                     }
 
@@ -290,7 +281,7 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
         }
 
         //롱클릭으로 접근한다면 쇼트컷/최단 거리를 표시해준다
-        else if(vending_stack.size() > 0  && originMarkerlist.size() > 1){
+        else if (vending_stack.size() > 0 && originMarkerlist.size() > 1) {
             try {
 
                 //db 접속(try/catch 필수)
@@ -308,9 +299,9 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
 
             //보충완료,닫기버튼을 보이게 한다.(강제형변환으로 액티비티를 접근한다. ->이게 최선이에요 ㅠㅠ)
             //순서대로 : 열기버튼,sortcutlayout,확인버튼,닫기버튼
-            if ((((Activity) context).findViewById(R.id.open_button)).getVisibility() == View.GONE) {
-                (((Activity) context).findViewById(R.id.sc_layout)).setVisibility(View.VISIBLE);
-                (((Activity) context).findViewById(R.id.ok_button)).setVisibility(View.VISIBLE);
+            if ((((Activity) context).findViewById(R.id.open_button)) .getVisibility() == View.GONE) {
+                (((Activity) context).findViewById(R.id.sc_layout))   .setVisibility(View.VISIBLE);
+                (((Activity) context).findViewById(R.id.ok_button))   .setVisibility(View.VISIBLE);
                 (((Activity) context).findViewById(R.id.close_button)).setVisibility(View.VISIBLE);
             }
 
@@ -328,12 +319,21 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
             //마커 옵션 함수를 만들고, 반환하여 구글맵에 마커를 그린다.
 
             //메인 맵의 경우
-            if(originMarkerlist.size() == 0)
+            if (originMarkerlist.size() == 0) {
                 originMarkerlist.add(0, gmap.addMarker(get_set_package.getMarkerOption(new LatLng(lattitude, longitude), addr, true)));
+            } else {
+                originMarkerlist.get(0).remove();
+                originMarkerlist.set(0, gmap.addMarker(get_set_package.getMarkerOption(new LatLng(lattitude, longitude), addr, true)));
+            }
 
             //미니맵의 경우
-            if(mini_list.size() == 0)
+            if (mini_list.size() == 0) {
                 mini_list.add(0, minimap.addMarker(get_set_package.getMarkerOption(new LatLng(lattitude, longitude), addr, true)));
+            } else {
+                mini_list.get(0).remove();
+                mini_list.set(0, minimap.addMarker(get_set_package.getMarkerOption(new LatLng(lattitude, longitude), addr, true)));
+            }
+
         }
 
         //0번째 위치를 갱신한다.
@@ -352,12 +352,12 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
 
         //위치 추적 활성화 버튼을 눌렀다면 추적 활성화
         if (location_button) {
-            gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 14));
+            gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13));
         }
 
         //미니맵은 항상 추적한다
-        if(minimap != null) {
-            //minimap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15));
+        if (minimap != null) {
+            minimap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15));
         }
 
 
@@ -389,17 +389,17 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
             //double형 -> String형 변환 + 소수점 한자리까지만 표현
             String SkmPerHour = String.format("%.1f", kmPerHour);   //현재 km/h
             //에러 예외처리
-            if(SkmPerHour.equals("NaN")){
+            if (SkmPerHour.equals("NaN")) {
                 SkmPerHour = "0.0";
             }
 
             //msg ="좌표: [ " + lattitude + ":" + longitude+"]\n"; //현재 위치의 좌표 출력 //주석 제거시 표현
             //msg+="고도: "+String.format("%.1f",altitude)+"m\n"; //고도의 세계표준을 한국표준으로 바꾸는걸 모르겟엉.. 쓸꺼면 걍써 잘 되니까...
 
-            msg += "현재 주소: "+addr + "\n";             //주소
-           // msg += nowDate + "\n";          //현재 날짜
-            msg += "현재 속도: "+SkmPerHour + "km/h \n";     //현재 km/h
-            msg += "남은 자판기: "+(originMarkerlist.size()-1) + "개";
+            msg += "현재 주소: "   + addr + "\n";             //주소
+            // msg += nowDate + "\n";          //현재 날짜
+            msg += "현재 속도: "   + SkmPerHour + "km/h \n";     //현재 km/h
+            msg += "남은 자판기: " + (originMarkerlist.size() - 1) + "개";
 
             //추가된 자판기가 하나이상 + 다음가야할 자판기가 있을경우 다음 자판기 거리 표시
             if (originMarkerlist.size() > 1 && closestMarker != null) {
@@ -407,11 +407,11 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
                 double next_meter = get_set_package.getmeter(originMarkerlist.get(0).getPosition(), closestMarker.getPosition());
 
                 //1km 이상의 거리일 경우
-                if((int)next_meter >= 1000){
+                if ((int) next_meter >= 1000) {
                     //1000m가 넘어 갈시, km로만 표시한다
                     //현재 m의 올림으로 1000m미만으로 떨어질경우, 다시 m로 표시된다
 
-                    int km = (int)Math.ceil(next_meter/1000);
+                    int km = (int) Math.ceil(next_meter / 1000);
 
                     next_vending.setText("NEXT:" + km + "km");
                 }
@@ -423,16 +423,16 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
             }
 
             //롱클릭 자판기가 1대이상 있을경우
-           else if(vending_stack.size() > 0){
+            else if (vending_stack.size() > 0) {
                 //다음 거리를 구한다
                 double next_meter = get_set_package.getmeter(originMarkerlist.get(0).getPosition(), vending_stack.get(0).getPosition());
 
                 //1km 이상의 거리일 경우
-                if((int)next_meter >= 1000){
+                if ((int) next_meter >= 1000) {
                     //1000m가 넘어 갈시, km로만 표시한다
                     //현재 m의 올림으로 1000m미만으로 떨어질경우, 다시 m로 표시된다
 
-                    int km = (int)Math.ceil(next_meter/1000);
+                    int km = (int) Math.ceil(next_meter / 1000);
 
                     next_vending.setText("NEXT:" + km + "km");
                 }
@@ -454,12 +454,12 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
         }
 
         // 생성자 같은 역할(최초 한번만 실행)
-        else{
+        else {
             //한번만 실행하게 한다
-            if(!camera_move_check) {
+            if (!camera_move_check) {
                 //최초 카메라 위치 잡기 ->자신의 위치가 갱신 된 이후 최초로 한번만 자신의 위치를 찾아서 카메라를 이동시킨다.
                 //기본적으로 영진전문대 -> 자신의 위치 순으로 잡힌다.
-                gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 14));
+                gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13));
                 minimap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15));
                 camera_move_check = true;
             }
@@ -471,7 +471,8 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
     //---------------------------------GPS 상태 관련 콜백 함수--------------------------------------
     //GPS 상태가 바뀔때 호출됨
     @Override
-    public void onStatusChanged(String s, int i, Bundle bundle) {}
+    public void onStatusChanged(String s, int i, Bundle bundle) {
+    }
 
     //GPS가 켜져있으면 실행됨!
     @Override
@@ -522,31 +523,31 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
         boolean abs_check;
 
         //범위를 1~5까지 준다(작은 수부터 미세하게 검색하며 찾아낸다)
-        for(int i = 1; i<200; i++) {
+        for (int i = 1; i < 200; i++) {
 
             //찾고자하는 실수값 이 저장되는 변수
             double parse_num;
 
             //2자리가 아닌경우 0.0000X
-            if(i<10){
-                parse_num = Double.parseDouble("0.0000"+i);
+            if (i < 10) {
+                parse_num = Double.parseDouble("0.0000" + i);
             }
 
             //2자리 인경우 0.000XX
-            else if(i<100){
-                parse_num = Double.parseDouble("0.000"+i);
+            else if (i < 100) {
+                parse_num = Double.parseDouble("0.000" + i);
             }
 
             //3자리 인 경우 0.00XXX
-            else{
-                parse_num = Double.parseDouble("0.00"+i);
+            else {
+                parse_num = Double.parseDouble("0.00" + i);
             }
 
             //true: 검색된 자판기가 없음 false:검색된 자판기가 있음
             abs_check = marker_check(latLng, parse_num);
 
             //검색된 자판기가 있는경우 반복문을 나간다
-            if(!abs_check){
+            if (!abs_check) {
                 break;
             }
 
@@ -555,7 +556,7 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
     }
 
     //범위에 따라 탐색 범위가 틀려진다
-    private boolean marker_check(LatLng latLng, double serch_size){
+    private boolean marker_check(LatLng latLng, double serch_size) {
 
         //첫번째 반복문에서 클릭을 찾지 못하였을 경우 범위를 조금더 넓혀서 찾게 하기 위함
         boolean abs_check = true;
@@ -565,7 +566,7 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
 
             //반경에 마커가 있는경우 DB를통해 그마커의 상세정보들을 가져온다.
             //실수를 많이 줄경우, 주변 자판기와 겹칠우려가 있으므로 너무 많이 주지않으며 클릭시, 적당한 반경을 탐색하게 해야한다.
-            if (Math.abs(originMarkerlist.get(i).getPosition().latitude  - latLng.latitude)  < serch_size &&
+            if (Math.abs(originMarkerlist.get(i).getPosition().latitude - latLng.latitude) < serch_size &&
                     Math.abs(originMarkerlist.get(i).getPosition().longitude - latLng.longitude) < serch_size) {
 
                 //클릭한 자판기의 지명을 출력한다.
@@ -574,7 +575,7 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
                 try {
 
                     //첫번째 롱클릭인 경우 바로 다음가야할 자판기이므로 그에따른 처리를한다
-                    if(vending_stack.size() == 0) {
+                    if (vending_stack.size() == 0) {
 
                         //db 접속 try/catch 필수
                         DB_conn db_conn_obj = new DB_conn(context, sc_lv, "short_cut");
@@ -583,7 +584,7 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
                         db_conn_obj.execute("get_vending_info", originMarkerlist.get(i).getSnippet());
 
                         //오른쪽 밑 레이아웃이 현재 안보이고 있다면 보이게 한다
-                        if (((Activity) context).findViewById(R.id.open_button).getVisibility() == View.GONE) {
+                        if (((Activity) context).findViewById(R.id.sc_layout).getVisibility() == View.GONE) {
                             //보충완료,닫기버튼을 보이게 한다.(강제형변환으로 액티비티를 접근한다. ->이게 최선이에요 ㅠㅠ)
                             //순서대로 : 오른쪽 밑 레이아웃. 갱신버튼, 닫기버튼
                             (((Activity) context).findViewById(R.id.sc_layout)).setVisibility(View.VISIBLE);
@@ -608,43 +609,55 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
 
                         //다음 가야할 자판기의 마커를 최신화 시킨다 -> 직선상의 거리를 표시해주는 기능을 함
                         closestMarker = originMarkerlist.get(i);
+                    }
 
-                        //현재 자신의 위치를 계속 최신화한다
-                        if(vending_stack.size() == 0) {
-                            vending_stack.add(originMarkerlist.get(i));
-                            mini_stack.add(originMarkerlist.get(i));
-                        }else{
-                            vending_stack.set(0,originMarkerlist.get(i));
-                            mini_stack.set(0,originMarkerlist.get(i));
+                    //만약 롱클릭으로 빨간색 하이라이트를 클릭한다면 지정된 자판기들은 전부 해제한다
+                    else if (originMarkerlist.get(i).getPosition().equals(vending_stack.get(0).getPosition())) {
+
+                        //지도에서 마커 지우기
+                        for(int j = 0; j<vending_stack.size(); j++){
+                            vending_stack.get(j).remove();
+                        }
+
+                        //미니맵도 지우기
+                        for(int j = 0; j<mini_stack.size(); j++){
+                            mini_stack.get(j).remove();
+                        }
+
+                        //배열 비우기
+                        vending_stack   .clear();
+                        mini_stack      .clear();
+
+                        //오른쪽 밑 레이아웃이 현재 안보이고 있다면 보이게 한다
+                        if (((Activity) context).findViewById(R.id.sc_layout).getVisibility() == View.VISIBLE) {
+                            //보충완료,닫기버튼을 보이게 한다.(강제형변환으로 액티비티를 접근한다. ->이게 최선이에요 ㅠㅠ)
+                            //순서대로 : 오른쪽 밑 레이아웃. 갱신버튼, 닫기버튼
+                            (((Activity) context).findViewById(R.id.sc_layout)).setVisibility(View.GONE);
+                        }
+
+                        //다음가야할 정보 출력공간을 보이게 한다.
+                        //오른쪽 위 레이아웃
+                        if ((((Activity) context).findViewById(R.id.next_vending_layout)).getVisibility() == View.VISIBLE) {
+                            (((Activity) context).findViewById(R.id.next_vending_layout)).setVisibility(View.GONE);
                         }
 
                     }
 
-                    //만약 롱클릭으로 빨간색 하이라이트를 클릭한다면 지정된 자판기들은 전부 해제한다
-                    else if(originMarkerlist.get(i).getPosition().equals(vending_stack.get(0).getPosition())){
-                        vending_stack.clear();
-                        originMarkerlist.clear();
-                        mini_stack.clear();
-                        mini_list.clear();
-
-                        ((MainActivity)context).draw_marker();
-                    }
-
                     //바로 다음 가야할 자판기가 아니므로 그에따른 처리를 한다
-                    else{
+                    else {
 
                         //롱클릭 중복 체크 변수 생성
                         Boolean overlap_check = true;
 
                         //한번이상 클릭 한 곳에 한번더 클릭한다면 false로 바꾼다
-                        for(int z = 0; z<vending_stack.size(); z++) {
-                            if (originMarkerlist.get(i).getPosition().equals(vending_stack.get(z).getPosition())){
+                        for (int z = 0; z < vending_stack.size(); z++) {
+                            if (originMarkerlist.get(i).getPosition().equals(vending_stack.get(z).getPosition())) {
                                 overlap_check = false;
                             }
                         }
 
                         //중복이 아닌 경우에(새로운 마커 클릭시) 구글맵에 그린다
-                        if(overlap_check){
+                        if (overlap_check) {
                             //다음 가야할 자판기를 하이라이팅한다(맵에 마커 추가)
                             get_set_package.drawMarkers(originMarkerlist.get(i).getPosition(), originMarkerlist.get(i).getTitle(), originMarkerlist.get(i).getSnippet(), -2, false);
                         }
@@ -740,15 +753,14 @@ class Mark_click_event implements GoogleMap.OnMarkerClickListener {
 }
 
 //MainActivity
-public class
-MainActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
     //-----------------------------------------레이아웃-----------------------------------------
     private DrawerLayout        drawerLayout;
 
     //-------------------------------------화면에 출력되는 애--------------------------------------
     private TextView            user_name_tv, user_email_tv, user_id_tv_hide, my_status, next_vending;
     private ListView            sc_lv;
-    private Button              ok_button,    close_button;
+    private Button              ok_button, close_button;
     private ImageButton         open_button;                //shortcut에 close버튼을 눌렀을때 나오는 이미지 버튼을 조종한다
     private Get_set_package     get_set_package;            //공통 get set함수를 모아클래스로 만들어 사용한다.
     private DB_conn             db_conn_obj;                //서버의 DB에 접속 할때마다 이 객체를 사용한다.
@@ -762,11 +774,11 @@ MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     //보충해야할 자판기들이 저장되는 배열
     private ArrayList<Marker>   originMarkerlist    = new ArrayList<Marker>();
-    private ArrayList<Marker>   miniMarkerlist    = new ArrayList<Marker>();
+    private ArrayList<Marker>   miniMarkerlist      = new ArrayList<Marker>();
 
     //현재 롱클릭으로 가야할 자판기들이 저장되는 배열
     private ArrayList<Marker>   vending_stack       = new ArrayList<Marker>();
-    private ArrayList<Marker>   mini_stack       = new ArrayList<Marker>();
+    private ArrayList<Marker>   mini_stack          = new ArrayList<Marker>();
 
     //주소는 능동적으로 바뀔 수 있다!
     private String              image_path          =
@@ -786,31 +798,30 @@ MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
         //쓰레드 핸들러(로딩화면을 보이거나 지운다)
         //1,2 오른쪽 로딩창 3.4 왼쪽 로딩창
-        handler = new Handler(){
+        handler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
-                if(msg.what == 1){
+                if (msg.what == 1) {
                     //login_iv에 애니메이션을 넣어 놓는다.(로딩화면 애니메이션)
                     Animation animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.rotate);
                     loading_iv.setAnimation(animation);
                     loading_iv.setVisibility(View.VISIBLE);
-                }else if(msg.what == 2){
+                } else if (msg.what == 2) {
                     //실행중인 애니메이션을 전부 지운다
                     loading_iv.clearAnimation();
                     loading_iv.setVisibility(View.GONE);
-                }else if(msg.what == 3){
+                } else if (msg.what == 3) {
                     //login_iv에 애니메이션을 넣어 놓는다.(로딩화면 애니메이션)
                     Animation animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.rotate);
                     loading_iv_map.setAnimation(animation);
                     loading_iv_map.setVisibility(View.VISIBLE);
-                }else if(msg.what == 4){
+                } else if (msg.what == 4) {
                     //실행중인 애니메이션을 전부 지운다
                     loading_iv_map.clearAnimation();
                     loading_iv_map.setVisibility(View.GONE);
                 }
             }
         };
-
         //-------------------------------인터넷연결 확인/관리 부분-------------------------------
         //인터넷 연결 체크 // 실시간으로 연결되는지 검사한다
         //연결될경우 실시간으로 알려준다.
@@ -849,7 +860,8 @@ MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
             //DrawLayout이 열렸을때 불리는 함수
             @Override
-            public void onDrawerOpened(View drawerView) {}
+            public void onDrawerOpened(View drawerView) {
+            }
 
             //DrawLayout을 닫는 행위를 할 경우
             //보이지않게 한 상태바를 다시 보이게 한다.
@@ -866,14 +878,14 @@ MainActivity extends AppCompatActivity implements OnMapReadyCallback {
         //-----------------------------레이아웃 셋팅 끝--------------------------------------------
 
         //저장소들 id 가져오기!!!!!!
-        my_status       =   (TextView)          findViewById(R.id.my_status);
-        next_vending    =   (TextView)          findViewById(R.id.next_vending);
-        sc_lv           =   (ListView)          findViewById(R.id.sc_lv);
-        ok_button       =   (Button)            findViewById(R.id.ok_button);
-        close_button    =   (Button)            findViewById(R.id.close_button);
-        open_button     =   (ImageButton)       findViewById(R.id.open_button);
-        loading_iv      =   (ImageView)         findViewById(R.id.loading_iv);
-        loading_iv_map  =   (ImageView)         findViewById(R.id.loading_iv_map);
+        my_status       = (TextView)    findViewById(R.id.my_status);
+        next_vending    = (TextView)    findViewById(R.id.next_vending);
+        sc_lv           = (ListView)    findViewById(R.id.sc_lv);
+        ok_button       = (Button)      findViewById(R.id.ok_button);
+        close_button    = (Button)      findViewById(R.id.close_button);
+        open_button     = (ImageButton) findViewById(R.id.open_button);
+        loading_iv      = (ImageView)   findViewById(R.id.loading_iv);
+        loading_iv_map  = (ImageView)   findViewById(R.id.loading_iv_map);
 
 
         //네비게이션뷰 가져오기(왼쪽에서 오른쪽으로 슬라이드 할시, 나오는 창)
@@ -895,7 +907,7 @@ MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
             //보충기사 사진 업데이트
             Picasso.with(this)
-                    .load(image_path+user_info[0]+".png")
+                    .load(image_path + user_info[0] + ".png")
                     //사진이 없을시 여기에 지정한 애로 출력됨
                     .placeholder(R.drawable.face_ex)
                     .into((CircleImageView) hView.findViewById(R.id.user_img_iv));
@@ -1025,7 +1037,7 @@ MainActivity extends AppCompatActivity implements OnMapReadyCallback {
                         if (gmap != null) {
 
                             //GPS추적 버튼이 켜져 있으면 끈다
-                            if(navi_menu.findItem(R.id.GPS_tracking).isChecked()) {
+                            if (navi_menu.findItem(R.id.GPS_tracking).isChecked()) {
 
                                 //토글 같은 느낌 켜져있으면 끄고 꺼져있으면 킨다 ->GPS버튼 끄기
                                 listener.location_button();
@@ -1035,7 +1047,7 @@ MainActivity extends AppCompatActivity implements OnMapReadyCallback {
                             }
 
                             //최초 카메라 위치 잡기 -> 자신의 위치가 갱신 되기전(영진전문대) 위치를 기본으로 시작한다.
-                            gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(33.589862, 130.395222), 14));
+                            gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(33.589862, 130.395222), 13));
 
                         }
                         break;
@@ -1079,7 +1091,6 @@ MainActivity extends AppCompatActivity implements OnMapReadyCallback {
         });
 
 
-
         //자판기(작업지시서) 갱신 버튼 클릭시,
         ok_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1116,9 +1127,9 @@ MainActivity extends AppCompatActivity implements OnMapReadyCallback {
         mapFragment.getMapAsync(this); //최초 한번만 그리기
 
         //미니맵 그리기 OnMapReadyCallBack -> 정상 호출시, onMapReady함수 호출
-        SupportMapFragment minimapFragment = (SupportMapFragment) getSupportFragmentManager()
+        SupportMapFragment minimapFragment2 = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.minimap);
-        minimapFragment.getMapAsync(this); //최초 한번만 그리기
+        minimapFragment2.getMapAsync(this); //최초 한번만 그리기
 
 
     }
@@ -1127,7 +1138,7 @@ MainActivity extends AppCompatActivity implements OnMapReadyCallback {
     public boolean connect_check() {
 
         //현재 사용중인 네트워크를 가져온다.
-        ConnectivityManager cm      = (ConnectivityManager) this.getSystemService(this.CONNECTIVITY_SERVICE);
+        ConnectivityManager cm = (ConnectivityManager) this.getSystemService(this.CONNECTIVITY_SERVICE);
         NetworkInfo activityNetwork = cm.getActiveNetworkInfo();
 
         //네트워크에 연결 되어있는지 확인
@@ -1173,9 +1184,8 @@ MainActivity extends AppCompatActivity implements OnMapReadyCallback {
     //OnMapReadyCallback 오버라이딩 // 구글 맵 로딩하기
     @Override
     public void onMapReady(final GoogleMap googleMap) {
-
         //메인 지도 설정
-        if(gmap == null) {
+        if (gmap == null) {
 
             //기존 맵 객체 가져오기
             gmap = googleMap;
@@ -1194,7 +1204,7 @@ MainActivity extends AppCompatActivity implements OnMapReadyCallback {
         }
 
         //미니맵 지도 설정
-        else{
+        else if (gmap != null && minimap == null) {
 
             //기존 맵 객체 가져오기
             minimap = googleMap;
@@ -1212,13 +1222,13 @@ MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
             //---------------------------------메인 맵 설정-------------------------------------------------------
             //Get_set_package 클래스 생성
-            get_set_package     = new Get_set_package(this, gmap, minimap, originMarkerlist, miniMarkerlist, vending_stack, mini_stack);
+            get_set_package = new Get_set_package(this, gmap, minimap, originMarkerlist, miniMarkerlist, vending_stack, mini_stack);
 
             //마커클릭 이벤트 클래스 생성
             new Mark_click_event(this, gmap, originMarkerlist, user_info[0], handler);
             new Mark_click_event(this, minimap, originMarkerlist, user_info[0], handler);
             //매초 혹은 미터 마다 갱신될 class 생성
-            listener            = new Locationlistener(this, originMarkerlist,miniMarkerlist, vending_stack, mini_stack, gmap, minimap, sc_lv, my_status,next_vending, get_set_package, navi_menu);
+            listener = new Locationlistener(this, originMarkerlist, miniMarkerlist, vending_stack, mini_stack, gmap, minimap, sc_lv, my_status, next_vending, get_set_package, navi_menu);
 
             //마커 최신화 / 갱신
             draw_marker();
@@ -1227,18 +1237,20 @@ MainActivity extends AppCompatActivity implements OnMapReadyCallback {
             //GPS가 켜져있다면 이 함수 실행
             initLocationManager();
 
+        } else {
+            Toast.makeText(this, "Re:", Toast.LENGTH_SHORT).show();
         }
 
-        if(gmap != null && minimap != null) {
+        if (gmap != null && minimap != null) {
             //최초 카메라 위치 잡기 -> 자신의 위치가 갱신 되기전(영진전문대) 위치를 기본으로 시작한다.
-            gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(35.8963510, 128.6219001), 14));
+            gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(35.8963510, 128.6219001), 13));
             minimap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(35.8963510, 128.6219001), 15));
         }
 
     }
 
     //자판기 갱신시, 생길수 있는 로딩시간에 호출되는 함수
-    public void loading(){
+    public void loading() {
         Runnable task;
 
         //핸들러 생성
@@ -1267,26 +1279,25 @@ MainActivity extends AppCompatActivity implements OnMapReadyCallback {
     }
 
     //마커 최신화 / 갱신 -> 새로고침, 자판기 갱신, 보충완료 버튼 클릭시
-    public void draw_marker(){
-
- //----------------------------------로딩화면 생성----------------------------------------
+    public void draw_marker() {
+        //----------------------------------로딩화면 생성----------------------------------------
         Runnable task;
-            //핸들러 생성
-            task = new Runnable() {
-                @Override
-                public void run() {
+        //핸들러 생성
+        task = new Runnable() {
+            @Override
+            public void run() {
 
-                    handler.sendEmptyMessage(1);
-                    try {
-                        //2초 지연
-                        Thread.sleep(2000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    //로딩화면 제거
-                    handler.sendEmptyMessage(2);
+                handler.sendEmptyMessage(1);
+                try {
+                    //2초 지연
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-            };
+                //로딩화면 제거
+                handler.sendEmptyMessage(2);
+            }
+        };
 
         //쓰레드 생성
         Thread thread = new Thread(task);
@@ -1296,21 +1307,32 @@ MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 //---------------------------------------------------------------------------------------
 
         //기존 마커들 지우기
-        if(gmap != null) {
+        if (gmap != null)
             gmap.clear();
+
+        //미니맵도 지우기
+        if(minimap != null)
             minimap.clear();
-        }
 
         //기존 마커들 저장소 지우기
-        if(get_set_package.getOriginMarkerlist() != null || get_set_package.getOriginMarkerlist().size() != 0) {
+        if (get_set_package.getOriginMarkerlist() != null || get_set_package.getOriginMarkerlist().size() != 0) {
             get_set_package.getOriginMarkerlist().clear();
         }
 
-        //다음 가야할 위치 가져오기
-        Marker marker = get_set_package.getNow_Marker();
+        //미니맵 마커도 지우기
+        if (get_set_package.getMini_list() != null || get_set_package.getMini_list().size() != 0) {
+            get_set_package.getMini_list().clear();
+        }
 
-        //만약 마커가 없을경우 넘어간다 //있을경우 제거한다
-        if(marker != null){
+        //다음 가야할 위치 가져와 삭제
+        Marker marker = get_set_package.getNow_Marker();
+        if (marker != null) {
+            marker.remove();
+        }
+
+        //미니맵도 반복 삭제
+        marker = get_set_package.getminiNow_Marker();
+        if (marker != null) {
             marker.remove();
         }
 
@@ -1321,7 +1343,7 @@ MainActivity extends AppCompatActivity implements OnMapReadyCallback {
         findViewById(R.id.next_vending_layout).setVisibility(View.GONE);
 
         //리스너가 있다면
-        if(listener != null) {
+        if (listener != null) {
             //다음 가야할 자판기의 정보 초기화
             listener.setBefore_snippet("");
 
@@ -1345,8 +1367,9 @@ MainActivity extends AppCompatActivity implements OnMapReadyCallback {
             //db_conn_obj.execute("get_markers", user_info[0], str_date);
 
             //특정 날짜를 기준으로 마커를 그리고 싶으면 얘를 쓴다
-            //db_conn_obj.execute("get_markers", user_info[0], "2018-05-16");
-            db_conn_obj.execute("get_markers", user_info[0], "2018-06-05");
+            db_conn_obj.execute("get_markers", user_info[0], "2018-05-16");
+            //db_conn_obj.execute("get_markers", user_info[0], "2018-06-08");
+
             //길찾기 함수 호출(일본에서 경로표시)
             new Directions_Functions(gmap, get_set_package);
 
@@ -1372,7 +1395,7 @@ MainActivity extends AppCompatActivity implements OnMapReadyCallback {
             // } else {
 
             //시연 할때는 내부에서 함으로 NETWORK_PROVIDER를 이용한다
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, listener);
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, listener);
             //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, listener);
             //  }
 

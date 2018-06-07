@@ -57,9 +57,11 @@ public class Get_set_package {
     //다음 가야할 마커 가져오기
     public Marker getNow_Marker() {return next_Marker;}
 
+    //다음 가야할 마커 가져오기
+    public Marker getminiNow_Marker() {return mini_next_Marker;}
+
     //마커 그리기
     public void drawMarkers(LatLng latLng, String vd_name, String vending_info, Integer status, boolean draggable) {
-
         MarkerOptions markerOptions = new MarkerOptions();  //마커 옵션들을 설정할 수있게 해주는 함수 호출\
         markerOptions.position(latLng);                     //마커의 현재 위도와 경도
         markerOptions.title(vd_name);                       //제목(위치의 주소)
@@ -71,18 +73,18 @@ public class Get_set_package {
         //통일되게 사이즈를 재설정하여 아이콘을 만든다.
         if (status == 1) {
             //resize함수로 사이즈를 통일한다
-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("japangi", 80, 90)));
+            //markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("japangi", 80, 90)));
         } else if (status == 2) {
-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("japangi2", 80, 90)));
+            //markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("japangi2", 80, 90)));
         } else if (status == 3) {
-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("japangi3", 80, 90)));
+            //markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("japangi3", 80, 90)));
         } else if (status == -1) {
-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("now", 80, 90)));
+            //markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("now", 80, 90)));
         }else if(status == -2){
-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("next", 80, 90)));
+            //markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("next", 80, 90)));
         }
         else {//없을 경우(예외처리)
-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("x2", 80, 90)));
+            //markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("x2", 80, 90)));
         }
 
         //다음 가야할 자판기를 그려 줄때 호출되는 함수
@@ -91,39 +93,50 @@ public class Get_set_package {
             //다음 가야할 자판기가 이미 그려져 있는 경우 맵에서 지운다.
             if (next_Marker != null) {
                 next_Marker.remove();
-                //mini_next_Marker.remove();
+            }
+
+            //미니맵도 지우기
+            if(mini_next_Marker != null){
+                mini_next_Marker.remove();
             }
 
             //다음 가야할 자판기를 다시 맵에 그린다.
-            next_Marker = googleMap.addMarker(markerOptions);
-           // mini_next_Marker = minimap.addMarker(markerOptions);
+            next_Marker      = googleMap.addMarker(markerOptions);
+            mini_next_Marker = minimap.addMarker(markerOptions);
 
             //다음가야하는 마커들을 저장한 배열
             vending_stack.add(next_Marker);
-           // mini_stack.add(mini_next_Marker);
-
+            mini_stack   .add(mini_next_Marker);
         }
 
         //롱클릭으로 가야할 자판기를 지정 한 경우(2번째 이상)
         else if(status == -2){
             //롱클릭 배열에 저장하며 맵에 그린다
             vending_stack.add(googleMap.addMarker(markerOptions));
-          //  mini_stack.add(minimap.addMarker(markerOptions));
+            mini_stack   .add(minimap.addMarker(markerOptions));
         }
 
         //이외에는 자판기들이 추가 된다!
         else {
             //리스트의 경우 0의자리는 자신의 위치를 나타내므로 더미로 초기화를 시켜준다
+
+            //전체 맵인 경우
             if (originMarkerlist.size() == 0) {
                 originMarkerlist.add(googleMap.addMarker(markerOptions));
-             //   mini_list.add(minimap.addMarker(markerOptions));
+            }
+
+            //미니맵의 경우
+            if(mini_list.size() == 0){
+                mini_list.add(minimap.addMarker(markerOptions));
             }
 
             // 구글맵에 마커 생성 + 마커배열 추가
             originMarkerlist.add(googleMap.addMarker(markerOptions));
-         //   mini_list.add(minimap.addMarker(markerOptions));
+            mini_list       .add(minimap.addMarker(markerOptions));
         }
     }
+
+
 
     //아이콘들의 사이즈 설정
     public Bitmap resizeMapIcons(String iconName, int width, int height) {

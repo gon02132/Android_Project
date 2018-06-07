@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.study.googlemapsandroidapiexample.Main_Page.*;
@@ -321,7 +322,7 @@ public class DB_conn extends AsyncTask<String, Void, String> {
                     else {
                         //json 객체로 변환하여 json배열에 저장
                         JSONObject jsonObject   = new JSONObject(result_String);
-                        JSONArray json_result   = jsonObject.getJSONArray("result");
+                        JSONArray  json_result  = jsonObject.getJSONArray("result");
 
                         //검색된 배열을 순차적으로 돈다
                         for (int i = 0; i < json_result.length(); i++) {
@@ -340,6 +341,8 @@ public class DB_conn extends AsyncTask<String, Void, String> {
 
                             //실제로 마커를 구글맵에 그린다
                             get_set_package.drawMarkers(latLng, json_obj.getString("vd_name"), vending_info, json_obj.getInt("vd_soldout"), false);
+
+                            //get_set_package.temp(latLng, json_obj.getString("vd_name"), vending_info, json_obj.getInt("vd_soldout"), false);
                         }
 
 
