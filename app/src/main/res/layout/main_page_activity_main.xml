@@ -32,14 +32,16 @@
                 android:id="@+id/minimap_side"
                 android:layout_width="202dp"
                 android:layout_height="202dp"
-                app:layout_constraintStart_toStartOf="parent"
+                android:visibility="gone"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:srcCompat="@drawable/now" />
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/minimap_layout"
             android:layout_width="200dp"
             android:layout_height="200dp"
+            android:visibility="gone"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
@@ -71,7 +73,7 @@
                 android:id="@+id/next_vending_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
+                android:layout_marginLeft="5dp"
                 android:layout_marginTop="30dp"
                 android:background="@drawable/second_activity_edge"
                 android:visibility="gone"

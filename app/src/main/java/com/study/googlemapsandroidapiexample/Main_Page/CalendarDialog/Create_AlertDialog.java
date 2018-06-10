@@ -2,19 +2,16 @@ package com.study.googlemapsandroidapiexample.Main_Page.CalendarDialog;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.graphics.Color;
 import android.view.Window;
-import android.widget.Toast;
 
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.CalendarMode;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 import com.study.googlemapsandroidapiexample.DB_conn;
-import com.study.googlemapsandroidapiexample.Main_Page.Order_sheet_alert;
+import com.study.googlemapsandroidapiexample.Main_Page.Order_sheet_item_list.Order_sheet_alert;
 import com.study.googlemapsandroidapiexample.R;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 
 public class Create_AlertDialog {

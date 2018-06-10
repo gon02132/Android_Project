@@ -16,7 +16,12 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyCyE-tzkA5dpRJQuCbsIyS8s3oNrMcZu1Y" />
+            android:value="AIzaSyCyE-tzkA5dpRJQuCbsIyS8s3oNrMcZu1Y"
+            />
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="my_channel_01"/>
 
         <activity android:name=".Login_Page.Login_page_Activity"
             android:screenOrientation="landscape">

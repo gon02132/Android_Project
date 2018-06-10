@@ -1,13 +1,15 @@
 package com.study.googlemapsandroidapiexample.Firebase_Page;
 
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.support.v4.app.NotificationCompat;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -38,26 +40,27 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
-
         //TYPE_NOTIFICATION -> 알림에 사용되는 소리의 유형을 뜻함
         //getDefaultUri -> uri의 특정 기본 벨소리 반환
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-
-
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.japangi)           //알림 영역에 보여질 아이콘
-                .setContentTitle("공지사항")                //알림영역의 제목
-                .setContentText(messageBody)                //알림 영역의 내용
-                .setAutoCancel(true)                        //알림 눌렀을때 자동으로 사라지게 할것인지
-                .setTicker("알림!!")                        //실행시 잠깐 나오는 메세지
-                .setSound(defaultSoundUri)                  //알림시 소리 지정
-                .setContentIntent(pendingIntent);           //눌렀을때 반응해줄 인텐트 지정
-
         //만든 옵션으로 알림을 만들어서 보여지는 곳
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
+
+        Notification.Builder nBuilder = new Notification.Builder(this,"my_channel_01")
+                .setContentTitle("공지사항")                //알림영역의 제목
+                .setContentText(messageBody)                //알림 영역의 내용
+                .setSmallIcon(R.drawable.japangi)           //알림 영역에 보여질 아이콘
+                .setAutoCancel(true)                        //알림 눌렀을때 자동으로 사라지게 할것인지
+                .setTicker("알림!!")                        //실행시 잠깐 나오는 메세지
+                .setContentIntent(pendingIntent);
+
+
+
         //출력!!!!!
-        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+        notificationManager.notify(23 /* ID of notification */, nBuilder.build());
+
     }
+
 }

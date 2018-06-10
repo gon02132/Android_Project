@@ -111,7 +111,7 @@ public class AlertDialog_Custom_dialog {
                                         }
 
 
-                                        Toast.makeText(context, "강제 갱신되었습니다.", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context, "보충 완료 되었습니다.", Toast.LENGTH_SHORT).show();
 
                                         //현재 열려있는 자판기 정보도 닫는다.
                                         dig.dismiss();

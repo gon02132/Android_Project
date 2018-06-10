@@ -1,4 +1,4 @@
-package com.study.googlemapsandroidapiexample.Main_Page;
+package com.study.googlemapsandroidapiexample.Main_Page.Order_sheet_item_list;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -7,10 +7,12 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -24,7 +26,6 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Locale;
 
 //작업지시서 만들어지는 class
@@ -42,8 +43,14 @@ public class Order_sheet_alert {
     private TableRow.LayoutParams   params;
     private Integer                 margin_size = 2;
 
-    //스크롤뷰
+    //자판기와 음료수들의 내용들이 들어가는 스크롤뷰
     private HorizontalScrollView    scroll_view_top, scroll_view_bottom;
+
+    //음료 이름 및 아이콘설명이 들어가는 리스트 뷰
+    private ListView                vd_item_list;
+
+    //제품들의 리스트들을 보여주기 위한 어뎁터
+    private Osil_Adapter            osil_adapter;
 
     //자동차 재고량
     private ArrayList<Integer>      car_stock       = new ArrayList<>();
@@ -82,6 +89,10 @@ public class Order_sheet_alert {
         order_sheet_layout  = dig.findViewById(R.id.order_sheet_layout);
         title_sheet_layout  = dig.findViewById(R.id.title_sheet_layout);
 
+
+        //작업지시서 왼쪽 맨위에 음료들의 설명이 들어가는 리스트뷰
+        vd_item_list = dig.findViewById(R.id.vd_item_list);
+
         //작업지시서의 좌우 스크롤뷰(머리, 몸통 부분)
         scroll_view_top     = (HorizontalScrollView) dig.findViewById(R.id.scroll_view_top);
         scroll_view_bottom  = (HorizontalScrollView) dig.findViewById(R.id.scroll_view_bottom);
@@ -101,8 +112,8 @@ public class Order_sheet_alert {
                 //현재 날짜 구하는 함수 포멧은 ex) 2018-04-25 로 문자열로 변환되어 출력됨
                 SimpleDateFormat df = new SimpleDateFormat("yyy-MM-dd", Locale.KOREA);
                 //String str_date     = df.format(new Date());
-                String str_date     = "2018-05-16";
-                //String str_date     = "2018-06-08";
+                //String str_date     = "2018-05-16";
+                String str_date     = "2018-06-10";
 
                 //db에 접속하여 반환된 결과값 초기화
                 result_str = db_conn_obj.execute("get_order_sheet", user_login_id, str_date).get();
@@ -157,8 +168,8 @@ public class Order_sheet_alert {
                         }
 
                         //현재 소유중인 제품들의 명들을 차례차례 출력한다.
-                        draw_td(1,0, drk_name,false);
-                        //draw_td_image(1,0, drk_name);
+                        //draw_td(1,0, drk_name,false);
+                        draw_td_image(1,0, drk_name);
 
                     }
 
@@ -176,6 +187,12 @@ public class Order_sheet_alert {
                         title_sheet_layout.addView(tr);
                     }
                 }
+
+                //제품들의 이름및 아이콘을 나타내기 위한 어뎁터 생성
+                osil_adapter = new Osil_Adapter(context, product_val);
+
+                //어뎁터에 따른 리스트 뷰 생성
+                vd_item_list.setAdapter(osil_adapter);
 
 //--------------------------------------------몸통 부분 ---------------------------------------------
                 //제품들 가져오기
@@ -462,10 +479,11 @@ public class Order_sheet_alert {
         //여백 지정
         imageView.setPadding(5,5,5,5);
 
+
         //속성이 따로 없을 시,
         if(select == 1){
             //속성 생성
-            params = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
+            params = new TableRow.LayoutParams(70,70);
         }
 
         //특정 위치에 추가하고 싶을 시,
@@ -480,13 +498,15 @@ public class Order_sheet_alert {
         }
 
         //마진 주기
-        params.setMargins(margin_size,margin_size,margin_size,margin_size);
+        params.setMargins(25,margin_size,25,margin_size);
 
         //속성지정
         imageView.setLayoutParams(params);
 
         //값 넣기
-        imageView.setImageResource(R.drawable.test);
+        imageView.setImageResource(R.drawable.japangi2);
+
+        tr.setBackgroundColor(Color.WHITE);
 
         //TR에 넣기
         tr.addView(imageView);

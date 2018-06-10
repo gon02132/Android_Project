@@ -341,9 +341,7 @@ public class DB_conn extends AsyncTask<String, Void, String> {
 
                             //실제로 마커를 구글맵에 그린다
                             get_set_package.drawMarkers(latLng, json_obj.getString("vd_name"), vending_info, json_obj.getInt("vd_soldout"), false);
-
-                            //get_set_package.temp(latLng, json_obj.getString("vd_name"), vending_info, json_obj.getInt("vd_soldout"), false);
-                        }
+                            }
 
 
                         //새로고침하여 저장된 배열을가져온다
@@ -369,6 +367,9 @@ public class DB_conn extends AsyncTask<String, Void, String> {
                             //만약 배열이 일치하지 않는다면 스택배열의 원소는 삭제한다
                             //그리고 반복문도 마저 종료한다(한번에 한개의 자판기만 보충 가능 하기 때문)
                             if(!temp_check){
+                                vending_stack.get(i).remove();
+                                mini_stack.get(i).remove();
+
                                 vending_stack.remove(i);
                                 mini_stack.remove(i);
                                 break;
@@ -389,14 +390,16 @@ public class DB_conn extends AsyncTask<String, Void, String> {
                         //복사한 값을 가지고 마커를 그린다(vending_stack배열에 다시 차곡차곡 쌓임)
                         for(int i=0; i<temp_stack.size(); i++){
 
-                            //첫번째 원소인경우 빨간색으로 그린다
+                            //첫번째 원소인경우 특정 색으로 그린다
                             if(i == 0){
                                 get_set_package.drawMarkers(temp_stack.get(i).getPosition(), temp_stack.get(i).getTitle(), temp_stack.get(i).getSnippet(), -1, false);
+                                get_set_package.draw_minimap_marker(temp_stack.get(i).getPosition(), temp_stack.get(i).getTitle(), temp_stack.get(i).getSnippet(), 1, false);
                             }
 
-                            //두번째 원소인 경우 파란색으로 그린다
+                            //두번째 이상 원소인 경우 첫번째와 다른 색으로 그린다
                             else{
                                 get_set_package.drawMarkers(temp_stack.get(i).getPosition(), temp_stack.get(i).getTitle(), temp_stack.get(i).getSnippet(), -2, false);
+                                get_set_package.draw_minimap_marker(temp_stack.get(i).getPosition(), temp_stack.get(i).getTitle(), temp_stack.get(i).getSnippet(), 2, false);
                             }
                         }
 

@@ -1,6 +1,11 @@
 package com.study.googlemapsandroidapiexample.Login_Page;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -34,9 +39,17 @@ public class Login_page_Activity extends AppCompatActivity implements View.OnCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
         //파이어베이스에 토큰을 저장(알림을 위한 기능)
         FirebaseMessaging.getInstance().subscribeToTopic("news");
-
+        NotificationChannel mChannel = new NotificationChannel("my_channel_01",getString(R.string.common_google_play_services_notification_channel_name), NotificationManager.IMPORTANCE_LOW);
+        mChannel.setDescription("channel description");
+        mChannel.enableLights(true);
+        mChannel.setLightColor(Color.RED);
+        mChannel.enableVibration(true);
+        mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+        mChannel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+        notificationManager.createNotificationChannel(mChannel);
 
         //이전에 로그인 했는지 확인 하기 위한 class 생성
         share_login_info_obj = new Share_login_info(this);
