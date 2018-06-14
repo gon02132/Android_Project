@@ -40,13 +40,10 @@ public class Order_sheet_alert{
     //기본 변수들
     private Context                 context;
     private String                  user_login_id;
-    private String                  date_String;                    //특정날자를 검색 했을 시, 이 날자로 검색한다
-    private int                     check_bg_color      = 0;        //배경색을 구별 해주기 위해 사용
-    private boolean                 swap_bg_color       = true;     //한줄한줄 배경을 다르게 해주는 애
-    private int                     now_page_print_val  = 0;        //현재 페이지에 가로로 몇개씩 출력되는지
-
-    //레이아웃 크기를 동적으로 조절하기위해 생성
-    private LinearLayout            top_layout, bottom_layout, total_layout;
+    private String                  date_String;                        //특정날자를 검색 했을 시, 이 날자로 검색한다
+    private int                     check_bg_color          = 0;        //배경색을 구별 해주기 위해 사용
+    private boolean                 swap_bg_color           = true;     //한줄한줄 배경을 다르게 해주는 애
+    private int                     now_page_print_val      = 0;        //현재 페이지에 가로로 몇개씩 출력되는지
 
     //테이블 속성 관련 변수 들
     private TextView                textView;
@@ -57,10 +54,10 @@ public class Order_sheet_alert{
     private ImageView               now_page_icon;
 
     //현재 페이지의 위치를 위한 Integer, 테이블 td,tr 간의 간격을 조절 해주기 위한 Integer
-    private Integer                 now_page, margin_size = 2;
+    private Integer                 now_page, margin_size   = 2;
 
     //DB값을 최초한번 저장하고 재사용 하기위한 변수
-    private String              result_str = "";
+    private String                  result_str              = "";
 
     //다이얼로그 관리 변수
     private Dialog                  dig;
@@ -75,25 +72,25 @@ public class Order_sheet_alert{
     private Osil_Adapter            osil_adapter;
 
     //자동차 재고량
-    private ArrayList<Integer>      car_stock       = new ArrayList<>();
+    private ArrayList<Integer>      car_stock               = new ArrayList<>();
     //제품 이름들이 들어갈 배열
-    private ArrayList<String>       product_val     = new ArrayList<>();
+    private ArrayList<String>       product_val             = new ArrayList<>();
     //제품 보충 필요량 합계가 들어갈 배열
-    private ArrayList<Integer>      product_count   = new ArrayList<>();
+    private ArrayList<Integer>      product_count           = new ArrayList<>();
 
 
     //-------------------------------------생성자----------------------------------
     public Order_sheet_alert(Context context, String user_login_id){
-        this.context        = context;
-        this.user_login_id  = user_login_id;
-        this.date_String    = "";
+        this.context                = context;
+        this.user_login_id          = user_login_id;
+        this.date_String            = "";
     }
 
     //---생성자 오버로딩-- 특정 날짜를 클릭하여 보는 작업지시서의 경우
     public Order_sheet_alert(Context context, String user_login_id, String date){
-        this.context               = context;
-        this.user_login_id         = user_login_id;
-        this.date_String           = date;
+        this.context                = context;
+        this.user_login_id          = user_login_id;
+        this.date_String            = date;
     }
 
     //테이블 생성!
@@ -101,11 +98,6 @@ public class Order_sheet_alert{
     public void create_table(final int now_page, final int recycle) {
         if(recycle == 0) {
             //-----------------------------------초기화 부분 -------------------------------------------
-
-            //레이아웃 크기를 동적으로 조절하기위해 생성
-            //top_layout      = dig.findViewById(R.id.top_layout);
-            //bottom_layout   = dig.findViewById(R.id.bottom_layout);
-            //total_layout    = dig.findViewById(R.id.total_layout);
 
             //class변수에 초기화 한다
             this.now_page = now_page;
@@ -129,34 +121,37 @@ public class Order_sheet_alert{
             dig.getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00000000")));
 
             //작업지시서 왼쪽 맨위에 음료들의 설명이 들어가는 리스트뷰
-            vd_item_list = dig.findViewById(R.id.vd_item_list);
+            vd_item_list        = dig.findViewById(R.id.vd_item_list);
 
             //작업지시서 레이아웃
-            order_sheet_layout = dig.findViewById(R.id.order_sheet_layout);
-            title_sheet_layout = dig.findViewById(R.id.title_sheet_layout);
-            total_sheet_layout = dig.findViewById(R.id.total_sheet_layout);
+            order_sheet_layout  = dig.findViewById(R.id.order_sheet_layout);
+            title_sheet_layout  = dig.findViewById(R.id.title_sheet_layout);
+            total_sheet_layout  = dig.findViewById(R.id.total_sheet_layout);
 
             //작업지시서의 좌우 스크롤뷰(머리, 몸통 부분)
-            scroll_view_top = (HorizontalScrollView) dig.findViewById(R.id.scroll_view_top);
-            scroll_view_bottom = (HorizontalScrollView) dig.findViewById(R.id.scroll_view_bottom);
-            scroll_view_total = (HorizontalScrollView) dig.findViewById(R.id.scroll_view_total);
+            scroll_view_top     = (HorizontalScrollView) dig.findViewById(R.id.scroll_view_top);
+            scroll_view_bottom  = (HorizontalScrollView) dig.findViewById(R.id.scroll_view_bottom);
+            scroll_view_total   = (HorizontalScrollView) dig.findViewById(R.id.scroll_view_total);
 
             //왼쪽으로 페이지 이동을 위한 ImageButton
-            angle_left = (ImageButton) dig.findViewById(R.id.angle_left);
+            angle_left          = (ImageButton) dig.findViewById(R.id.angle_left);
 
             //오른쪽으로 페이지 이동을 위한 ImageButton
-            angle_right = (ImageButton) dig.findViewById(R.id.angle_right);
+            angle_right         = (ImageButton) dig.findViewById(R.id.angle_right);
 
             //맨밑에 현재 페이지를 나타내는 Image view
-            now_page_icon = (ImageView) dig.findViewById(R.id.now_page_icon);
+            now_page_icon       = (ImageView) dig.findViewById(R.id.now_page_icon);
 
             //"<"버튼 클릭시,
             angle_left.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
+                    //테이블들의 모든 자식들을 지운다
                     order_sheet_layout.removeAllViews();
                     title_sheet_layout.removeAllViews();
 
+                    //세로로 회색줄을 구분하기 위한 변수들
                     swap_bg_color   = true;
                     check_bg_color  = 0;
 
@@ -175,7 +170,7 @@ public class Order_sheet_alert{
                 @Override
                 public void onClick(View v) {
 
-                    //테이블의 모든 원소를 지운다
+                    //테이블들의 모든 자식들을 지운다
                     order_sheet_layout.removeAllViews();
                     title_sheet_layout.removeAllViews();
 
@@ -193,6 +188,7 @@ public class Order_sheet_alert{
         }
 
         else{
+            //테이블들의 모든 자식들을 삭제한다.
             order_sheet_layout.removeAllViews();
             title_sheet_layout.removeAllViews();
             total_sheet_layout.removeAllViews();
@@ -328,10 +324,10 @@ public class Order_sheet_alert{
 
         //TextView 생성
         textView = new TextView(context);
-        textView.setTypeface(Typeface.createFromAsset(context.getAssets(), font));
-        textView.setTextSize(text_size);
-
-        textView.setBackgroundColor(Color.parseColor(bg_color));
+        textView.setTypeface(Typeface.createFromAsset(context.getAssets(), font));  //폰트 설정
+        textView.setTextSize(text_size);                                            //텍스트 사이즈 설정
+        textView.setLetterSpacing((float)-0.05);                                    //자간 설정
+        textView.setBackgroundColor(Color.parseColor(bg_color));                    //배경색 설정
 
         //1,2페이지에서 각 칸마다 구별을 주기위해(세로로 배경색 색칠)
         if(!bg_color.equals("#0064c8") && str.length() < 4 && now_page != 3){
@@ -358,6 +354,7 @@ public class Order_sheet_alert{
 
         }
 
+        //고정 바인경우 색상을 흰색으로 바꾼다.
         if(bg_color.equals("#0064c8")){
             textView.setTextColor(Color.parseColor("#FFFFFF"));
         }
@@ -524,7 +521,7 @@ public class Order_sheet_alert{
                         tr = new TableRow(context);
 
                         //"자판기 명" TD 생성
-                        draw_td(3,600, "Vending Machine\nName","#0064c8", 16, "fonts/Futura Bold font.ttf", false);
+                        draw_td(3,600, "Vending Machine\nName","#0064c8", 16, "fonts/Futura Heavy font.ttf", false);
 
                         //첫페이지냐 두번째 페이지냐에 따라 시작점이 틀려짐
                         int for_i = (now_page == 1) ? 0 : 6;
@@ -697,22 +694,7 @@ public class Order_sheet_alert{
                                 for(int j=0; j<product_val.size(); j++){
                                     one_line_list.set(j, -1);
                                 }
-/*
-                            if(tr != null){
-                                order_sheet_layout.addView(tr);
-                            }
 
-                            //테이블의 TR태그를 만든다
-                            tr = new TableRow(context);
-
-                            //자판기 이름 출력
-                            //만약 보충 완료된 자판기라면 가운데줄 추가 / 아니라면 추가X
-                            if(json_object.getInt("sp_check") == 1) {
-                                draw_td(1,0,json_object.getString("vd_name"),true);
-                            }else {
-                                draw_td(1, 0, json_object.getString("vd_name"), false);
-                            }
-                            */
                         }
 
                         //보충이 완료되었는지 체크
@@ -721,16 +703,9 @@ public class Order_sheet_alert{
 //---------------------------몸통)자판기 숫자(보충 필요 량) 들어가는 곳--------------------------------
 
                         one_line_list.set(product_val.indexOf(now_val), json_object.getInt("sp_val"));
-                        //만약 보충완료된 자판기라면 중앙선을 긋는다.
-                        if(sp_check_int == 1) {
-                            //보충 필요량 출력 TD 생성
-                            //draw_td(2,product_val.indexOf(now_val) + 1,json_object.getString("sp_val"),true);
-                        }
-                        else {
-                            //보충 필요량 출력 TD 생성
-                            //draw_td(2, product_val.indexOf(now_val) + 1, json_object.getString("sp_val"),false);
 
-                            //보충 미완료 자판기만 계속 합을 구한다.
+                        //보충 미완료 자판기만 계속 합을 구한다.
+                        if(sp_check_int != 1) {
                             Integer before_count = product_count.get(product_val.indexOf(now_val));
                             product_count.set(product_val.indexOf(now_val), before_count + json_object.getInt("sp_val"));
                         }
@@ -738,6 +713,7 @@ public class Order_sheet_alert{
                         //이전 자판기 변수를 현재자판기로 바꾼다
                         before_vending = now_vending;
 
+                        //값을 전부 받아 왔을 때(배열에 전부 저장 되었을 경우) 실행
                         if(i == json_result.length()-1){
 
                             //첫페이지냐 두번째 페이지냐에 따라 시작점이 틀려짐
@@ -763,15 +739,22 @@ public class Order_sheet_alert{
                                 draw_td(3,600,now_vending,"#FFFFFF", 12,"fonts/YoonGothic750.ttf", (sp_check_int == 1) ? true : false);
 
 
+                            //받아온 값만큼 출력한다(제품 수량 부분)
                             for(int j=for_j; j<result_arr_size; j++){
+
                                 if(one_line_list.get(j) == -1) {
                                     draw_td(1, 0, "-", "#FFFFFF", 16,"fonts/Futura Heavy Italic font.ttf", (sp_check_int == 1) ? true : false);
                                 }else{
                                     draw_td(1, 0, one_line_list.get(j).toString(), "#FFFFFF", 16,"fonts/Futura Heavy Italic font.ttf", (sp_check_int == 1) ? true : false);
                                 }
+
                             }
+
+                            //테이블에 tr을 넣는다
                             order_sheet_layout.addView(tr);
+
                         }
+
                     }
 
                     //첫페이지냐 두번째 페이지냐에 따라 시작점이 틀려짐
@@ -799,13 +782,13 @@ public class Order_sheet_alert{
                         //합계 글자 TD 생성
                         draw_td(3, 600, "보충 필요량 합계", "#0064c8", 13,"fonts/YoonGothic760.ttf", false);
 
+                        //지정된 횟수만큼 합계의 수량들을  출력한다.
                         for (int j = for_j; j < result_arr_size; j++) {
-
                             //합계 TD 만들기
                             draw_td(1, 0, product_count.get(j) + "", "#0064c8", 20,"fonts/Futura Heavy Italic font.ttf", false);
-
                         }
 
+                        //고정바와 메인바 둘 다 적용 시킨다
                         if(i == 0) {
                             //테이블에 TR 적용
                             order_sheet_layout.addView(tr);
@@ -813,26 +796,8 @@ public class Order_sheet_alert{
                             //테이블에 TR 적용
                             total_sheet_layout.addView(tr);
                         }
+
                     }
-
-
-
-/*
-                    //첫페이지냐 두번째 페이지냐에 따라 시작점이 틀려짐
-                    int for_j = (now_page == 1) ? 0 : 6;
-
-                    //한화면에 출력되는 양을 조절하기 위함
-                    int result_arr_size = (product_val.size() > 6) ? 6:product_val.size();
-
-                    //테이블의 TR태그를 만든다
-                    tr = new TableRow(context);
-
-                    for(int j=for_j; j<result_arr_size; j++){
-                        draw_td(1,0,one_line_list.get(j).toString(),one_line_check.get(j));
-                    }
-                    order_sheet_layout.addView(tr);
-*/
-                    //order_sheet_layout.addView(tr);
                     break;
 
                 case 3:
@@ -849,9 +814,9 @@ public class Order_sheet_alert{
 
     //토탈 부분 생성 및 출력
     public void draw_total(String result_str, int now_page){
-        String before_vending  = "";
-        String now_vending  = "";
-        String save_note ="";
+        String before_vending   = "";
+        String now_vending      = "";
+        String save_note        = "";
 
         //보충이 완료된 자판기인지 아닌지 구분해준다.
         int    sp_check_int = 1;
@@ -865,18 +830,23 @@ public class Order_sheet_alert{
 
                 case 1:
                 case 2:
+                    //맨밑 고정바를 보이게 한다
                     if(total_sheet_layout.getVisibility() == View.GONE)
                         total_sheet_layout.setVisibility(View.VISIBLE);
+
                     break;
 
                 case 3:
+                    //맨 밑 고정바를 숨긴다.
                     if(total_sheet_layout.getVisibility() == View.VISIBLE)
                         total_sheet_layout.setVisibility(View.GONE);
+
                     //제품들 가져오기
                     JSONArray  json_result = jsonObject.getJSONArray("result");
 
                     //받아온 값만큼 반복한다.
                     for(int i = 0; i < json_result.length(); i++){
+
                         //sp_name, vd_name, drink_name, drink_path, sp_val, drink_line, note, sp_check 가 저장되어 있음
                         JSONObject json_object  = json_result.getJSONObject(i);
 
@@ -915,6 +885,7 @@ public class Order_sheet_alert{
 
                         //만약 작업지시가 있다면 작업지시 저장String에 저장 해 둔다.
                         if(note != null && !note.equals(" ") && !note.equals("null")) {
+
                             //작업지시가 여러번 있을수 있는데, 만약 그중 첫번째 작업 지시 인 경우
                             if(save_note.equals("") || save_note.equals(" ")){
                                 save_note = json_object.getString("note");

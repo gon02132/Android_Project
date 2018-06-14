@@ -1,47 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
 
+<!-- id찾기 화면 -->
+<android.support.constraint.ConstraintLayout
+    xmlns:android                               = "http://schemas.android.com/apk/res/android"
+    xmlns:app                                   = "http://schemas.android.com/apk/res-auto"
+    xmlns:tools                                 = "http://schemas.android.com/tools"
+    android:layout_width                        = "match_parent"
+    android:layout_height                       = "match_parent">
+
+    <!-- 정렬을 위한 가이드라인 -->
     <android.support.constraint.Guideline
-        android:id="@+id/guideline10"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="100dp" />
+        android:id                              = "@+id/guideline10"
+        android:layout_width                    = "wrap_content"
+        android:layout_height                   = "wrap_content"
+        android:orientation                     = "horizontal"
+        app:layout_constraintGuide_begin        = "100dp" />
 
+    <!-- 이름 입력 란 -->
     <EditText
-        android:id="@+id/serch_name_et"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:ems="10"
-        android:hint="name"
-        android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline10" />
+        android:id                              = "@+id/serch_name_et"
+        android:layout_width                    = "wrap_content"
+        android:layout_height                   = "wrap_content"
+        android:layout_marginEnd                = "8dp"
+        android:layout_marginStart              = "8dp"
+        android:ems                             = "10"
+        android:hint                            = "name"
+        android:inputType                       = "textPersonName"
+        app:layout_constraintEnd_toEndOf        = "parent"
+        app:layout_constraintStart_toStartOf    = "parent"
+        app:layout_constraintTop_toTopOf        = "@+id/guideline10" />
 
+    <!-- id찾기 버튼 -->
     <Button
-        android:id="@+id/serch_bt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="serch"
-        app:layout_constraintEnd_toStartOf="@+id/back_bt"
-        app:layout_constraintStart_toStartOf="@+id/serch_name_et"
-        app:layout_constraintTop_toBottomOf="@+id/serch_name_et" />
+        android:id                              = "@+id/serch_bt"
+        android:layout_width                    = "wrap_content"
+        android:layout_height                   = "wrap_content"
+        android:layout_marginStart              = "8dp"
+        android:text                            = "serch"
+        app:layout_constraintEnd_toStartOf      = "@+id/back_bt"
+        app:layout_constraintStart_toStartOf    = "@+id/serch_name_et"
+        app:layout_constraintTop_toBottomOf     = "@+id/serch_name_et" />
 
+    <!-- 뒤로가기 버튼 -->
     <Button
-        android:id="@+id/back_bt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="back"
-        app:layout_constraintEnd_toEndOf="@+id/serch_name_et"
-        app:layout_constraintStart_toEndOf="@+id/serch_bt"
-        app:layout_constraintTop_toBottomOf="@+id/serch_name_et" />
+        android:id                              = "@+id/back_bt"
+        android:layout_width                    = "wrap_content"
+        android:layout_height                   = "wrap_content"
+        android:text                            = "back"
+        app:layout_constraintEnd_toEndOf        = "@+id/serch_name_et"
+        app:layout_constraintStart_toEndOf      = "@+id/serch_bt"
+        app:layout_constraintTop_toBottomOf     = "@+id/serch_name_et" />
 
 </android.support.constraint.ConstraintLayout>

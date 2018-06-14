@@ -1,26 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="horizontal"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="1dp"
-    android:background="#000000"
+
+<!-- 자판기 아이콘의 설명 해주는 레이아웃(아이템) -->
+<!-- orderseet_table_view.xml에 그려짐-->
+<LinearLayout
+    xmlns:android               = "http://schemas.android.com/apk/res/android"
+    xmlns:app                   = "http://schemas.android.com/apk/res-auto"
+    android:orientation         = "horizontal"
+    android:layout_width        = "match_parent"
+    android:layout_height       = "match_parent"
+    android:padding             = "1dp"
+    android:background          = "#000000"
     >
 
+    <!-- 아이콘 이미지 뷰 -->
     <ImageView
-        android:id="@+id/drink_icon"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:background="#FFFFFF"
-        app:srcCompat="@drawable/japangi" />
+        android:id              = "@+id/drink_icon"
+        android:layout_width    = "20dp"
+        android:layout_height   = "20dp"
+        android:background      = "#FFFFFF"
+        app:srcCompat           = "@drawable/japangi" />
 
+    <!-- 아이콘 이름 텍스트 뷰 -->
     <TextView
-        android:id="@+id/drink_name"
-        android:layout_width="110dp"
-        android:layout_height="wrap_content"
-        android:background="#FFFFFF"
-        android:text="TextView" />
+        android:id              = "@+id/drink_name"
+        android:layout_width    = "110dp"
+        android:layout_height   = "wrap_content"
+        android:background      = "#FFFFFF"
+        android:text            = "TextView" />
 
 
 </LinearLayout>

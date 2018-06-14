@@ -1,80 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_weight="10">
 
+<!-- 자판기 클릭시 나오는 화면  alert-->
+<!-- alertdialog_first_item.xml, alertdialog_list_item.xml 폼으로 커스터마이징-->
+<LinearLayout
+    xmlns:android                       = "http://schemas.android.com/apk/res/android"
+    android:orientation                 = "vertical"
+    android:layout_width                = "match_parent"
+    android:layout_height               = "match_parent"
+    android:layout_weight               = "10">
+
+    <!-- 리스트업과 버튼들을 나눠서 버튼은 리스트업에 해당 안되도록 한다 -->
     <LinearLayout
-        android:layout_width="400dp"
-        android:layout_height="0dp"
-        android:layout_weight="8"
-        android:orientation="vertical">
+        android:layout_width            = "400dp"
+        android:layout_height           = "0dp"
+        android:layout_weight           = "8"
+        android:orientation             = "vertical">
 
+        <!-- 현재 자판기 이름 출력 텍스트 뷰 -->
         <TextView
-            android:id="@+id/vending_name"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="#566270"
-            android:gravity="center"
-            android:text="자판기 명"
-            android:textColor="#FFFFFF"
-            android:textSize="16dp" />
+            android:id                  = "@+id/vending_name"
+            android:layout_width        = "match_parent"
+            android:layout_height       = "50dp"
+            android:background          = "#566270"
+            android:gravity             = "center"
+            android:text                = "자판기 명"
+            android:textColor           = "#FFFFFF"
+            android:textSize            = "16dp" />
 
+        <!-- 구분자(가로 줄 긋기) -->
         <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#84B4CD" />
+            android:layout_width        ="match_parent"
+            android:layout_height       ="1dp"
+            android:background          ="#84B4CD" />
 
+        <!-- 현재 자판기의 음료 리스트들 -->
         <ListView
-            android:id="@+id/item_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:id                  ="@+id/item_list"
+            android:layout_width        ="match_parent"
+            android:layout_height       ="match_parent" />
+
     </LinearLayout>
 
+    <!-- 버튼이 출력되는 레이아웃 -->
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2"
-        android:orientation="vertical">
+        android:layout_width            = "match_parent"
+        android:layout_height           = "0dp"
+        android:layout_weight           = "2"
+        android:orientation             = "vertical">
 
-
+        <!-- 몰래 숨겨 놓은 vd_id -->
         <TextView
-            android:id="@+id/vd_id"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:text="" />
+            android:id                  = "@+id/vd_id"
+            android:layout_width        = "match_parent"
+            android:layout_height       = "wrap_content"
+            android:visibility          = "gone"
+            android:text                = "" />
 
+        <!-- 버튼을 가로로 출력하기 위한 레이아웃 -->
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:layout_width        = "match_parent"
+            android:layout_height       = "match_parent"
+            android:orientation         = "horizontal">
 
+            <!-- 보충 완료 버튼 -->
             <Button
-                android:id="@+id/okButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="#566270"
-                android:layout_margin="5dp"
-                android:gravity="center"
-                android:text="보충 완료"
-                android:textColor="#FFFFFF"
-                android:textSize="16dp" />
+                android:id              = "@+id/okButton"
+                android:layout_width    = "match_parent"
+                android:layout_height   = "wrap_content"
+                android:layout_weight   = "1"
+                android:background      = "#566270"
+                android:layout_margin   = "5dp"
+                android:gravity         = "center"
+                android:text            = "보충 완료"
+                android:textColor       = "#FFFFFF"
+                android:textSize        = "16dp" />
 
 
+            <!-- 취소(뒤로가기) 버튼 -->
             <Button
-                android:id="@+id/cancelButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="#566270"
-                android:layout_margin="5dp"
-                android:gravity="center"
-                android:text="취소"
-                android:textColor="#FFFFFF"
-                android:textSize="16dp" />
+                android:id              = "@+id/cancelButton"
+                android:layout_width    = "match_parent"
+                android:layout_height   = "wrap_content"
+                android:layout_weight   = "1"
+                android:background      = "#566270"
+                android:layout_margin   = "5dp"
+                android:gravity         = "center"
+                android:text            = "취소"
+                android:textColor       = "#FFFFFF"
+                android:textSize        = "16dp" />
+
         </LinearLayout>
+
     </LinearLayout>
 
 </LinearLayout>

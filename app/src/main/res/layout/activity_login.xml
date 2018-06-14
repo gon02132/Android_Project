@@ -1,90 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!-- 로그인 메인페이지 -->
 <android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.study.googlemapsandroidapiexample.Login_Page.Login_page_Activity">
+    xmlns:android                               = "http://schemas.android.com/apk/res/android"
+    android:layout_width                        = "match_parent"
+    android:layout_height                       = "match_parent"
+    xmlns:app                                   = "http://schemas.android.com/apk/res-auto"
+    xmlns:tools                                 = "http://schemas.android.com/tools"
+    tools:context                               = "com.study.googlemapsandroidapiexample.Login_Page.Login_page_Activity">
 
+    <!-- 정렬을 위한 가이드라인 -->
     <android.support.constraint.Guideline
-        android:id="@+id/guideline11"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="100dp" />
+        android:id                              = "@+id/guideline11"
+        android:layout_width                    = "wrap_content"
+        android:layout_height                   = "wrap_content"
+        android:orientation                     = "horizontal"
+        app:layout_constraintGuide_begin        = "100dp" />
 
-
+    <!-- id 입력 창 -->
     <EditText
-        android:id="@+id/id_et"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="ID"
-        android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline11" />
+        android:id                              = "@+id/id_et"
+        android:layout_width                    = "wrap_content"
+        android:layout_height                   = "wrap_content"
+        android:ems                             = "10"
+        android:hint                            = "ID"
+        android:inputType                       = "textPersonName"
+        app:layout_constraintEnd_toEndOf        = "parent"
+        app:layout_constraintStart_toStartOf    = "parent"
+        app:layout_constraintTop_toTopOf        = "@+id/guideline11" />
 
+    <!-- 비밀번호 입력창 -->
     <EditText
-        android:id="@+id/pass_et"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:ems="10"
-        android:hint="PASS"
-        android:inputType="textPassword"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/id_et" />
+        android:id                              = "@+id/pass_et"
+        android:layout_width                    = "wrap_content"
+        android:layout_height                   = "wrap_content"
+        android:layout_marginTop                = "10dp"
+        android:ems                             = "10"
+        android:hint                            = "PASS"
+        android:inputType                       = "textPassword"
+        app:layout_constraintEnd_toEndOf        = "parent"
+        app:layout_constraintStart_toStartOf    = "parent"
+        app:layout_constraintTop_toBottomOf     = "@+id/id_et" />
 
+    <!-- 로그인 버튼 -->
     <Button
-        android:id="@+id/login_bt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="Login"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pass_et" />
+        android:id                              = "@+id/login_bt"
+        android:layout_width                    = "wrap_content"
+        android:layout_height                   = "wrap_content"
+        android:layout_marginTop                = "10dp"
+        android:text                            = "Login"
+        app:layout_constraintEnd_toEndOf        = "parent"
+        app:layout_constraintStart_toStartOf    = "parent"
+        app:layout_constraintTop_toBottomOf     = "@+id/pass_et" />
 
+    <!-- 가로 구분 선 -->
     <view
-        android:id="@+id/line"
-        class="android.support.v7.widget.ActionMenuView"
-        id="@+id/view"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_marginTop="10dp"
-        android:background="#999999"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/login_bt" />
+        android:id                              = "@+id/line"
+        class                                   = "android.support.v7.widget.ActionMenuView"
+        id                                      = "@+id/view"
+        android:layout_width                    = "match_parent"
+        android:layout_height                   = "2dp"
+        android:layout_marginTop                = "10dp"
+        android:background                      = "#999999"
+        app:layout_constraintEnd_toEndOf        = "parent"
+        app:layout_constraintStart_toStartOf    = "parent"
+        app:layout_constraintTop_toBottomOf     = "@+id/login_bt" />
 
+    <!-- id 찾기 버튼 -->
     <Button
-        android:id="@+id/id_serch_bt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="ID찾기"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/pass_serch_bt"
-        app:layout_constraintTop_toBottomOf="@+id/line" />
+        android:id                              = "@+id/id_serch_bt"
+        android:layout_width                    = "wrap_content"
+        android:layout_height                   = "wrap_content"
+        android:text                            = "ID찾기"
+        app:layout_constraintStart_toStartOf    = "parent"
+        app:layout_constraintEnd_toStartOf      = "@+id/pass_serch_bt"
+        app:layout_constraintTop_toBottomOf     = "@+id/line" />
 
+    <!-- 비밀번호 찾기 버튼 -->
     <Button
-        android:id="@+id/pass_serch_bt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="비밀번호 찾기"
-        app:layout_constraintStart_toEndOf="@+id/id_serch_bt"
-        app:layout_constraintEnd_toStartOf="@+id/create_id_bt"
-        app:layout_constraintTop_toBottomOf="@+id/line" />
+        android:id                              = "@+id/pass_serch_bt"
+        android:layout_width                    = "wrap_content"
+        android:layout_height                   = "wrap_content"
+        android:text                            = "비밀번호 찾기"
+        app:layout_constraintStart_toEndOf      = "@+id/id_serch_bt"
+        app:layout_constraintEnd_toStartOf      = "@+id/create_id_bt"
+        app:layout_constraintTop_toBottomOf     = "@+id/line" />
 
+    <!-- 회원가입 버튼 -->
     <Button
-        android:id="@+id/create_id_bt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="회원가입"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/pass_serch_bt"
-        app:layout_constraintTop_toBottomOf="@+id/line" />
+        android:id                              = "@+id/create_id_bt"
+        android:layout_width                    = "wrap_content"
+        android:layout_height                   = "wrap_content"
+        android:text                            = "회원가입"
+        app:layout_constraintEnd_toEndOf        = "parent"
+        app:layout_constraintStart_toEndOf      = "@+id/pass_serch_bt"
+        app:layout_constraintTop_toBottomOf     = "@+id/line" />
 
 </android.support.constraint.ConstraintLayout>

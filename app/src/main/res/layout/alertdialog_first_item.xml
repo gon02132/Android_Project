@@ -1,25 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="55dp"
-    android:background="#dddddd"
-    android:orientation="horizontal"
-    android:padding="1dp">
 
+<!-- 작업 지시서가 출력되는 공간 -->
+<!-- alertdialog_custom_dialog.xml에 그려짐-->
+<LinearLayout
+    xmlns:android                   = "http://schemas.android.com/apk/res/android"
+    xmlns:app                       = "http://schemas.android.com/apk/res-auto"
+    android:layout_width            = "match_parent"
+    android:layout_height           = "55dp"
+    android:background              = "#dddddd"
+    android:orientation             = "horizontal"
+    android:padding                 = "1dp">
+
+    <!-- 가로로에 하나의 작업지시서가 나오게 한다 -->
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:layout_width        = "match_parent"
+        android:layout_height       = "match_parent"
+        android:orientation         = "horizontal">
 
+        <!-- 작업 지시가 들어가는 텍스트 뷰 -->
         <TextView
-            android:id="@+id/note"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#ffffff"
-            android:gravity="center_vertical"
-            android:padding="3dp"
-            android:text="ProductName" />
+            android:id              = "@+id/note"
+            android:layout_width    = "match_parent"
+            android:layout_height   = "match_parent"
+            android:background      = "#ffffff"
+            android:gravity         = "center_vertical"
+            android:padding         = "3dp"
+            android:text            = "ProductName" />
 
     </LinearLayout>
 

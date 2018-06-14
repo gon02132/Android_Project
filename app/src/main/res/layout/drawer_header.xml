@@ -1,70 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="160dp">
 
+<!-- ->쪽으로 슬라이드 했을때 나오는 창 -->
+<android.support.constraint.ConstraintLayout
+    xmlns:android                               = "http://schemas.android.com/apk/res/android"
+    xmlns:app                                   = "http://schemas.android.com/apk/res-auto"
+    xmlns:tools                                 = "http://schemas.android.com/tools"
+    android:layout_width                        = "match_parent"
+    android:layout_height                       = "160dp">
 
+    <!-- 뒷 배경 사진 -->
     <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:srcCompat="@drawable/drawer_hader_bg_img"
-        android:scaleType="fitXY"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        android:id                              = "@+id/imageView2"
+        android:layout_width                    = "match_parent"
+        android:layout_height                   = "match_parent"
+        app:srcCompat                           = "@drawable/drawer_hader_bg_img"
+        android:scaleType                       = "fitXY"
+        app:layout_constraintStart_toStartOf    = "parent"
+        app:layout_constraintTop_toTopOf        = "parent"/>
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+    <!-- 보충기사의 정보가 들어가는 레이아웃 -->
+    <LinearLayout
+        xmlns:android                           = "http://schemas.android.com/apk/res/android"
+        xmlns:app                               = "http://schemas.android.com/apk/res-auto"
+        android:orientation                     = "vertical"
+        android:layout_width                    = "match_parent"
+        android:layout_height                   = "match_parent"
+        app:layout_constraintStart_toStartOf    = "parent"
+        app:layout_constraintTop_toTopOf        = "parent">
 
+        <!-- 보충기사 사진 -->
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/user_img_iv"
-            android:layout_width="80dp"
-            android:layout_height="70dp"
-            android:layout_marginTop="43dp"
-            android:layout_marginStart="10dp"
-            app:civ_border_width="2dp"
-            app:civ_border_color="#ffffff"
-            android:src="@drawable/face_ex"/>
+            android:id                          = "@+id/user_img_iv"
+            android:layout_width                = "80dp"
+            android:layout_height               = "70dp"
+            android:layout_marginTop            = "43dp"
+            android:layout_marginStart          = "10dp"
+            app:civ_border_width                = "2dp"
+            app:civ_border_color                = "#ffffff"
+            android:src                         = "@drawable/face_ex"/>
 
-
+        <!-- 보충기사의 이름, 이메일이 세로로 한줄 씩 들어가는 레이아웃 -->
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_width                = "wrap_content"
+            android:layout_height               = "wrap_content"
+            android:orientation                 = "vertical">
 
+            <!-- 보충기사 이름 텍스트 뷰 -->
             <TextView
-                android:id="@+id/user_name_tv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_weight="1"
-                android:text="Android Studio"
-                android:textColor="#FFFFFF"
-                android:textSize="15dp"
-                android:textStyle="bold" />
+                android:id                      = "@+id/user_name_tv"
+                android:layout_width            = "match_parent"
+                android:layout_height           = "wrap_content"
+                android:layout_marginTop        = "8dp"
+                android:layout_weight           = "1"
+                android:text                    = "Android Studio"
+                android:textColor               = "#FFFFFF"
+                android:textSize                = "15dp"
+                android:textStyle               = "bold" />
 
+            <!-- 보충기사 이메일 텍스트 뷰 -->
             <TextView
-                android:id="@+id/user_email_tv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="android.studio@android.com"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+                android:id                      = "@+id/user_email_tv"
+                android:layout_width            = "match_parent"
+                android:layout_height           = "wrap_content"
+                android:layout_weight           = "1"
+                android:text                    = "android.studio@android.com"
+                android:textAppearance          = "@style/TextAppearance.AppCompat.Body1"/>
 
+            <!-- 유저 id를 숨겨서 보관 -->
             <TextView
-                android:id="@+id/user_id_tv_hide"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0"
-                android:visibility="gone"
-                android:text="" />
+                android:id                      = "@+id/user_id_tv_hide"
+                android:layout_width            = "wrap_content"
+                android:layout_height           = "wrap_content"
+                android:layout_weight           = "0"
+                android:visibility              = "gone"
+                android:text                    = "" />
+
         </LinearLayout>
+
     </LinearLayout>
+
 </android.support.constraint.ConstraintLayout>
