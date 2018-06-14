@@ -31,7 +31,7 @@ public class AlertDialog_MyListAdapter extends BaseAdapter {
         this.list_item_Arraylist    = list_item_Arraylist;
 
         //이미지를 가져오기위해 서버의 주소를 가져온다
-        img_url = "http://13.125.134.167/";
+        img_url = "http://52.78.198.67/";
     }
 
     //데이터 총 갯수 지정

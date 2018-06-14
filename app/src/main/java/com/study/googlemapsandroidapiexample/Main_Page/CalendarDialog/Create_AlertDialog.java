@@ -86,7 +86,7 @@ public class Create_AlertDialog {
 
                 //custom alert 보여주기 클래스 생성(작업지시서) / 함수 실행
                 Order_sheet_alert order_sheet_alert = new Order_sheet_alert(context, user_login_id, result);
-                order_sheet_alert.create_table();
+                order_sheet_alert.create_table(1, 0);
 
                 //현재 열려있는 자판기 정보도 닫는다.
                 dig.dismiss();

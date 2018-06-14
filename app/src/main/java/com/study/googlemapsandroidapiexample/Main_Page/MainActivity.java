@@ -162,7 +162,7 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
 
         //스택 자판기가 특정 m안에 자판기가 없는경우
         if (vending_stack.size() < 1 ||
-                get_set_package.getmeter(originMarkerlist.get(0).getPosition(), vending_stack.get(0).getPosition()) > 300) {
+                get_set_package.getmeter(originMarkerlist.get(0).getPosition(), vending_stack.get(0).getPosition()) > 443) {
 
             //특정 m밖에 있다면 미니맵을 없앤다
             if ((((Activity) context).findViewById(R.id.minimap_side)).getVisibility() == View.VISIBLE) {
@@ -503,7 +503,7 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
         boolean abs_check;
 
         //범위를 1~5까지 준다(작은 수부터 미세하게 검색하며 찾아낸다)
-        for (int i = 1; i < 200; i++) {
+        for (int i = 1; i < 270; i++) {
 
             //찾고자하는 실수값 이 저장되는 변수
             double parse_num;
@@ -984,7 +984,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                         //custom alert 보여주기 클래스 생성(작업지시서) / 함수 실행
                         Order_sheet_alert order_sheet_alert = new Order_sheet_alert(MainActivity.this, user_info[0]);
-                        order_sheet_alert.create_table();
+                        order_sheet_alert.create_table(1,0);
 
                         break;
 
@@ -1044,7 +1044,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             }
 
                             //최초 카메라 위치 잡기 -> 자신의 위치가 갱신 되기전(영진전문대) 위치를 기본으로 시작한다.
-                            gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(33.589862, 130.395222), 13));
+                            gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(33.589862, 130.395222), 15));
 
                         }
                         break;
@@ -1350,7 +1350,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             //특정 날짜를 기준으로 마커를 그리고 싶으면 얘를 쓴다
             //db_conn_obj.execute("get_markers", user_info[0], "2018-05-16");
-            db_conn_obj.execute("get_markers", user_info[0], "2018-06-10");
+            db_conn_obj.execute("get_markers", user_info[0], "2018-06-15");
 
             //길찾기 함수 호출(일본에서 경로표시)
             new Directions_Functions(gmap, get_set_package);

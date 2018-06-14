@@ -3,18 +3,27 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@android:color/transparent"
+    android:layout_marginTop="30dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
 
     <ListView
         android:id="@+id/vd_item_list"
         android:layout_width="130dp"
         android:layout_height="match_parent"
+        android:visibility="gone"
+        android:background="@android:color/transparent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />
 
+    <!-- 위의 리스트 뷰의 visivilty를 없애고 화면에 표시하고 싶은 경우
+     밑의 tag의 주석을 풀고 그밑의 tag를 주석처리한다.
+     + 밑에 드래그해서 내려보면 다른거 하나 더있는데 그거도 같은 방식으로 풀어야함
+     + Order_shhet_item_list폴더의 Order_sheet_alert파일의 어뎁터 생성 객체 주석도 풀어야함
+     -->
+<!--
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical"
         android:layout_marginStart="130dp"
@@ -22,33 +31,91 @@
         android:layout_height="300dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+        -->
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/bottom_con_layout"
+        android:layout_width="510dp"
+        android:layout_height="300dp"
+        android:layout_marginStart="50dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/bottom_layout"
+            android:orientation="vertical"
+            android:layout_width="500dp"
+            android:layout_height="250dp"
+            android:background="@android:color/transparent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <HorizontalScrollView
+                    android:id="@+id/scroll_view_bottom"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TableLayout
+                        android:id="@+id/order_sheet_layout"
+                        android:background="#FFFFFF"
+                        android:padding="5dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+                    </TableLayout>
+
+                </HorizontalScrollView>
+            </ScrollView>
+        </LinearLayout>
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/total_layout"
+            android:orientation="vertical"
+            android:layout_width="500dp"
+            android:layout_height="50dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/bottom_layout">
 
             <HorizontalScrollView
-                android:id="@+id/scroll_view_bottom"
+                android:id="@+id/scroll_view_total"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent">
 
                 <TableLayout
-                    android:id="@+id/order_sheet_layout"
-                    android:background="#77Af9C"
-                    android:padding="5dp"
+                    android:id="@+id/total_sheet_layout"
+                    android:background="#0064c8"
+                    android:paddingLeft="5dp"
+                    android:paddingTop="10dp"
+                    android:paddingRight="5dp"
+                    android:paddingBottom="5dp"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
                 </TableLayout>
 
             </HorizontalScrollView>
-        </ScrollView>
-    </LinearLayout>
 
+        </LinearLayout>
+
+    </android.support.constraint.ConstraintLayout>
+
+    <!--
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical"
         android:layout_marginStart="130dp"
         android:layout_width="500dp"
         android:layout_height="300dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+-->
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/top_layout"
+        android:orientation="vertical"
+        android:layout_width="500dp"
+        android:layout_height="63dp"
+        android:layout_marginStart="50dp"
+        android:background="@android:color/transparent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -59,7 +126,7 @@
 
             <TableLayout
                 android:id="@+id/title_sheet_layout"
-                android:background="#285943"
+                android:background="#0064c8"
                 android:padding="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
@@ -68,5 +135,57 @@
         </HorizontalScrollView>
 
     </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/order_exit"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="50dp"
+        android:layout_marginStart="500dp"
+        app:srcCompat="@drawable/exit"
+        android:scaleType="fitXY"
+        android:background="@android:color/transparent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <ImageButton
+        android:id="@+id/angle_left"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="50dp"
+        android:layout_marginEnd="500dp"
+        app:srcCompat="@drawable/angle_left"
+        android:scaleType="fitXY"
+        android:background="@android:color/transparent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+
+    <ImageButton
+        android:id="@+id/angle_right"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="50dp"
+        android:layout_marginStart="500dp"
+        app:srcCompat="@drawable/angle_right"
+        android:scaleType="fitXY"
+        android:background="@android:color/transparent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+
+    <ImageView
+        android:id="@+id/now_page_icon"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        app:srcCompat="@drawable/fir_page"
+        android:background="@android:color/transparent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
 
 </android.support.constraint.ConstraintLayout>

@@ -50,7 +50,7 @@ public class DB_conn extends AsyncTask<String, Void, String> {
     private MaterialCalendarView materialCalendarView;           //달력에 여러 작업을 하기위한 viee ->CalendarDialog/Create_AlertDialog
 //--------------------------------------------------------------------------------------------------
     //받아올 php 경로 선택 1:aws 2:autoset
-    private String              link = "http://13.125.134.167/android_db_conn_source/conn.php";
+    private String              link = "http://52.78.198.67/android_db_conn_source/conn.php";
     //String link  = "http://172.25.1.26/android_db_conn_source/conn.php";
 
     //HTTP커넥션
@@ -474,7 +474,6 @@ public class DB_conn extends AsyncTask<String, Void, String> {
 
                                 //실제 반복문을 도는 알맹이를 배열로 가져온다
                                 JSONArray json_result   = jsonObject.getJSONArray("result");
-                                Log.e("<><>",json_result.toString());
 
                                 //검색된 배열을 순차적으로 돈다
                                 for (int i = 0; i < json_result.length(); i++) {
@@ -552,11 +551,9 @@ public class DB_conn extends AsyncTask<String, Void, String> {
                 break;
 
             case "get_order_sheet":
-                Log.e("<><>",result_String);
                 break;
 
             case "insert_vending":
-                Log.e("<><>",result_String+"/<>/");
                 break;
 
             case "token":
