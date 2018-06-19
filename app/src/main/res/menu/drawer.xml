@@ -1,45 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!-- 오른쪽으로 슬라이드 했을 때 나오는 창의 옵션들-->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:title="Settings">
         <menu>
             <item
-                android:id="@+id/GPS_tracking"
-                android:icon="@drawable/ic_place"
-                android:title="GPS Tracking On/Off" />
+                android:id      ="@+id/GPS_tracking"
+                android:icon    ="@drawable/ic_place"
+                android:title   ="GPS Tracking On/Off" />
             <item
-                android:id="@+id/Closest_V-machine_tracking"
-                android:icon="@drawable/ic_image"
-                android:title="V-machine Tracking On/Off" />
+                android:id      ="@+id/Closest_V-machine_tracking"
+                android:icon    ="@drawable/ic_image"
+                android:title   ="V-machine Tracking On/Off" />
         </menu>
     </item>
 
     <item android:title="Menu">
         <menu>
             <item
-                android:id="@+id/order_list"
-                android:icon="@drawable/ic_attachment"
-                android:title="작업지시서 보기" />
+                android:id      = "@+id/order_list"
+                android:icon    = "@drawable/ic_attachment"
+                android:title   = "작업지시서 보기" />
 
             <item
-                android:id="@+id/serch_order_list"
-                android:icon="@drawable/calendar"
-                android:title="작업지시서 찾기" />
+                android:id      = "@+id/serch_order_list"
+                android:icon    = "@drawable/calendar"
+                android:title   = "작업지시서 찾기" />
 
             <item
-                android:id="@+id/refrash_order_list"
-                android:icon="@drawable/ic_image"
-                android:title="작업지시서 갱신 하기" />
+                android:id      = "@+id/refrash_order_list"
+                android:icon    = "@drawable/ic_image"
+                android:title   = "작업지시서 갱신 하기" />
 
             <item
-                android:id="@+id/go_japan"
-                android:icon="@drawable/ic_attachment"
-                android:title="Go japan" />
+                android:id      = "@+id/go_japan"
+                android:icon    = "@drawable/ic_attachment"
+                android:title   = "Go japan" />
 
             <item
-                android:id="@+id/Logout"
-                android:icon="@drawable/ic_done"
-                android:title="Logout" />
+                android:id      = "@+id/Logout"
+                android:icon    = "@drawable/ic_done"
+                android:title   = "Logout" />
         </menu>
     </item>
 

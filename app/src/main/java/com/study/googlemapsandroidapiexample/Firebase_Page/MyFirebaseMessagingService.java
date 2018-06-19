@@ -6,15 +6,13 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
-import com.study.googlemapsandroidapiexample.Login_Page.Login_page_Activity;
 import com.study.googlemapsandroidapiexample.R;
+import com.study.googlemapsandroidapiexample.splash_activity;
 
 //push알람이 왔을 때 실제로 푸쉬알람의 옵션을 설정해 만들어주는 class
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
@@ -29,7 +27,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     //알림form을 만들어 보여준다.
     private void sendNotification(String messageBody) {
         //보여줄 Class 를 Intent로 지정
-        Intent intent = new Intent(this, Login_page_Activity.class);
+        Intent intent = new Intent(this, splash_activity.class);
+
+        //작업지시서로 접근 한다는 것을 알려준다
+        intent.putExtra("go_order_sheet","go");
 
         //이전 Activity 삭제하고 새로운 class 생성
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -43,11 +44,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         //TYPE_NOTIFICATION -> 알림에 사용되는 소리의 유형을 뜻함
         //getDefaultUri -> uri의 특정 기본 벨소리 반환
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
         //만든 옵션으로 알림을 만들어서 보여지는 곳
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
 
+        //보낼 양식 지정
         Notification.Builder nBuilder = new Notification.Builder(this,"my_channel_01")
                 .setContentTitle("공지사항")                //알림영역의 제목
                 .setContentText(messageBody)                //알림 영역의 내용

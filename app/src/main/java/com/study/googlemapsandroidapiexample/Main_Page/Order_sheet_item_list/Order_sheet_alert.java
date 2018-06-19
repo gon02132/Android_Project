@@ -10,21 +10,19 @@ import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.study.googlemapsandroidapiexample.R;
 import com.study.googlemapsandroidapiexample.DB_conn;
+import com.study.googlemapsandroidapiexample.R;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -47,7 +45,7 @@ public class Order_sheet_alert{
 
     //테이블 속성 관련 변수 들
     private TextView                textView;
-    private ImageButton             angle_left, angle_right;
+    private ImageButton             angle_left, angle_right, order_exit;
     private TableLayout             order_sheet_layout, title_sheet_layout, total_sheet_layout;
     private TableRow                tr;
     private TableRow.LayoutParams   params;
@@ -133,6 +131,9 @@ public class Order_sheet_alert{
             scroll_view_bottom  = (HorizontalScrollView) dig.findViewById(R.id.scroll_view_bottom);
             scroll_view_total   = (HorizontalScrollView) dig.findViewById(R.id.scroll_view_total);
 
+            //페이지를 다가기위한 ImageButton
+            order_exit          = (ImageButton) dig.findViewById(R.id.order_exit) ;
+
             //왼쪽으로 페이지 이동을 위한 ImageButton
             angle_left          = (ImageButton) dig.findViewById(R.id.angle_left);
 
@@ -141,6 +142,15 @@ public class Order_sheet_alert{
 
             //맨밑에 현재 페이지를 나타내는 Image view
             now_page_icon       = (ImageView) dig.findViewById(R.id.now_page_icon);
+
+            //"X"버튼 클릭시,
+            order_exit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //현재 화면을 나간다 -> 메인화면으로
+                    dig.dismiss();
+                }
+            });
 
             //"<"버튼 클릭시,
             angle_left.setOnClickListener(new View.OnClickListener() {
@@ -173,6 +183,10 @@ public class Order_sheet_alert{
                     //테이블들의 모든 자식들을 지운다
                     order_sheet_layout.removeAllViews();
                     title_sheet_layout.removeAllViews();
+
+                    //세로로 회색줄을 구분하기 위한 변수들
+                    swap_bg_color   = true;
+                    check_bg_color  = 0;
 
                     //예외처리) 광클시 3이상 올라가는데 이를 막기위함, 이외에는 정상 접근이므로 ++를 해준다
                     if(Order_sheet_alert.this.now_page > 3){
@@ -261,9 +275,9 @@ public class Order_sheet_alert{
 
                 //현재 날짜 구하는 함수 포멧은 ex) 2018-04-25 로 문자열로 변환되어 출력됨
                 SimpleDateFormat df = new SimpleDateFormat("yyy-MM-dd", Locale.KOREA);
-                //String str_date     = df.format(new Date());
+                String str_date     = df.format(new Date());
                 //String str_date     = "2018-05-16";
-                String str_date = "2018-06-15";
+                //String str_date = "2018-06-15";
 
                 //db에 접속하여 반환된 결과값 초기화
                 result_str = db_conn_obj.execute("get_order_sheet", user_login_id, str_date).get();
@@ -344,13 +358,15 @@ public class Order_sheet_alert{
                 swap_bg_color = !swap_bg_color;
             }
 
+            check_bg_color++;
+
             //출력되는 수량이 홀 수인경우 짝수와 같은 출력효과를 내도록 해준다.
             if(check_bg_color % now_page_print_val == 0 && now_page_print_val % 2 == 1){
                 swap_bg_color = !swap_bg_color;
             }
 
             //구분자는 계속 ++한다
-            check_bg_color++;
+            //check_bg_color++;
 
         }
 
@@ -463,7 +479,7 @@ public class Order_sheet_alert{
         //값 넣기
         //imageView.setImageResource(R.drawable.japangi2);
             com.squareup.picasso.Picasso.with(context)
-                    .load("http://52.78.198.67/images/drink/"+img_select+"_icon.png")
+                    .load("http://52.78.198.67/images/drink/"+img_select+"_back.png")
                     .into(imageView);
 
 
@@ -561,6 +577,7 @@ public class Order_sheet_alert{
                         if(a==0){
                             //테이블에 TR을 적용시킨다.
                             order_sheet_layout.addView(tr);
+
                         }
                         else if(a==1){
                             //테이블에 TR을 적용시킨다.
@@ -578,10 +595,10 @@ public class Order_sheet_alert{
                         tr = new TableRow(context);
 
                         //"자판기 명" TD 생성
-                        draw_td(3,600, "Vending Machine\nName","#0064c8", 16, "fonts/futur_0.ttf", false);
+                        draw_td(3,600, "Vending Machine\nName","#0064c8", 16, "fonts/Futura Heavy font.ttf", false);
 
                         //"작업 지시" TD 생성
-                        draw_td(3,700, "작업 지시","#0064c8", 16, "fonts/futur_0.ttf", false);
+                        draw_td(3,700, "작업 지시","#0064c8", 16, "fonts/Futura Heavy font.ttf", false);
 
                         //반복문마다 다른 레이아아웃에 추가
                         if(a==0){
@@ -689,6 +706,12 @@ public class Order_sheet_alert{
 
                                 }
 
+                                //줄 긋기(위아래 TR 구분선)
+                                View v = new View(context);
+                                v.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT,3));
+                                v.setBackgroundColor(Color.parseColor("#000000"));
+                                order_sheet_layout.addView(v);
+
                                 order_sheet_layout.addView(tr);
 
                                 for(int j=0; j<product_val.size(); j++){
@@ -749,6 +772,13 @@ public class Order_sheet_alert{
                                 }
 
                             }
+
+                            //줄 긋기(위아래 TR 구분선)
+                            View v = new View(context);
+                            v.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT,3));
+                            v.setBackgroundColor(Color.parseColor("#000000"));
+
+                            order_sheet_layout.addView(v);
 
                             //테이블에 tr을 넣는다
                             order_sheet_layout.addView(tr);
@@ -864,14 +894,21 @@ public class Order_sheet_alert{
 
                             //자판기 이름 출력
                             //보충완료 자판기인지 아닌자판기인지에 따라 결과값을 다르게 출력한다.
-                            draw_td(1,0,before_vending,"#FFFFFF", 11,"fonts/YoonGothic750.ttf", (sp_check_int == 1) ? true : false);
+                            draw_td(1,0,before_vending,"#FFFFFF", 12,"fonts/YoonGothic750.ttf", (sp_check_int == 1) ? true : false);
 
                             //작업지시 내용 출력
                             if(save_note.equals("") || save_note.equals(" ")) {
-                                draw_td(1, 0, "-", "#FFFFFF", 11, "fonts/YoonGothic750.ttf", (sp_check_int == 1) ? true : false);
+                                draw_td(1, 0, "-", "#FFFFFF", 16, "fonts/Futura Heavy Italic font.ttf", (sp_check_int == 1) ? true : false);
                             }else {
-                                draw_td(1, 0, save_note, "#FFFFFF", 11, "fonts/YoonGothic750.ttf", (sp_check_int == 1) ? true : false);
+                                draw_td(1, 0, save_note, "#FFFFFF", 16, "fonts/Futura Heavy Italic font.ttf", (sp_check_int == 1) ? true : false);
                             }
+
+                            //줄 긋기(위아래 TR 구분선)
+                            View v = new View(context);
+                            v.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT,3));
+                            v.setBackgroundColor(Color.parseColor("#000000"));
+                            order_sheet_layout.addView(v);
+
                             //tr을 테이블에 저장
                             order_sheet_layout.addView(tr);
 
@@ -906,14 +943,20 @@ public class Order_sheet_alert{
 
                             //자판기 이름 출력
                             //보충완료 자판기인지 아닌자판기인지에 따라 결과값을 다르게 출력한다.
-                            draw_td(1,0,before_vending,"#FFFFFF", 11,"fonts/YoonGothic750.ttf", (sp_check_int == 1) ? true : false);
+                            draw_td(1,0,before_vending,"#FFFFFF", 12,"fonts/YoonGothic750.ttf", (sp_check_int == 1) ? true : false);
 
                             //작업지시 내용 출력
                             if(save_note.equals("") || save_note.equals(" ")) {
-                                draw_td(1, 0, "-", "#FFFFFF", 11, "fonts/YoonGothic750.ttf", (sp_check_int == 1) ? true : false);
+                                draw_td(1, 0, "-", "#FFFFFF", 16, "fonts/Futura Heavy Italic font.ttf", (sp_check_int == 1) ? true : false);
                             }else {
-                                draw_td(1, 0, save_note, "#FFFFFF", 11, "fonts/YoonGothic750.ttf", (sp_check_int == 1) ? true : false);
+                                draw_td(1, 0, save_note, "#FFFFFF", 16, "fonts/Futura Heavy Italic font.ttf", (sp_check_int == 1) ? true : false);
                             }
+
+                            //줄 긋기(위아래 TR 구분선)
+                            View v = new View(context);
+                            v.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT,3));
+                            v.setBackgroundColor(Color.parseColor("#000000"));
+                            order_sheet_layout.addView(v);
 
                             //tr을 테이블에 저장
                             order_sheet_layout.addView(tr);

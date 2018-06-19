@@ -27,8 +27,6 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
         // 햔재 토큰 검색(DB에 토큰 저장됨)
         String token = FirebaseInstanceId.getInstance().getToken();
 
-        Log.e("<><>",token + " //1");
-
         //현재 토큰으로 http통신(POST전송) 하는 함수
         sendRegistrationToServer(token);
     }

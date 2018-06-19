@@ -73,25 +73,25 @@ public class Directions_Functions extends FragmentActivity{
 
     private String getRequestUrl(LatLng origin, LatLng dest) {
         //Value of origin
-        String str_org = "origin=" + origin.latitude +","+origin.longitude;
+        String str_org  = "origin=" + origin.latitude +","+origin.longitude;
         //Value of destination
         String str_dest = "destination=" + dest.latitude+","+dest.longitude;
         //Set value enable the sensor
-        String sensor = "sensor=false";
+        String sensor   = "sensor=false";
         //Mode for find direction
-        String mode = "mode=driving";
+        String mode     = "mode=driving";
         //Build the full param
-        String param = str_org +"&" + str_dest + "&" +sensor+"&" +mode;
+        String param    = str_org +"&" + str_dest + "&" +sensor+"&" +mode;
         //Output format
-        String output = "json";
+        String output   = "json";
         //Create url to request
-        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + param;
+        String url      = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + param;
         return url;
     }
 
     private String requestDirection(String reqUrl) throws IOException {
-        String responseString = "";
-        InputStream inputStream = null;
+        String responseString               = "";
+        InputStream inputStream             = null;
         HttpURLConnection httpURLConnection = null;
         try{
             URL url = new URL(reqUrl);
@@ -99,12 +99,12 @@ public class Directions_Functions extends FragmentActivity{
             httpURLConnection.connect();
 
             //Get the response result
-            inputStream = httpURLConnection.getInputStream();
+            inputStream                         = httpURLConnection.getInputStream();
             InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            BufferedReader bufferedReader       = new BufferedReader(inputStreamReader);
 
-            StringBuffer stringBuffer = new StringBuffer();
-            String line = "";
+            StringBuffer stringBuffer   = new StringBuffer();
+            String line                 = "";
             while ((line = bufferedReader.readLine()) != null) {
                 stringBuffer.append(line);
             }
@@ -162,12 +162,12 @@ public class Directions_Functions extends FragmentActivity{
 
         @Override
         protected List<List<HashMap<String, String>>> doInBackground(String... strings) {
-            JSONObject jsonObject = null;
+            JSONObject jsonObject                       = null;
             List<List<HashMap<String, String>>> routes = null;
             try {
-                jsonObject = new JSONObject(strings[0]);
-                DirectionsParser directionsParser = new DirectionsParser();
-                routes = directionsParser.parse(jsonObject);
+                jsonObject                          = new JSONObject(strings[0]);
+                DirectionsParser directionsParser   = new DirectionsParser();
+                routes                              = directionsParser.parse(jsonObject);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -183,7 +183,7 @@ public class Directions_Functions extends FragmentActivity{
             PolylineOptions polylineOptions = null;
 
             for (List<HashMap<String, String>> path : lists) {
-                points = new ArrayList();
+                points          = new ArrayList();
                 polylineOptions = new PolylineOptions();
 
                 for (HashMap<String, String> point : path) {

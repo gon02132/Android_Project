@@ -13,4 +13,9 @@
 
     </style>
 
+    <!-- 메인페이지 로딩시 사용되는 스타일 -->
+    <style name = "SplashTheme" parent = "AppTheme">
+        <item name = "android:windowBackground">@drawable/splash</item>
+    </style>
+
 </resources>

@@ -4,10 +4,12 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.util.Log;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,7 +26,8 @@ public class AlertDialog_Custom_dialog {
     private TextView                            title, vd_id;               //제목, vd_id(hide) 저장공간
     private ListView                            item_list;                  //상품 목록
     private ArrayList<AlertDialog_list_item>    list_itemArrayList;         //배열(상품 목록 출력에 관한)
-    private Button                              ok_bt, cancel_bt;           //갱신 과 취소버튼
+    private Button                              ok_bt;                      //갱신버튼
+    private ImageButton                         cancel_bt;                  //취소버튼
     private String                              vending_name, vd_id_str;    //자판기 이름, 자판기 id
     private String                              user_login_id;              //보충기사 로그인 아이디
     private AlertDialog_MyListAdapter           myListAdapter;              //custom어뎁터
@@ -44,6 +47,9 @@ public class AlertDialog_Custom_dialog {
 
         //Dialog 객체 생성
         final Dialog dig = new Dialog(context);
+
+        //배경을 투명색으로 바꾼다.
+        dig.getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00000000")));
 
         //타이틀제거(타이틀의 공간차지 방지)
         dig.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -125,7 +131,7 @@ public class AlertDialog_Custom_dialog {
         });
 
         //취소 버튼 클릭 시 -> 현재 보고 있는 창을 닫는다.
-        cancel_bt = (Button)dig.findViewById(R.id.cancelButton);
+        cancel_bt = (ImageButton)dig.findViewById(R.id.cancelButton);
         cancel_bt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

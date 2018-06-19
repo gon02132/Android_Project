@@ -31,6 +31,7 @@ public class Create_user_Acitivty extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_user);
 
+        // 초기화 하기(변수, onclick)!
         id_input_et       = (EditText)findViewById(R.id.id_input_tv);       //ID 입력 란
         name_et           = (EditText)findViewById(R.id.name_et);           //name 입력 란
         email_et          = (EditText)findViewById(R.id.emil_et);           //email 입력 란

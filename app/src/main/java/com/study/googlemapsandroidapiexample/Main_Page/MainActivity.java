@@ -6,21 +6,26 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.AbsoluteSizeSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,13 +33,11 @@ import android.view.View;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -42,18 +45,18 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.squareup.picasso.Picasso;
+import com.study.googlemapsandroidapiexample.DB_conn;
+import com.study.googlemapsandroidapiexample.Login_Page.Login_page_Activity;
+import com.study.googlemapsandroidapiexample.Login_Page.Share_login_info;
+import com.study.googlemapsandroidapiexample.Main_Page.CalendarDialog.Create_AlertDialog;
+import com.study.googlemapsandroidapiexample.Main_Page.Order_sheet_item_list.Order_sheet_alert;
+import com.study.googlemapsandroidapiexample.R;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
-
-import com.squareup.picasso.Picasso;
-import com.study.googlemapsandroidapiexample.Main_Page.CalendarDialog.Create_AlertDialog;
-import com.study.googlemapsandroidapiexample.Main_Page.Order_sheet_item_list.Order_sheet_alert;
-import com.study.googlemapsandroidapiexample.R;
-import com.study.googlemapsandroidapiexample.Login_Page.*;
-import com.study.googlemapsandroidapiexample.DB_conn;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -61,7 +64,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickListener {
 
     private GoogleMap           gmap, minimap;                  //구글 지도
-    private TextView            my_status, next_vending;        //내 정보(왼쪽 위에 표시되는 tv), 다음 자판기까지의 거리
+
+    //나의 정보들4개, 다음 자판기까지의 거리
+    private TextView            now_addr,now_speed,
+                                vd_val, next_vd_name,
+                                next_vending;
+
     private Context             context;                        //MainActivity this
     private Get_set_package     get_set_package;                //내가 만든 getset패키지 함수!
     private Marker              closestMarker;                  //가장 가까운 마커(다음 가야할 자판기), 가장 가까운 자판기 temp
@@ -73,6 +81,8 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
     private ArrayList<Marker>   mini_stack;                     //현재 미닌맵의 롱클릭으로 가야할 자판기들이 저장되는 배열
 
     private String              before_snippet = "";            //db접속을 최소화 하기위한 String
+
+    public  String              now_vd_id      = "";            //쇼트컷에 쓰이는 현재 자판기의 id
 
     private Location            lastlocation;                   //최초 한번만 update되는 함수가 호출되어
     //생기는 에러를 방지하기위한 변수
@@ -95,19 +105,30 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
     private boolean refresh                                 = false;
 
     //생성자
-    public Locationlistener(Context context, ArrayList<Marker> originMarkerlist, ArrayList<Marker> vending_stack, ArrayList<Marker> mini_stack, GoogleMap gmap, GoogleMap minimap, ListView sc_lv, TextView my_status, TextView next_vending, Get_set_package get_set_package, Menu navi_menu) {
+    public Locationlistener(Context context, ArrayList<Marker> originMarkerlist, ArrayList<Marker> vending_stack, ArrayList<Marker> mini_stack, GoogleMap gmap, GoogleMap minimap, ListView sc_lv, TextView next_vending, Get_set_package get_set_package, Menu navi_menu) {
 
         this.originMarkerlist   = originMarkerlist;
         this.mini_stack         = mini_stack;
         this.gmap               = gmap;
         this.minimap            = minimap;
         this.sc_lv              = sc_lv;
-        this.my_status          = my_status;
         this.next_vending       = next_vending;
         this.context            = context;
         this.get_set_package    = get_set_package;
         this.navi_menu          = navi_menu;
         this.vending_stack      = vending_stack;
+
+        //나의 정보들이 출력될 공간들
+        now_addr = (TextView)((MainActivity) context).findViewById(R.id.now_addr);
+        now_speed = (TextView)((MainActivity) context).findViewById(R.id.now_speed);
+        vd_val   = (TextView)((MainActivity) context).findViewById(R.id.vd_val);
+        next_vd_name = (TextView)((MainActivity) context).findViewById(R.id.next_vd_name);
+
+        //폰트 설정
+        now_addr    .setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/YoonGothic750.ttf"));
+        now_speed   .setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/YoonGothic750.ttf"));
+        vd_val      .setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/YoonGothic750.ttf"));
+        next_vd_name.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/YoonGothic750.ttf"));
 
         //맵이 전부 로딩된 이후 롱클릭 이벤트 활성화
         gmap.setOnMapLongClickListener(this);
@@ -231,13 +252,27 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
 
                 //추적된 자판기가 특정 m안에 자판기가 있는경우
                 if (vending_stack.size() > 0 ||
-                        get_set_package.getmeter(originMarkerlist.get(0).getPosition(), closestMarker.getPosition()) < 300) {
+                        get_set_package.getmeter(originMarkerlist.get(0).getPosition(), closestMarker.getPosition()) < 443) {
 
                     //미니맵을 보이게 한다. -> 왼쪽 위 레이아웃
                     if ((((Activity) context).findViewById(R.id.minimap_side)).getVisibility() == View.GONE) {
                         ((MainActivity) context).findViewById(R.id.minimap_side).setVisibility(View.VISIBLE);
                         ((MainActivity) context).findViewById(R.id.minimap_layout).setVisibility(View.VISIBLE);
                     }
+
+                    //보충완료,닫기버튼을 보이게 한다.(강제형변환으로 액티비티를 접근한다. ->이게 최선이에요 ㅠㅠ)
+                    //순서대로 : 열기버튼,sortcutlayout,확인버튼,닫기버튼
+                    if ((((Activity) context).findViewById(R.id.open_button)) .getVisibility() == View.GONE) {
+                        (((Activity) context).findViewById(R.id.sc_layout))   .setVisibility(View.VISIBLE);
+                        (((Activity) context).findViewById(R.id.ok_button))   .setVisibility(View.VISIBLE);
+                        (((Activity) context).findViewById(R.id.close_button)).setVisibility(View.VISIBLE);
+                    }
+
+                    //다음가야할 정보 출력공간을 보이게 한다. -> 오른쪽 맨위 layout
+                    if ((((Activity) context).findViewById(R.id.next_vending_layout)).getVisibility() == View.GONE) {
+                        (((Activity) context).findViewById(R.id.next_vending_layout)).setVisibility(View.VISIBLE);
+                    }
+
 
                 }
 
@@ -256,6 +291,9 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
 
                         //db에 접속하여 short_cut 생성
                         db_conn_obj.execute("get_vending_info", closestMarker.getSnippet());
+
+                        //현재 자판기의 id를 저장한다
+                        now_vd_id =closestMarker.getSnippet();
 
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -289,6 +327,9 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
 
                 //db에 접속하여 short_cut 생성
                 db_conn_obj.execute("get_vending_info", vending_stack.get(0).getSnippet());
+
+                //현재 자판기의 id를 저장한다
+                now_vd_id =vending_stack.get(0).getSnippet();
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -376,10 +417,51 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
             //msg ="좌표: [ " + lattitude + ":" + longitude+"]\n"; //현재 위치의 좌표 출력 //주석 제거시 표현
             //msg+="고도: "+String.format("%.1f",altitude)+"m\n"; //고도의 세계표준을 한국표준으로 바꾸는걸 모르겟엉.. 쓸꺼면 걍써 잘 되니까...
 
-            msg += "현재 주소: "   + addr + "\n";             //주소
-            // msg += nowDate + "\n";          //현재 날짜
-            msg += "현재 속도: "   + SkmPerHour + "km/h \n";     //현재 km/h
-            msg += "남은 자판기: " + (originMarkerlist.size() - 1) + "개";
+            //출력하고자하는 문자열
+            String chnage_str = "현재 주소\n"  + addr;
+
+            //하나의 textView에 글자색, 크기를 다르게 하는 함수
+            SpannableStringBuilder sp = new SpannableStringBuilder(chnage_str);
+
+            //앞 글자는 크게 출력한다
+            sp.setSpan(new AbsoluteSizeSpan(25),             0, 5, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            now_addr.setText(sp);
+
+            //출력하고자하는 문자열
+            chnage_str = "현재 속도\n" +  SkmPerHour + "km/h";
+
+            //하나의 textView에 글자색, 크기를 다르게 하는 함수
+            sp = new SpannableStringBuilder(chnage_str);
+
+            //앞 글자는 크게 출력한다
+            sp.setSpan(new AbsoluteSizeSpan(25),             0, 5, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            now_speed.setText(sp);
+
+            //출력하고자하는 문자열
+            chnage_str = "남은 자판기\n" +  (originMarkerlist.size()-1)+ "개";
+
+            //하나의 textView에 글자색, 크기를 다르게 하는 함수
+            sp = new SpannableStringBuilder(chnage_str);
+
+            //앞 글자는 크게 출력한다
+            sp.setSpan(new AbsoluteSizeSpan(25),             0, 6, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            vd_val.setText(sp);
+
+            //다음 가야할 자판기가 있다면 정보를 출력한다
+            if(vending_stack.size() > 0){
+
+                //출력하고자하는 문자열
+                chnage_str = "다음 자판기\n"+vending_stack.get(0).getTitle();
+
+                //하나의 textView에 글자색, 크기를 다르게 하는 함수
+                sp = new SpannableStringBuilder(chnage_str);
+
+                //앞 글자는 크게 출력한다
+                sp.setSpan(new AbsoluteSizeSpan(25),             0, 6, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                next_vd_name.setText(sp);
+
+                //next_vd_name.setText("다음 자판기\n"+vending_stack.get(0).getTitle());
+            }
 
             //추가된 자판기가 하나이상 + 다음가야할 자판기가 있을경우 다음 자판기 거리 표시
             if (originMarkerlist.size() > 1 && closestMarker != null) {
@@ -422,14 +504,6 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
                     next_vending.setText("NEXT:" + String.format("%.1f", next_meter) + "m");
                 }
             }
-
-            //얼마나 신뢰도를 가지는지 보고 싶으면 주석 제거(하지만 딱히 신뢰도가 정확하지 않음)
-            //나중에 신뢰도를 사용할 알고리즘이 있다면 이거 쓰지말고
-            //직접 알고리즘으로 짜서 예외처리하는 것이 보다 효율적
-            //msg+="\n신뢰도:"+location.getAccuracy();
-
-            //왼쪽 위에 표시되는 textview
-            my_status.setText(msg);
 
         }
 
@@ -556,16 +630,18 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
 
                     //첫번째 롱클릭인 경우 바로 다음가야할 자판기이므로 그에따른 처리를한다
                     if (vending_stack.size() == 0) {
-
                         //db 접속 try/catch 필수
                         DB_conn db_conn_obj = new DB_conn(context, sc_lv, "short_cut");
 
                         //서버에서 값을 가져와 shortcut을 만들어준다
                         db_conn_obj.execute("get_vending_info", originMarkerlist.get(i).getSnippet());
 
+                        //현재 자판기의 id를 저장한다
+                        now_vd_id = originMarkerlist.get(i).getSnippet();
+
                         //오른쪽 밑 레이아웃이 현재 안보이고 있다면 보이게 한다
                         if (((Activity) context).findViewById(R.id.sc_layout).getVisibility() == View.GONE) {
-                            //보충완료,닫기버튼을 보이게 한다.(강제형변환으로 액티비티를 접근한다. ->이게 최선이에요 ㅠㅠ)
+                            //보충완료,닫기버튼을 보이게 한다.(강제형변환으로 액티비티를 접근한다.)
                             //순서대로 : 오른쪽 밑 레이아웃. 갱신버튼, 닫기버튼
                             (((Activity) context).findViewById(R.id.sc_layout)).setVisibility(View.VISIBLE);
                             (((Activity) context).findViewById(R.id.ok_button)).setVisibility(View.VISIBLE);
@@ -580,7 +656,7 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
 
                         //롱 클릭된 자판기가 특정 m안에 자판기가 있는경우
                         if (vending_stack.size() > 0 ||
-                                get_set_package.getmeter(originMarkerlist.get(0).getPosition(), originMarkerlist.get(i).getPosition()) < 300) {
+                                get_set_package.getmeter(originMarkerlist.get(0).getPosition(), originMarkerlist.get(i).getPosition()) < 443) {
 
                             //미니맵을 보이게 한다. -> 왼쪽 위 레이아웃
                             if ((((Activity) context).findViewById(R.id.minimap_side)).getVisibility() == View.GONE) {
@@ -620,6 +696,9 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
                         //배열 비우기
                         vending_stack.clear();
                         mini_stack   .clear();
+
+                        //미니맵 비우기
+                        minimap.clear();
 
                         //오른쪽 밑 레이아웃을 안보이게 한다
                         if (((Activity) context).findViewById(R.id.sc_layout).getVisibility() == View.VISIBLE) {
@@ -754,12 +833,14 @@ class Mark_click_event implements GoogleMap.OnMarkerClickListener {
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
     //-----------------------------------------레이아웃-----------------------------------------
     private DrawerLayout        drawerLayout;
+    private ConstraintLayout    info_layout;
 
     //-------------------------------------화면에 출력되는 애--------------------------------------
-    private TextView            user_name_tv, user_email_tv, user_id_tv_hide, my_status, next_vending;
+    private TextView            user_name_tv, user_email_tv, user_id_tv_hide, next_vending;
     private ListView            sc_lv;
-    private Button              ok_button, close_button;
-    private ImageButton         open_button;                //shortcut에 close버튼을 눌렀을때 나오는 이미지 버튼을 조종한다
+
+    //이미지 버튼들(우측의 이미지버튼)
+    private ImageButton         ok_button, open_button, close_button, info_swap_button;
     private Get_set_package     get_set_package;            //공통 get set함수를 모아클래스로 만들어 사용한다.
     private DB_conn             db_conn_obj;                //서버의 DB에 접속 할때마다 이 객체를 사용한다.
     private Menu                navi_menu;                  //네비게이션바의 모든 객체들을 조종할 수 있다.
@@ -849,8 +930,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 if (drawer_check) {
-                    //현재 상태바를 보이지않게 한다.
-                    //my_status.setVisibility(View.GONE);
                     drawer_check = false;
                 }
             }
@@ -864,7 +943,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             //보이지않게 한 상태바를 다시 보이게 한다.
             @Override
             public void onDrawerClosed(View drawerView) {
-                //my_status.setVisibility(View.VISIBLE);
                 drawer_check = true;
             }
 
@@ -875,14 +953,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         //-----------------------------레이아웃 셋팅 끝--------------------------------------------
 
         //저장소들 id 가져오기!!!!!!
-        my_status       = (TextView)    findViewById(R.id.my_status);
-        next_vending    = (TextView)    findViewById(R.id.next_vending);
-        sc_lv           = (ListView)    findViewById(R.id.sc_lv);
-        ok_button       = (Button)      findViewById(R.id.ok_button);
-        close_button    = (Button)      findViewById(R.id.close_button);
-        open_button     = (ImageButton) findViewById(R.id.open_button);
-        loading_iv      = (ImageView)   findViewById(R.id.loading_iv);
-        loading_iv_map  = (ImageView)   findViewById(R.id.loading_iv_map);
+        info_layout         = (ConstraintLayout)    findViewById(R.id.info_layout);
+        next_vending        = (TextView)            findViewById(R.id.next_vending);
+        sc_lv               = (ListView)            findViewById(R.id.sc_lv);
+        ok_button           = (ImageButton)         findViewById(R.id.ok_button);
+        close_button        = (ImageButton)         findViewById(R.id.close_button);
+        open_button         = (ImageButton)         findViewById(R.id.open_button);
+        info_swap_button    = (ImageButton)         findViewById(R.id.info_swap_button);
+        loading_iv          = (ImageView)           findViewById(R.id.loading_iv);
+        loading_iv_map      = (ImageView)           findViewById(R.id.loading_iv_map);
 
 
         //네비게이션뷰 가져오기(왼쪽에서 오른쪽으로 슬라이드 할시, 나오는 창)
@@ -898,6 +977,41 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             String str = data.getStringExtra("user_info");
             //[0]=login_id [1]=name [2]=email [3]=imgsrc
             user_info = str.split("/br/");
+
+            //푸쉬메세지에서 보내는 값이 있는지 확인한다
+            String check       = data.getStringExtra("go_order_sheet");
+
+            //푸쉬메세지로 접근시 작업지시서를 바로 출력해준다
+            if(check != null){
+                //핸들러 생성
+                Runnable task = new Runnable() {
+                    @Override
+                    public void run() {
+
+                        //로딩 화면생성
+                        handler.sendEmptyMessage(3);
+                        try {
+                            //1초 지연
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        //로딩화면 제거
+                        handler.sendEmptyMessage(4);
+                    }
+                };
+
+                //쓰레드 생성
+                Thread thread = new Thread(task);
+
+                //쓰레드 실행
+                thread.start();
+
+                //custom alert 보여주기 클래스 생성(작업지시서) / 함수 실행
+                Order_sheet_alert order_sheet_alert = new Order_sheet_alert(MainActivity.this, user_info[0]);
+                order_sheet_alert.create_table(1,0);
+            }
+
 
             //네비게이션의 헤더부분 가져오기
             View hView = navigationView.getHeaderView(0);
@@ -964,7 +1078,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             public void run() {
 
                                 //로딩 화면생성
-                                handler.sendEmptyMessage(1);
+                                handler.sendEmptyMessage(3);
                                 try {
                                     //1초 지연
                                     Thread.sleep(1000);
@@ -972,7 +1086,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     e.printStackTrace();
                                 }
                                 //로딩화면 제거
-                                handler.sendEmptyMessage(2);
+                                handler.sendEmptyMessage(4);
                             }
                         };
 
@@ -997,7 +1111,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             public void run() {
 
                                 //로딩 화면생성
-                                handler.sendEmptyMessage(1);
+                                handler.sendEmptyMessage(3);
                                 try {
                                     //1초 지연
                                     Thread.sleep(1000);
@@ -1005,7 +1119,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     e.printStackTrace();
                                 }
                                 //로딩화면 제거
-                                handler.sendEmptyMessage(2);
+                                handler.sendEmptyMessage(4);
                             }
                         };
 
@@ -1087,6 +1201,32 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
+        //우측 레이아웃을 보이게 하거나 안보이게 한다
+        info_swap_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Animation animation;
+                //레이아웃을 안보이게 한다
+                if(info_layout.getVisibility() == View.VISIBLE){
+                    animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_out);
+                    info_layout.startAnimation(animation);
+
+                    info_layout.setVisibility(View.GONE);
+                    info_swap_button.setImageResource(R.drawable.open);
+                }
+
+                //레이아웃을 보이게 한다
+                else{
+                    info_layout.setVisibility(View.VISIBLE);
+                    info_swap_button.setImageResource(R.drawable.close);
+
+                    animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_in);
+                    info_layout.startAnimation(animation);
+                }
+            }
+        });
+
+
 
         //자판기(작업지시서) 갱신 버튼 클릭시,
         ok_button.setOnClickListener(new View.OnClickListener() {
@@ -1099,17 +1239,28 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
-        //여는 버튼 클릭 시 -> 오른쪽 밑의 레이아웃이 보여진다
+        //강제갱신(보충완료) -> 강제로 자판기를 갱신한다
         close_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                findViewById(R.id.sc_layout).setVisibility(View.GONE);
-                open_button.setVisibility(View.VISIBLE);
+                //findViewById(R.id.sc_layout).setVisibility(View.GONE);
+                //open_button.setVisibility(View.VISIBLE);
+
+                //현재 자판기 마커를 없애고(보충완료) 마커를 최신화한다
+                try {
+                    DB_conn db_conn = new DB_conn(MainActivity.this);
+                    db_conn.execute("insert_vending", listener.now_vd_id.toString(), user_info[0].toString());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                //마커 최신화(갱신)
+                draw_marker();
 
             }
         });
 
-        //닫는 버튼 클릭 시, 오른쪽 밑의 레이아웃이 숨겨진다
+        //쇼트컷 열기, 오른쪽 밑의 레이아웃이 보여진다
         open_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1224,7 +1375,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             new Mark_click_event(this, minimap, originMarkerlist, user_info[0], handler);
 
             //매초 혹은 미터 마다 갱신될 class 생성
-            listener = new Locationlistener(this, originMarkerlist, vending_stack, mini_stack, gmap, minimap, sc_lv, my_status, next_vending, get_set_package, navi_menu);
+            listener = new Locationlistener(this, originMarkerlist, vending_stack, mini_stack, gmap, minimap, sc_lv, next_vending, get_set_package, navi_menu);
 
             //마커 최신화 / 갱신
             draw_marker();
@@ -1303,8 +1454,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 //---------------------------------------------------------------------------------------
 
         //기존 마커들 지우기
-        if (gmap != null)
+        if (gmap != null) {
             gmap.clear();
+            minimap.clear();
+        }
 
         //기존 마커들 저장소 지우기
         if (get_set_package.getOriginMarkerlist() != null || get_set_package.getOriginMarkerlist().size() != 0) {
@@ -1317,12 +1470,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             marker.remove();
         }
 
-
         //오른쪽 밑 레이아웃 지우기
-        findViewById(R.id.sc_layout).setVisibility(View.GONE);
+        if(findViewById(R.id.sc_layout).getVisibility() == View.VISIBLE) {
+            findViewById(R.id.sc_layout).setVisibility(View.GONE);
+        }
+
 
         //다음가야할 거리 레이아웃 숨기기
-        findViewById(R.id.next_vending_layout).setVisibility(View.GONE);
+        if(findViewById(R.id.next_vending_layout).getVisibility() == View.VISIBLE) {
+            findViewById(R.id.next_vending_layout).setVisibility(View.GONE);
+        }
 
         //리스너가 있다면
         if (listener != null) {
@@ -1346,11 +1503,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             db_conn_obj = new DB_conn(this, get_set_package, vending_stack, mini_stack);
 
             //마커들을 새로 그린다 ->user의 login_id를 기준으로
-            //db_conn_obj.execute("get_markers", user_info[0], str_date);
+            db_conn_obj.execute("get_markers", user_info[0], str_date);
 
             //특정 날짜를 기준으로 마커를 그리고 싶으면 얘를 쓴다
             //db_conn_obj.execute("get_markers", user_info[0], "2018-05-16");
-            db_conn_obj.execute("get_markers", user_info[0], "2018-06-15");
+            //db_conn_obj.execute("get_markers", user_info[0], "2018-06-15");
 
             //길찾기 함수 호출(일본에서 경로표시)
             new Directions_Functions(gmap, get_set_package);

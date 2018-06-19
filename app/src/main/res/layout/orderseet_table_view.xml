@@ -6,9 +6,8 @@
     xmlns:app                                       = "http://schemas.android.com/apk/res-auto"
     xmlns:tools                                     = "http://schemas.android.com/tools"
     android:background                              = "@android:color/transparent"
-    android:layout_marginTop                        = "30dp"
     android:layout_width                            = "match_parent"
-    android:layout_height                           = "match_parent">
+    android:layout_height                           = "350dp">
 
     <!-- 음료사진의 내용들이 들어가는 리스트 뷰 -->
     <ListView
@@ -40,17 +39,19 @@
     <android.support.constraint.ConstraintLayout
         android:id                                  = "@+id/bottom_con_layout"
         android:layout_width                        = "510dp"
-        android:layout_height                       = "300dp"
+        android:layout_height                       = "250dp"
         android:layout_marginStart                  = "50dp"
+        android:layout_marginTop                    = "50dp"
         app:layout_constraintStart_toStartOf        = "parent"
         app:layout_constraintTop_toTopOf            = "parent">
 
         <!-- 메인 출력(수량) 레이아웃 -->
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <LinearLayout
+            xmlns:android                           = "http://schemas.android.com/apk/res/android"
             android:id                              = "@+id/bottom_layout"
             android:orientation                     = "vertical"
             android:layout_width                    = "500dp"
-            android:layout_height                   = "250dp"
+            android:layout_height                   = "0dp"
             android:background                      = "@android:color/transparent"
             app:layout_constraintStart_toStartOf    = "parent"
             app:layout_constraintTop_toTopOf        = "parent">
@@ -80,7 +81,8 @@
         </LinearLayout>
 
         <!-- 맨 밑 고정바 레이아웃 -->
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <LinearLayout
+            xmlns:android                           = "http://schemas.android.com/apk/res/android"
             android:id                              = "@+id/total_layout"
             android:orientation                     = "vertical"
             android:layout_width                    = "500dp"
@@ -119,6 +121,7 @@
         android:layout_width                        = "500dp"
         android:layout_height                       = "63dp"
         android:layout_marginStart                  = "50dp"
+        android:layout_marginTop                    = "50dp"
         android:background                          = "@android:color/transparent"
         app:layout_constraintStart_toStartOf        = "parent"
         app:layout_constraintTop_toTopOf            = "parent">
@@ -149,7 +152,7 @@
         android:layout_height                       = "40dp"
         android:layout_marginBottom                 = "50dp"
         android:layout_marginStart                  = "500dp"
-        android:paddingBottom                       = "15dp"
+        android:layout_marginTop                    = "20dp"
         android:paddingStart                        = "15dp"
         app:srcCompat                               = "@drawable/exit"
         android:scaleType                           = "fitCenter"
@@ -163,7 +166,6 @@
         android:id                                  = "@+id/angle_left"
         android:layout_width                        = "40dp"
         android:layout_height                       = "40dp"
-        android:layout_marginBottom                 = "50dp"
         android:layout_marginEnd                    = "500dp"
         app:srcCompat                               = "@drawable/angle_left"
         android:scaleType                           = "fitXY"
@@ -178,8 +180,7 @@
         android:id                                  = "@+id/angle_right"
         android:layout_width                        = "40dp"
         android:layout_height                       = "40dp"
-        android:layout_marginBottom                 = "50dp"
-        android:layout_marginStart                  = "500dp"
+        android:layout_marginStart                  = "520dp"
         app:srcCompat                               = "@drawable/angle_right"
         android:scaleType                           = "fitXY"
         android:background                          = "@android:color/transparent"

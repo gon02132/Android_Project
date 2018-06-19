@@ -9,13 +9,12 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
-import com.study.googlemapsandroidapiexample.Main_Page.*;
 import com.study.googlemapsandroidapiexample.Main_Page.AlertDialog.AlertDialog_Custom_dialog;
 import com.study.googlemapsandroidapiexample.Main_Page.AlertDialog.AlertDialog_list_item;
 import com.study.googlemapsandroidapiexample.Main_Page.CalendarDialog.EventDecorator;
+import com.study.googlemapsandroidapiexample.Main_Page.Get_set_package;
 import com.study.googlemapsandroidapiexample.Main_Page.Shortcut_view.Sc_custom_listview;
 
 import org.json.JSONArray;
@@ -38,6 +37,8 @@ public class DB_conn extends AsyncTask<String, Void, String> {
 
     private String              router_string           = "";    //백그라운드 UI작업 구분자
     private String              second_router;                   //같은 구분자를 쓰며 다른 UI이 작업이 필요한 경우 얘가 쓰임
+
+    public int                  vd_id                   = -1;
 
     private ArrayList<Marker>   vending_stack;                   //롱클릭시 저장되는 마커 배열들
     private ArrayList<Marker>   mini_stack;                      //롱클릭시 저장되는 마커 배열들(미니맵)
@@ -312,6 +313,18 @@ public class DB_conn extends AsyncTask<String, Void, String> {
 
             //모든 자판기들을 가져와 맵에 뿌려주는구문
             case "get_markers":
+
+                //미니맵의 마커들을 전부 지우고 새로 마커를 그린다 -> 예외처리
+                //->메인맵과 미니맵의 동기화를 이루기위해
+                ArrayList<Marker> mini_markers = get_set_package.get_mini_stack();
+                ArrayList<Marker> temp_markers = new ArrayList<Marker>();
+                temp_markers.addAll(mini_markers);
+                mini_markers.clear();
+
+                for(int i = 0; i<temp_markers.size(); i++) {
+                    get_set_package.draw_minimap_marker(temp_markers.get(i).getPosition(), temp_markers.get(i).getTitle(), temp_markers.get(i).getSnippet(), 1, false);
+                }
+
                 try{
                     //받아온 값이 없거나 mysql구문의 에러의 경우 아무것도 실행하지 않고 다음으로 넘어간다
                     if (result_String.equals("no_marker") || result_String.equals("mysql_err")) {
@@ -368,9 +381,35 @@ public class DB_conn extends AsyncTask<String, Void, String> {
                             //그리고 반복문도 마저 종료한다(한번에 한개의 자판기만 보충 가능 하기 때문)
                             if(!temp_check){
                                 vending_stack.get(i).remove();
-                                mini_stack.get(i).remove();
 
                                 vending_stack.remove(i);
+                                break;
+                            }
+
+                        }
+
+                        //롱클릭 배열에 저장되있는 원소만큼 반복 한다
+                        for(int i=0; i<mini_stack.size(); i++){
+
+                            //마커가 있는지 없는지 확인하는 변수
+                            boolean temp_check = false;
+
+                            //자판기 배열에 저장되어 있는 원소만큼 반복한다
+                            for(int j=0; j<origin_marker.size(); j++){
+
+                                //롱클릭 스택에 있는 원소가 새로 생성된 자판기 배열에도 있다면 true로 반환한다
+                                if(mini_stack.get(i).getPosition().equals(origin_marker.get(j).getPosition())){
+                                    temp_check = true;
+                                    break;
+                                }
+
+                            }
+
+                            //만약 배열이 일치하지 않는다면 스택배열의 원소는 삭제한다
+                            //그리고 반복문도 마저 종료한다(한번에 한개의 자판기만 보충 가능 하기 때문)
+                            if(!temp_check){
+                                mini_stack.get(i).remove();
+
                                 mini_stack.remove(i);
                                 break;
                             }
@@ -449,7 +488,10 @@ public class DB_conn extends AsyncTask<String, Void, String> {
 
                                 //custom Listview 만들기!!
                                 sc_custom.change_listview();
+
+
                             }
+
                             break;
 
                             //특정 자판기의 정보(customalert)보여주는 곳

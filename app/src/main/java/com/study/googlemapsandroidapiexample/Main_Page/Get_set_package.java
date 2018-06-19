@@ -54,6 +54,7 @@ public class Get_set_package {
     //마커 그리기
     public void drawMarkers(LatLng latLng, String vd_name, String vending_info, Integer status, boolean draggable) {
 
+        //옵션 제작
         MarkerOptions markerOptions = new MarkerOptions();  //마커 옵션들을 설정할 수있게 해주는 함수 호출
         markerOptions.position(latLng);                     //마커의 현재 위도와 경도
         markerOptions.title(vd_name);                       //제목(위치의 주소)

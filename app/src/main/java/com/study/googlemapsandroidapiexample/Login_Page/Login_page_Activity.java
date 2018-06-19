@@ -39,6 +39,23 @@ public class Login_page_Activity extends AppCompatActivity implements View.OnCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        //다음 가야할 액티비티를 지정한다
+        Intent intent = new Intent(Login_page_Activity.this, MainActivity.class);
+
+        //이전 액티비티로부터 값을 가져온다
+        Intent get_intent  = getIntent();
+
+        //푸쉬메세지로 접근시 값을 다음 엑티비티에 넘겨주기위해 저장해 둔다
+        String check       = get_intent.getStringExtra("go_order_sheet");
+
+        //푸쉬메세지로 접근이 아닐경우에는 값을 넘겨주지 않고
+        //푸쉬메세지로 접근시(값이 있으므로) 그 값을 다음 액티비티에 넘겨준다
+        if(check != null){
+            intent.putExtra("go_order_sheet", "go");
+            Log.e("<><>","go");
+        }
+
+
         NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
         //파이어베이스에 토큰을 저장(알림을 위한 기능)
         FirebaseMessaging.getInstance().subscribeToTopic("news");
@@ -55,10 +72,8 @@ public class Login_page_Activity extends AppCompatActivity implements View.OnCli
         share_login_info_obj = new Share_login_info(this);
 
         //이전에 로그인을 했는지 확인한다.(문자열 길이 확인)
+        //로그인 되어있다면 바로 다음페이지로 이동(로그인된 정보와 같이)
         if(share_login_info_obj.get_login_info().length() > 0){
-
-            //로그인 되어있다면 바로 다음페이지로 이동(로그인된 정보와 같이)
-            Intent intent = new Intent(Login_page_Activity.this, MainActivity.class);
 
             //저장되어있는 사용자 정보와함께 다음 페이지로 이동한다.
             intent.putExtra("user_info" , share_login_info_obj.get_login_info());

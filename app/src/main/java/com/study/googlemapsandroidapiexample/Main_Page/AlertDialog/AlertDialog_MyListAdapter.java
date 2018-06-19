@@ -1,11 +1,13 @@
 package com.study.googlemapsandroidapiexample.Main_Page.AlertDialog;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,12 +43,12 @@ public class AlertDialog_MyListAdapter extends BaseAdapter {
         //1)그렇기 때문에 최대 사이즈/2 에서 홀수 인경우 더미값으로 +1을 해준다.
         //2)또한 첫번째 라인은 작업지시를 보여주는 라인으로 +1을하여 모든 음료를 보여 줄 수 있게 한다.
 
-        //짝수 일 경우
+        //짝수 일 경우 /2의 올림으로 갯수를 정한다 / +1은 작업지시서용
         if (list_item_Arraylist.size() % 2 == 0) {
             return (int) (Math.ceil(list_item_Arraylist.size() / 2)) + 1;
         }
 
-        //홀수 일 경우
+        //홀수 일 경우 /2의 올림과 +1을 더한다 / 또다른 +1은 작업지시서용
         else {
             return (int) (Math.ceil(list_item_Arraylist.size() / 2) + 1) + 1;
         }
@@ -65,8 +67,12 @@ public class AlertDialog_MyListAdapter extends BaseAdapter {
     }
 
     //반복하면서 처리하는 구문
+    @SuppressLint("ResourceType")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {//for문 같은 역할
+
+        if(convertView != null)
+            Log.e("<><>",position+"/"+convertView.toString());
 
         //첫번째 위치에는 작업지시가 있는지 보는 라인이다.
         if (position == 0) {
@@ -94,8 +100,8 @@ public class AlertDialog_MyListAdapter extends BaseAdapter {
 
         //재사용을 하기위한 view를 설정한다/ 만약 view가 없다면 생성하고
         //있다면 이전에 사용하던 view를 재사용한다
-        else if (convertView.findViewById(R.id.product_count) == null) {
-
+        else if (convertView == null || convertView.getId() != R.layout.alertdialog_list_item) {
+            Log.e("<><>","hi");
             //custom화 시킨 view를 보여준다.
             convertView = LayoutInflater.from(context).inflate(R.layout.alertdialog_list_item, null);
 
