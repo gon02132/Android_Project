@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- alertdialog_custom_dialog.xml 의 Listview의 아이템으로 들어가는 레이아웃-->
+<LinearLayout
+    xmlns:android                       = "http://schemas.android.com/apk/res/android"
+    xmlns:app                           = "http://schemas.android.com/apk/res-auto"
+    android:orientation                 = "horizontal"
+    android:layout_width                = "match_parent"
+    android:layout_height               = "wrap_content"
+    android:weightSum                   = "8">
+
+    <!-- 한 라인당 4개의 제품을 보여줌-->
+    <!-- 첫번째 제품을 나타내는 레이아웃 -->
+    <LinearLayout
+        android:layout_width            = "0dp"
+        android:layout_height           = "wrap_content"
+        android:orientation             = "vertical"
+        android:layout_weight           = "2">
+
+        <!-- 자판기의 몇번째 라인을 나타내는지 알려주는 텍스트 뷰 -->
+        <TextView
+            android:id                  = "@+id/line_1"
+            android:layout_width        = "wrap_content"
+            android:layout_height       = "15dp"
+            android:layout_gravity      = "left"
+            android:textColor           = "#0064c8"
+            android:textSize            = "10dp"
+            android:text                = "Line" />
+
+        <!-- 제품이미지, 수량을 나타내는 레이아웃 -> 배경을 하나의 박스처럼 보이게 -->
+        <LinearLayout
+            android:layout_width        = "wrap_content"
+            android:layout_height       = "85dp"
+            android:orientation         = "vertical"
+            android:background          = "@drawable/val_back"
+            >
+
+            <!-- 제품의 이미지를 나타내는 뷰 -->
+            <ImageView
+                android:id              = "@+id/line_image_1"
+                android:layout_width    = "wrap_content"
+                android:layout_height   = "45dp"
+                android:layout_gravity  = "center"
+                app:srcCompat           = "@drawable/x2" />
+
+            <!-- 제품의 수량을 나타내는 뷰 -->
+            <TextView
+                android:id              = "@+id/val_1"
+                android:layout_width    = "wrap_content"
+                android:layout_height   = "40dp"
+                android:layout_gravity  = "center"
+                android:textColor       = "#0064c8"
+                android:text            = "0" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- 두번째 제품을 나타내는 레이아웃 -->
+    <LinearLayout
+        android:layout_width            = "0dp"
+        android:layout_height           = "wrap_content"
+        android:orientation             = "vertical"
+        android:layout_weight           = "2">
+
+        <!-- 자판기의 몇번째 라인을 나타내는지 알려주는 텍스트 뷰 -->
+        <TextView
+            android:id                  = "@+id/line_2"
+            android:layout_width        = "wrap_content"
+            android:layout_height       = "15dp"
+            android:layout_gravity      = "left"
+            android:textColor           = "#0064c8"
+            android:textSize            = "10dp"
+            android:text                = "Line" />
+
+        <!-- 제품이미지, 수량을 나타내는 레이아웃 -> 배경을 하나의 박스처럼 보이게 -->
+        <LinearLayout
+            android:layout_width        = "wrap_content"
+            android:layout_height       = "85dp"
+            android:orientation         = "vertical"
+            android:background          = "@drawable/val_back"
+            >
+
+        <!-- 제품의 이미지를 나타내는 뷰 -->
+        <ImageView
+            android:id                  = "@+id/line_image_2"
+            android:layout_width        = "wrap_content"
+            android:layout_height       = "45dp"
+            android:layout_gravity      = "center"
+            app:srcCompat               = "@drawable/x2" />
+
+        <!-- 제품의 수량을 나타내는 뷰 -->
+        <TextView
+            android:id                  = "@+id/val_2"
+            android:layout_width        = "wrap_content"
+            android:layout_height       = "40dp"
+            android:layout_gravity      = "center"
+            android:textColor           = "#0064c8"
+            android:text                = "0" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- 세번째 제품을 나타내는 레이아웃 -->
+    <LinearLayout
+        android:layout_width            = "0dp"
+        android:layout_height           = "wrap_content"
+        android:orientation             = "vertical"
+        android:layout_weight           = "2">
+
+        <!-- 자판기의 몇번째 라인을 나타내는지 알려주는 텍스트 뷰 -->
+        <TextView
+            android:id                  = "@+id/line_3"
+            android:layout_width        = "wrap_content"
+            android:layout_height       = "15dp"
+            android:layout_gravity      = "left"
+            android:textColor           = "#0064c8"
+            android:textSize            = "10dp"
+            android:text                = "Line" />
+
+        <!-- 제품이미지, 수량을 나타내는 레이아웃 -> 배경을 하나의 박스처럼 보이게 -->
+        <LinearLayout
+            android:layout_width        = "wrap_content"
+            android:layout_height       = "85dp"
+            android:orientation         = "vertical"
+            android:background          = "@drawable/val_back"
+            >
+
+        <!-- 제품의 이미지를 나타내는 뷰 -->
+        <ImageView
+            android:id                  = "@+id/line_image_3"
+            android:layout_width        = "wrap_content"
+            android:layout_height       = "45dp"
+            android:layout_gravity      = "center"
+            app:srcCompat               = "@drawable/x2" />
+
+        <!-- 제품의 수량을 나타내는 뷰 -->
+        <TextView
+            android:id                  = "@+id/val_3"
+            android:layout_width        = "wrap_content"
+            android:layout_height       = "40dp"
+            android:layout_gravity      = "center"
+            android:textColor           = "#0064c8"
+            android:text                = "0" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- 네번째 제품을 나타내는 레이아웃 -->
+    <LinearLayout
+        android:layout_width            = "0dp"
+        android:layout_height           = "wrap_content"
+        android:orientation             = "vertical"
+        android:layout_weight           = "2">
+
+        <!-- 자판기의 몇번째 라인을 나타내는지 알려주는 텍스트 뷰 -->
+        <TextView
+            android:id                  = "@+id/line_4"
+            android:layout_width        = "wrap_content"
+            android:layout_height       = "15dp"
+            android:layout_gravity      = "left"
+            android:textColor           = "#0064c8"
+            android:textSize            = "10dp"
+            android:text                = "Line" />
+
+        <!-- 제품이미지, 수량을 나타내는 레이아웃 -> 배경을 하나의 박스처럼 보이게 -->
+        <LinearLayout
+            android:layout_width        = "wrap_content"
+            android:layout_height       = "85dp"
+            android:orientation         = "vertical"
+            android:background          = "@drawable/val_back"
+            >
+
+        <!-- 제품의 이미지를 나타내는 뷰 -->
+        <ImageView
+            android:id                  = "@+id/line_image_4"
+            android:layout_width        = "wrap_content"
+            android:layout_height       = "45dp"
+            android:layout_gravity      = "center"
+            app:srcCompat               = "@drawable/x2" />
+
+        <!-- 제품의 수량을 나타내는 뷰 -->
+        <TextView
+            android:id                  = "@+id/val_4"
+            android:layout_width        = "wrap_content"
+            android:layout_height       = "40dp"
+            android:layout_gravity      = "center"
+            android:textColor           = "#0064c8"
+            android:text                ="0" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

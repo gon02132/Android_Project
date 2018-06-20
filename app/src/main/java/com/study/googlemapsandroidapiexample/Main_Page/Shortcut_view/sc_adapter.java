@@ -1,7 +1,7 @@
 package com.study.googlemapsandroidapiexample.Main_Page.Shortcut_view;
 
 import android.content.Context;
-import android.util.Log;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +33,6 @@ public class Sc_adapter extends BaseAdapter{
     //저장된 배열의 크기(수량)
     @Override
     public int getCount() {
-        Log.e("<><>",sc_list.size()+"/"+(Math.ceil(sc_list.size() / 4)));
         //return sc_list.size();
         //4개씩 출력하도록 한다(배열갯수를 /4의 올림으로 반환)
         return (int) (Math.ceil(sc_list.size() / 4));
@@ -58,72 +57,72 @@ public class Sc_adapter extends BaseAdapter{
         if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(R.layout.short_lv_items, null);
         }
-/*
-        //제품 라인
-        line = (TextView) convertView.findViewById(R.id.lv_product_line);
-        line.setText(" "+sc_list.get(position).getLv_product_line());
-
-        //제품 이름
-        name = (TextView) convertView.findViewById(R.id.lv_product_name);
-        name.setText("  "+sc_list.get(position).getLv_product_name());
-
-        //제품 수량
-        count = (TextView) convertView.findViewById(R.id.lv_product_count);
-        count.setText(sc_list.get(position).getLv_product_count());
-        */
 
         //------------------------첫번째 원소----------------------------
-        //제품 아이콘 이미지
-        line_image = (ImageView) convertView.findViewById(R.id.line_image_1);
+        //예외처리 / 만약 받아올 값이 더이상 없다면 그냥 넘어간다
+        if((position*4) < sc_list.size()) {
+            //제품 아이콘 이미지
+            line_image = (ImageView) convertView.findViewById(R.id.line_image_1);
 
-        //서버에서 이미지 가져오기
-        com.squareup.picasso.Picasso.with(context)
-                .load("http://52.78.198.67/images/drink/"+sc_list.get(position*4).getLv_product_name()+"_back.png")
-                .into(line_image);
+            //서버에서 이미지 가져오기
+            com.squareup.picasso.Picasso.with(context)
+                    .load("http://52.78.198.67/images/drink/" + sc_list.get(position * 4).getLv_product_name() + "_back.png")
+                    .into(line_image);
 
-        //제품 수량
-        val = (TextView) convertView.findViewById(R.id.val_1);
-        val.setText(sc_list.get(position*4).getLv_product_count());
-
+            //제품 수량
+            val = (TextView) convertView.findViewById(R.id.val_1);
+            val.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/Futura Heavy Italic font.ttf"));  //폰트 설정
+            val.setText(sc_list.get(position * 4).getLv_product_count());
+        }
         //------------------------두번째 원소----------------------------
-        //제품 아이콘 이미지
-        line_image = (ImageView) convertView.findViewById(R.id.line_image_2);
+        //예외처리 / 만약 받아올 값이 더이상 없다면 그냥 넘어간다
+        if(((position*4) + 1) < sc_list.size()) {
+            //제품 아이콘 이미지
+            line_image = (ImageView) convertView.findViewById(R.id.line_image_2);
 
-        //서버에서 이미지 가져오기
-        com.squareup.picasso.Picasso.with(context)
-                .load("http://52.78.198.67/images/drink/"+sc_list.get((position*4)+1).getLv_product_name()+"_back.png")
-                .into(line_image);
+            //서버에서 이미지 가져오기
+            com.squareup.picasso.Picasso.with(context)
+                    .load("http://52.78.198.67/images/drink/" + sc_list.get((position * 4) + 1).getLv_product_name() + "_back.png")
+                    .into(line_image);
 
-        //제품 수량
-        val = (TextView) convertView.findViewById(R.id.val_2);
-        val.setText(sc_list.get((position*4)+1).getLv_product_count());
-
+            //제품 수량
+            val = (TextView) convertView.findViewById(R.id.val_2);
+            val.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/Futura Heavy Italic font.ttf"));  //폰트 설정
+            val.setText(sc_list.get((position * 4) + 1).getLv_product_count());
+        }
         //------------------------세번째 원소----------------------------
-        //제품 아이콘 이미지
-        line_image = (ImageView) convertView.findViewById(R.id.line_image_3);
+        //예외처리 / 만약 받아올 값이 더이상 없다면 그냥 넘어간다
+        if(((position*4) + 2) < sc_list.size()) {
+            //제품 아이콘 이미지
+            line_image = (ImageView) convertView.findViewById(R.id.line_image_3);
 
-        //서버에서 이미지 가져오기
-        com.squareup.picasso.Picasso.with(context)
-                .load("http://52.78.198.67/images/drink/"+sc_list.get((position*4)+2).getLv_product_name()+"_back.png")
-                .into(line_image);
+            //서버에서 이미지 가져오기
+            com.squareup.picasso.Picasso.with(context)
+                    .load("http://52.78.198.67/images/drink/" + sc_list.get((position * 4) + 2).getLv_product_name() + "_back.png")
+                    .into(line_image);
 
-        //제품 수량
-        val = (TextView) convertView.findViewById(R.id.val_3);
-        val.setText(sc_list.get((position*4)+2).getLv_product_count());
+            //제품 수량
+            val = (TextView) convertView.findViewById(R.id.val_3);
+            val.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/Futura Heavy Italic font.ttf"));  //폰트 설정
+            val.setText(sc_list.get((position * 4) + 2).getLv_product_count());
+        }
 
         //------------------------네번째 원소----------------------------
-        //제품 아이콘 이미지
-        line_image = (ImageView) convertView.findViewById(R.id.line_image_4);
+        //예외처리 / 만약 받아올 값이 더이상 없다면 그냥 넘어간다
+        if(((position*4) + 3) < sc_list.size()) {
+            //제품 아이콘 이미지
+            line_image = (ImageView) convertView.findViewById(R.id.line_image_4);
 
-        //서버에서 이미지 가져오기
-        com.squareup.picasso.Picasso.with(context)
-                .load("http://52.78.198.67/images/drink/"+sc_list.get((position*4)+3).getLv_product_name()+"_back.png")
-                .into(line_image);
+            //서버에서 이미지 가져오기
+            com.squareup.picasso.Picasso.with(context)
+                    .load("http://52.78.198.67/images/drink/" + sc_list.get((position * 4) + 3).getLv_product_name() + "_back.png")
+                    .into(line_image);
 
-        //제품 수량
-        val = (TextView) convertView.findViewById(R.id.val_4);
-        val.setText(sc_list.get((position*4)+3).getLv_product_count());
-
+            //제품 수량
+            val = (TextView) convertView.findViewById(R.id.val_4);
+            val.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/Futura Heavy Italic font.ttf"));  //폰트 설정
+            val.setText(sc_list.get((position * 4) + 3).getLv_product_count());
+        }
 
         //view 반환
         return convertView;

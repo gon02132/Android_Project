@@ -5,18 +5,17 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
-import android.util.Log;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.study.googlemapsandroidapiexample.R;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 //공통 get set함수를 모아놓은 클래스
 public class Get_set_package {
@@ -72,13 +71,18 @@ public class Get_set_package {
         } else if (status == 3) {
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("japangi3", 80, 90)));
         } else if (status == -1) {
-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("now", 80, 90)));
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("now", 170, 170)));
+            //markerOptions.position(new LatLng(latLng.latitude-0.002,latLng.longitude)); //이미지의 위치를 중앙으로 맞추기 위해 약간 위치를 아래로 조절
         }else if(status == -2){
-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("next", 80, 90)));
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("next", 170, 170)));
+            //markerOptions.position(new LatLng(latLng.latitude-0.002,latLng.longitude)); //이미지의 위치를 중앙으로 맞추기 위해 약간 위치를 아래로 조절
         }
         else {//없을 경우(예외처리)
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("x2", 80, 90)));
         }
+
+        //이미지를 중앙으로 맞춘다
+        markerOptions.anchor(0.5f, 0.5f);
 
         //다음 가야할 자판기를 그려 줄때 호출되는 함수
         if (status == -1) {
@@ -162,11 +166,22 @@ public class Get_set_package {
     }
 
     //위치 이름 반환
-    public String getAddress(LatLng latLng) {
+    public String getAddress(LatLng latLng, Boolean now_nation) {
         List<Address> list = null;
         try {
-            //Geocoder로 지명을 가져오기위해 클래스를 가져온다
-            Geocoder geocoder = new Geocoder(context);
+
+            Geocoder geocoder;
+
+            //한국 버전 일 경우
+            if(now_nation) {
+                //Geocoder로 지명을 가져오기위해 클래스를 가져온다
+                geocoder = new Geocoder(context, Locale.JAPANESE);
+            }
+
+            //일본 버전 일 경우
+            else{
+                geocoder = new Geocoder(context, Locale.KOREAN);
+            }
 
             //주소 리스트 객체를 가져온다
             list = geocoder.getFromLocation(
@@ -197,9 +212,10 @@ public class Get_set_package {
         //위치 확인
         markerOptions.position(latLng);
 
-        markerOptions.title(addr);               //제목(위치의 주소)
+        markerOptions.title("my_location");               //제목(위치의 주소)
         markerOptions.snippet("[" + latLng.latitude + ":" + latLng.longitude + "]");//내용
         markerOptions.draggable(draggable);      //드래그 허용
+        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("my_location", 150, 150)));
 
         return markerOptions;
     }

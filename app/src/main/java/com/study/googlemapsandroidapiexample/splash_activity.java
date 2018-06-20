@@ -12,7 +12,7 @@ import com.study.googlemapsandroidapiexample.Login_Page.Login_page_Activity;
 public class splash_activity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        setTheme(R.style.SplashTheme);
+        setTheme(R.style.SplashTheme);  //어떤 스타일을 적용시킬 것인지 선택
 
         super.onCreate(savedInstanceState);
 

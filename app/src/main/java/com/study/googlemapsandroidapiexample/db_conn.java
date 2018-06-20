@@ -510,14 +510,15 @@ public class DB_conn extends AsyncTask<String, Void, String> {
 
                                     //[0]=coin_var [1]=vd_id [2]=1000 [3]=500 [4]=100 [5]=50 [6]=10 [7]=5 [8]=1
                                     JSONObject json_obj = coin_arr.getJSONObject(i);
-                                    Log.e("<<<<",json_obj.getString("1000")+"/"+json_obj.getString("500")+"/"+json_obj.getString("100"));
 
                                 }
 
                                 //실제 반복문을 도는 알맹이를 배열로 가져온다
                                 JSONArray json_result   = jsonObject.getJSONArray("result");
 
+                                String order_list_str = "작업 지시서가 없는 자판기 입니다";
                                 //검색된 배열을 순차적으로 돈다
+
                                 for (int i = 0; i < json_result.length(); i++) {
 
                                     //[0]=vd_id [1]=vd_name [2]z=drink_name [3]=drink_path [4]=drink_stook [5]=drink_line [6]=note
@@ -529,29 +530,20 @@ public class DB_conn extends AsyncTask<String, Void, String> {
                                         list_itemArrayList.add(new AlertDialog_list_item("작업 지시서가 없는 자판기 입니다",json_obj.getString("drink_name"), json_obj.getString("drink_path"), json_obj.getInt("drink_stook"), json_obj.getInt("drink_line")));
                                     }
 
-                                    //작업 지시서가 있는 자판기의 경우 -> 맨 첫 줄은 작업지시 내용을 출력하게 한다.
+                                    //작업 지시서가 있는 자판기의 경우
                                     else {
 
-                                        //첫번째 반복문이 아니며, 작업지시서가 있는 경우
-                                        if(i != 0 && !json_obj.getString("note").equals(" ") && json_obj.getString("note") != null){
-
-                                            //첫번째 작업지시서를 가져온다.
-                                            AlertDialog_list_item temp = list_itemArrayList.get(0);
+                                        //작업지시서가 있는 경우
+                                        if(!json_obj.getString("note").equals(" ") && json_obj.getString("note") != null){
 
                                             //첫번째 작업지시서에 아무거도 작성되어 있지 않다면
-                                            if(temp.getNote().equals("작업 지시서가 없는 자판기 입니다")){
-
-                                                //첫번째 textview를 새로 덮어 씌워서 저장한다
-                                                list_itemArrayList.set(0,new AlertDialog_list_item(json_obj.getString("note"), temp.getName(), temp.getImg_path(), temp.getCount(), temp.getDrink_line()));
-
+                                            if(order_list_str.equals("작업 지시서가 없는 자판기 입니다")){
+                                                order_list_str = json_obj.getString("note");
                                             }
 
                                             //작업지시서에 작업지시가 작성되어 있다면
                                             else {
-
-                                                //이전 textview에 덧붙여서 저장한다
-                                                list_itemArrayList.set(0, new AlertDialog_list_item(temp.getNote() + "\r\n" + json_obj.getString("note"), temp.getName(), temp.getImg_path(), temp.getCount(), temp.getDrink_line()));
-
+                                                order_list_str += "\r\n"+ json_obj.getString("note");
                                             }
 
                                             //현재 반복문의 결과값을 저장 한다.
@@ -577,7 +569,7 @@ public class DB_conn extends AsyncTask<String, Void, String> {
                                 //생성자로 올바른 값을 받았다면 custom alertdialog를 만들어서 띄운다
                                 if(marker_title != "" && user_login_id != "") {
                                     //custom_dialog를 만들어서 보여준다
-                                    AlertDialog_Custom_dialog custom_dialog = new AlertDialog_Custom_dialog(context, list_itemArrayList, marker_title, json_result.getJSONObject(0).getString("vd_id"), user_login_id);
+                                    AlertDialog_Custom_dialog custom_dialog = new AlertDialog_Custom_dialog(context, order_list_str, list_itemArrayList, marker_title, json_result.getJSONObject(0).getString("vd_id"), user_login_id);
                                     custom_dialog.callFunction();
                                 }else{
                                     Toast.makeText(context, "no_title or user_login_id", Toast.LENGTH_SHORT).show();

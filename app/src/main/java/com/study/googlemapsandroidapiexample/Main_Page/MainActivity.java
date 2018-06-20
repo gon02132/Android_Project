@@ -85,24 +85,30 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
     public  String              now_vd_id      = "";            //쇼트컷에 쓰이는 현재 자판기의 id
 
     private Location            lastlocation;                   //최초 한번만 update되는 함수가 호출되어
-    //생기는 에러를 방지하기위한 변수
+                                                                //생기는 에러를 방지하기위한 변수
+
+    private LatLng              japan_location;                 //일본버전에서 자신의 위치가 되는 변수
 
     //-----한번만 실행되게 하기위한 Boolean 변수들-----
+
+    //국가 버전 정하기 / true = 일본 false = 한국
+    private boolean             now_nation                              = true;
+
     //GPS추적 버튼 클릭시
-    private boolean location_button                         = false;
+    private boolean             location_button                         = false;
 
     //가장 가까운 자판기 추적 버튼 클릭 시
-    private boolean closest_vendingmachine_tracking_button  = false;
+    private boolean             closest_vendingmachine_tracking_button  = false;
 
     //맨 처음에 카메라를 현재 위치로 잡았다면 이후는 잡지 않는다
-    private boolean camera_move_check                       = false;
+    private boolean             camera_move_check                       = false;
 
     //미니맵에서 가장 가까운 자판기를 한번 표시 해줬으면 이후 중복 함수 실행 x
-    private boolean play_check                              = false;
+    private boolean             play_check                              = false;
     //-----------------------------------------------
 
     //아무 자판기도 찾지 못하였을경우 로딩창을 생성 하기위한 변수
-    private boolean refresh                                 = false;
+    private boolean             refresh                                 = false;
 
     //생성자
     public Locationlistener(Context context, ArrayList<Marker> originMarkerlist, ArrayList<Marker> vending_stack, ArrayList<Marker> mini_stack, GoogleMap gmap, GoogleMap minimap, ListView sc_lv, TextView next_vending, Get_set_package get_set_package, Menu navi_menu) {
@@ -119,16 +125,19 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
         this.vending_stack      = vending_stack;
 
         //나의 정보들이 출력될 공간들
-        now_addr = (TextView)((MainActivity) context).findViewById(R.id.now_addr);
-        now_speed = (TextView)((MainActivity) context).findViewById(R.id.now_speed);
-        vd_val   = (TextView)((MainActivity) context).findViewById(R.id.vd_val);
-        next_vd_name = (TextView)((MainActivity) context).findViewById(R.id.next_vd_name);
+        now_addr                = (TextView)((MainActivity) context).findViewById(R.id.now_addr);
+        now_speed               = (TextView)((MainActivity) context).findViewById(R.id.now_speed);
+        vd_val                  = (TextView)((MainActivity) context).findViewById(R.id.vd_val);
+        next_vd_name            = (TextView)((MainActivity) context).findViewById(R.id.next_vd_name);
 
         //폰트 설정
         now_addr    .setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/YoonGothic750.ttf"));
         now_speed   .setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/YoonGothic750.ttf"));
         vd_val      .setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/YoonGothic750.ttf"));
         next_vd_name.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/YoonGothic750.ttf"));
+
+        //일본버전의 나의 위치 지정하기
+        japan_location = new LatLng(33.585542, 130.392997);
 
         //맵이 전부 로딩된 이후 롱클릭 이벤트 활성화
         gmap.setOnMapLongClickListener(this);
@@ -172,14 +181,21 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
         Double altitude  = location.getAltitude();
 
         //status에 저장될 msg
-        String msg  = "";
-        String addr = "";
+        String msg       = "";
+        String addr      = "";
 
-        //get_set_package가 null이아니면
-        if (get_set_package != null) {
-            //현재 지명 가져오기
-            addr = get_set_package.getAddress(new LatLng(lattitude, longitude));
+        //get_set_package가 null이아니면 + 일본 버전이라면
+        if (get_set_package != null && now_nation) {
+            //지정 일본 지명 가져오기
+            addr = get_set_package.getAddress(japan_location, now_nation);
         }
+
+        //get_set_package가 null이아니면 + 한국 버전이라면
+        else if (get_set_package != null && !now_nation) {
+            //현재 지명 가져오기
+            addr = get_set_package.getAddress(new LatLng(lattitude, longitude), now_nation);
+        }
+
 
         //스택 자판기가 특정 m안에 자판기가 없는경우
         if (vending_stack.size() < 1 ||
@@ -352,35 +368,64 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
             }
         }
 
+        //일본 버전 일경우
+        if(now_nation){
+            //0번째는 사용자의 위치! -> 아무것도 안들었다면 현재 위치를 넣어준다!
+            if (originMarkerlist.size() == 0) {
+                //0번째 arraylist에 배열 추가
+                //0번째에는 항상 사용자의 위치가 들어간다
+                //마커 옵션 함수를 만들고, 반환하여 구글맵에 마커를 그린다.
+                originMarkerlist.add(0, gmap.addMarker(get_set_package.getMarkerOption(japan_location, addr, false)));
+            }
 
-        //0번째는 사용자의 위치! -> 아무것도 안들었다면 현재 위치를 넣어준다!
-        if (originMarkerlist.size() == 0) {
-            //0번째 arraylist에 배열 추가
-            //0번째에는 항상 사용자의 위치가 들어간다
-            //마커 옵션 함수를 만들고, 반환하여 구글맵에 마커를 그린다.
-            originMarkerlist.add(0, gmap.addMarker(get_set_package.getMarkerOption(new LatLng(lattitude, longitude), addr, true)));
+            //0번째 위치를 갱신한다.
+            else {
+                //get으로 0번째의 마커를 지우고, set으로 새로운 위치에 마커를 생성한다.
+                originMarkerlist.get(0).remove();
+                originMarkerlist.set(0, gmap.addMarker(get_set_package.getMarkerOption(japan_location, addr, false)));
+            }
+
+            //위치 추적 활성화 버튼을 눌렀다면 추적 활성화
+            if (location_button) {
+                gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(japan_location, 13));
+            }
+
+            //미니맵은 항상 추적한다
+            if (minimap != null) {
+                minimap.moveCamera(CameraUpdateFactory.newLatLngZoom(japan_location, 15));
+            }
         }
 
-        //0번째 위치를 갱신한다.
+        //한국 버전 일경우
         else {
-            //get으로 0번째의 마커를 지우고, set으로 새로운 위치에 마커를 생성한다.
-            originMarkerlist.get(0).remove();
-            originMarkerlist.set(0, gmap.addMarker(get_set_package.getMarkerOption(new LatLng(lattitude, longitude), addr, true)));
+            //0번째는 사용자의 위치! -> 아무것도 안들었다면 현재 위치를 넣어준다!
+            if (originMarkerlist.size() == 0) {
+                //0번째 arraylist에 배열 추가
+                //0번째에는 항상 사용자의 위치가 들어간다
+                //마커 옵션 함수를 만들고, 반환하여 구글맵에 마커를 그린다.
+                originMarkerlist.add(0, gmap.addMarker(get_set_package.getMarkerOption(new LatLng(lattitude, longitude), addr, true)));
+            }
+
+            //0번째 위치를 갱신한다.
+            else {
+                //get으로 0번째의 마커를 지우고, set으로 새로운 위치에 마커를 생성한다.
+                originMarkerlist.get(0).remove();
+                originMarkerlist.set(0, gmap.addMarker(get_set_package.getMarkerOption(new LatLng(lattitude, longitude), addr, true)));
+            }
+
+            //자신의 위치에 그려지는 마크는 없앤다.
+            originMarkerlist.get(0).setVisible(false);
+
+            //위치 추적 활성화 버튼을 눌렀다면 추적 활성화
+            if (location_button) {
+                gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13));
+            }
+
+            //미니맵은 항상 추적한다
+            if (minimap != null) {
+                minimap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15));
+            }
         }
-
-        //자신의 위치에 그려지는 마크는 없앤다.
-        originMarkerlist.get(0).setVisible(false);
-
-        //위치 추적 활성화 버튼을 눌렀다면 추적 활성화
-        if (location_button) {
-            gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13));
-        }
-
-        //미니맵은 항상 추적한다
-        if (minimap != null) {
-           minimap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15));
-        }
-
 
         //처음 받아오는 결과값으로는 연산이 불가능(이전꺼와 현재꺼 필요)
         //그러므로 최초 1번 받아오는 값은 저장만 하게 한다.
@@ -465,7 +510,6 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
 
             //추가된 자판기가 하나이상 + 다음가야할 자판기가 있을경우 다음 자판기 거리 표시
             if (originMarkerlist.size() > 1 && closestMarker != null) {
-
                 double next_meter = get_set_package.getmeter(originMarkerlist.get(0).getPosition(), closestMarker.getPosition());
 
                 //1km 이상의 거리일 경우
@@ -512,9 +556,13 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
             //한번만 실행하게 한다
             if (!camera_move_check) {
                 //최초 카메라 위치 잡기 ->자신의 위치가 갱신 된 이후 최초로 한번만 자신의 위치를 찾아서 카메라를 이동시킨다.
-                //기본적으로 영진전문대 -> 자신의 위치 순으로 잡힌다.
-                gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13));
-                minimap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15));
+                //일본의 경우 일본으로, 한국의경우 한국으로 조정한다
+                if(now_nation){
+                    gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(japan_location, 13));
+                }else {
+                    gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13));
+                    minimap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15));
+                }
                 camera_move_check = true;
             }
         }
@@ -556,6 +604,20 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
         location_button = (location_button) ? false : true;
     }
 
+    //현재 국가 바꾸기
+    public void change_Nation_Version(){
+        now_nation = !now_nation;
+
+        //바꾼 국가가 일본 인 경우
+        if(now_nation){
+            gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(japan_location, 15));
+        }
+
+        //바꾼 국가가 한국 인 경우
+        else{
+            gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lastlocation.getLatitude(), lastlocation.getLongitude()), 15));
+        }
+    }
 
     //가장 가까운 자판기 추적 버튼을 누를시,
     public void closest_vendingmachine_tracking_button() {
@@ -787,42 +849,44 @@ class Mark_click_event implements GoogleMap.OnMarkerClickListener {
     //마커를 클릭했을시 이벤트 -> custom_alertDialog를 만들어서 띄워준다
     @Override
     public boolean onMarkerClick(Marker marker) {
-        //핸들러 생성
-        Runnable task = new Runnable() {
-            @Override
-            public void run() {
+        //현재 위치(일본)가 아닌 마커인경우에만 작동
+        if (!marker.getTitle().equals("my_location")) {
+            //핸들러 생성
+            Runnable task = new Runnable() {
+                @Override
+                public void run() {
 
-                //로딩 화면생성
-                handler.sendEmptyMessage(3);
-                try {
-                    //1.5초 지연
-                    Thread.sleep(1500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    //로딩 화면생성
+                    handler.sendEmptyMessage(3);
+                    try {
+                        //1.5초 지연
+                        Thread.sleep(1500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    //로딩화면 제거
+                    handler.sendEmptyMessage(4);
                 }
-                //로딩화면 제거
-                handler.sendEmptyMessage(4);
+            };
+
+            //쓰레드 생성
+            Thread thread = new Thread(task);
+
+
+            try {
+
+                //쓰레드 실행
+                thread.start();
+                //db접속 try/catch 필수
+                db_conn_obj = new DB_conn(context, marker.getTitle(), user_login_id, "alert_dialog");
+
+                //서버의 결과값으로 custom alert dailog를 만들어 띄운다
+                db_conn_obj.execute("get_vending_info", marker.getSnippet());
+
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        };
-
-        //쓰레드 생성
-        Thread thread = new Thread(task);
-
-
-        try {
-
-            //쓰레드 실행
-            thread.start();
-            //db접속 try/catch 필수
-            db_conn_obj = new DB_conn(context, marker.getTitle(), user_login_id, "alert_dialog");
-
-            //서버의 결과값으로 custom alert dailog를 만들어 띄운다
-            db_conn_obj.execute("get_vending_info", marker.getSnippet());
-
-        } catch (Exception e) {
-            e.printStackTrace();
         }
-
         //반환형이 false일 경우 기존의 클릭 이벤트도 같이 발생된다.
         return true;
     }
@@ -1048,6 +1112,23 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 int id = menuItem.getItemId();
                 switch (id) {
 
+                    //국가 버전 정하기
+                    case R.id.Nation_Version:
+
+                        //일본 -> 한국 버전으로 바꾸기
+                       if(menuItem.getTitle().equals("Japan Version")){
+                           menuItem.setTitle("Korea Version");
+                           listener.change_Nation_Version();
+                        }
+
+                        //한국 -> 일본버전 바꾸기
+                       else{
+                           menuItem.setTitle("Japan Version");
+                           listener.change_Nation_Version();
+                       }
+
+                        break;
+
                     //Tracking 버튼 활성화시 현재위치 계속 추적
                     case R.id.GPS_tracking:
 
@@ -1157,9 +1238,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 navi_menu.findItem(R.id.GPS_tracking).setChecked(false);
                             }
 
-                            //최초 카메라 위치 잡기 -> 자신의 위치가 갱신 되기전(영진전문대) 위치를 기본으로 시작한다.
-                            gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(33.589862, 130.395222), 15));
-
                         }
                         break;
 
@@ -1205,23 +1283,41 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         info_swap_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //어떤 애니메이션을 설정할건지 정하는 변수
                 Animation animation;
+
                 //레이아웃을 안보이게 한다
                 if(info_layout.getVisibility() == View.VISIBLE){
-                    animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_out);
-                    info_layout.startAnimation(animation);
 
+                    //어떤 애니메이션을 보여줄건지 설정(화면 밖으로 나가는 애니메이션)
+                    animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_out);
+
+                    //버튼과 레이아웃에 애니메이션 적용
+                    info_layout.startAnimation(animation);
+                    info_swap_button.startAnimation(animation);
+
+                    //레이아웃은 이후 아예 보이지 않게한다
                     info_layout.setVisibility(View.GONE);
+
+                    //버튼이미지를 여는 이미지로 바꾼다
                     info_swap_button.setImageResource(R.drawable.open);
                 }
 
                 //레이아웃을 보이게 한다
                 else{
-                    info_layout.setVisibility(View.VISIBLE);
-                    info_swap_button.setImageResource(R.drawable.close);
 
+                    //어떤 애니메이션을 보여줄건지 설정(화면 안으로 들어오는 애니메이션)
                     animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_in);
+
+                    //레이아웃을 먼저 보이게 한다
+                    info_layout.setVisibility(View.VISIBLE);
+
+                    //버튼과 레이아웃에 애니메이션을 적용한다
                     info_layout.startAnimation(animation);
+                    info_swap_button.startAnimation(animation);
+
+                    //버튼 이미지를 닫는 이미지로 바꾼다
+                    info_swap_button.setImageResource(R.drawable.close);
                 }
             }
         });
@@ -1389,9 +1485,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         if (gmap != null && minimap != null) {
-            //최초 카메라 위치 잡기 -> 자신의 위치가 갱신 되기전(영진전문대) 위치를 기본으로 시작한다.
-            gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(35.8963510, 128.6219001), 13));
-            minimap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(35.8963510, 128.6219001), 15));
+            //최초 카메라 위치 잡기 -> 일본 기준
+            gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(33.585542, 130.392997), 13));
+            minimap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(33.585542, 130.392997), 15));
         }
 
     }
@@ -1510,7 +1606,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             //db_conn_obj.execute("get_markers", user_info[0], "2018-06-15");
 
             //길찾기 함수 호출(일본에서 경로표시)
-            new Directions_Functions(gmap, get_set_package);
+            //new Directions_Functions(gmap, get_set_package);
 
 
         } catch (Exception e) {

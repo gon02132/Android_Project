@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.view.View;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -22,25 +21,25 @@ import java.util.ArrayList;
 
 
 public class AlertDialog_Custom_dialog {
-    private Context                             context;                    //main_context
-    private TextView                            title, vd_id;               //제목, vd_id(hide) 저장공간
-    private ListView                            item_list;                  //상품 목록
-    private ArrayList<AlertDialog_list_item>    list_itemArrayList;         //배열(상품 목록 출력에 관한)
-    private Button                              ok_bt;                      //갱신버튼
-    private ImageButton                         cancel_bt;                  //취소버튼
-    private String                              vending_name, vd_id_str;    //자판기 이름, 자판기 id
-    private String                              user_login_id;              //보충기사 로그인 아이디
-    private AlertDialog_MyListAdapter           myListAdapter;              //custom어뎁터
-    private DB_conn                             db_conn;                    //DB연결자
+    private Context                             context;                        //main_context
+    private TextView                            title, vd_id, order_list_tv;    //제목, vd_id(hide) 저장공간
+    private ListView                            item_list;                      //상품 목록
+    private ArrayList<AlertDialog_list_item>    list_itemArrayList;             //배열(상품 목록 출력에 관한)
+    private ImageButton                         cancel_bt, ok_bt;               //취소, 보충완료 버튼
+    private String                              vending_name, vd_id_str;        //자판기 이름, 자판기 id
+    private String                              user_login_id, order_sheet_str; //보충기사 로그인 아이디, 작업지시들 문자열
+    private AlertDialog_MyListAdapter           myListAdapter;                  //custom어뎁터
+    private DB_conn                             db_conn;                        //DB연결자
 
     //생성자
-    public AlertDialog_Custom_dialog(Context context, ArrayList<AlertDialog_list_item> list_itemArrayList, String vending_name, String vd_id, String user_login_id) {
+    public AlertDialog_Custom_dialog(Context context, String order_sheet_str, ArrayList<AlertDialog_list_item> list_itemArrayList, String vending_name, String vd_id, String user_login_id) {
         this.context            = context;                  //mainActivity this
         this.list_itemArrayList = list_itemArrayList;       //item list(array)
         this.vending_name       = vending_name;             //자판기 이름
         this.vd_id_str          = vd_id;                    //자판기 id
         this.db_conn            = new DB_conn(context);     //db연결자
         this.user_login_id      = user_login_id;            //보충기사 로그인 아이디
+        this.order_sheet_str    = order_sheet_str;          //작업지시서 내용들
     }
 
     public void callFunction() {
@@ -64,6 +63,10 @@ public class AlertDialog_Custom_dialog {
         //만든 BaseAdapt class 생성
         myListAdapter   = new AlertDialog_MyListAdapter(context, list_itemArrayList);
 
+        order_list_tv = (TextView)dig.findViewById(R.id.order_list_tv);
+        //order_list_tv.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/YoonGothic770.ttf"));  //폰트 설정
+        order_list_tv.setText(order_sheet_str);
+
         //listview에 적용
         item_list       = (ListView) dig.findViewById(R.id.item_list);
         item_list.setAdapter(myListAdapter);
@@ -77,7 +80,7 @@ public class AlertDialog_Custom_dialog {
         vd_id.setText(vd_id_str);
 
         //강제 갱신버튼 클릭 시
-        ok_bt = (Button)dig.findViewById(R.id.okButton);
+        ok_bt = (ImageButton)dig.findViewById(R.id.okButton);
         ok_bt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

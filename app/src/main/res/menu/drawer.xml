@@ -3,41 +3,59 @@
 <!-- 오른쪽으로 슬라이드 했을 때 나오는 창의 옵션들-->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- On/Off가 가능한 아이템들 -->
     <item android:title="Settings">
         <menu>
+            <!-- KR/JP 국가 버전 고르기 JP/KR -->
+            <item
+                android:id      ="@+id/Nation_Version"
+                android:icon    ="@drawable/nation_icon"
+                android:title   ="Japan Version" />
+
+            <!-- 자신의 위치 계속 추적 ON/OFF -->
             <item
                 android:id      ="@+id/GPS_tracking"
                 android:icon    ="@drawable/ic_place"
                 android:title   ="GPS Tracking On/Off" />
+
+            <!-- 가장 가까운 자판기 추적 ON/OFF -->
             <item
                 android:id      ="@+id/Closest_V-machine_tracking"
                 android:icon    ="@drawable/ic_image"
                 android:title   ="V-machine Tracking On/Off" />
         </menu>
+
     </item>
 
+    <!-- 특정 이벤트를 발생 시키는 On/Off가 아닌 아이템들 -->
     <item android:title="Menu">
         <menu>
+
+            <!-- 현재 날짜의 작업지시서 보기 -->
             <item
                 android:id      = "@+id/order_list"
                 android:icon    = "@drawable/ic_attachment"
                 android:title   = "작업지시서 보기" />
 
+            <!-- 원하는 날짜의 작업지시서 찾기 -->
             <item
                 android:id      = "@+id/serch_order_list"
                 android:icon    = "@drawable/calendar"
                 android:title   = "작업지시서 찾기" />
 
+            <!-- 새로고침 -->
             <item
                 android:id      = "@+id/refrash_order_list"
                 android:icon    = "@drawable/ic_image"
                 android:title   = "작업지시서 갱신 하기" />
 
+            <!-- 일본 가기 버튼 -->
             <item
                 android:id      = "@+id/go_japan"
                 android:icon    = "@drawable/ic_attachment"
                 android:title   = "Go japan" />
 
+            <!-- 로그아웃 버튼 -->
             <item
                 android:id      = "@+id/Logout"
                 android:icon    = "@drawable/ic_done"

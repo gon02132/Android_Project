@@ -52,7 +52,6 @@ public class Login_page_Activity extends AppCompatActivity implements View.OnCli
         //푸쉬메세지로 접근시(값이 있으므로) 그 값을 다음 액티비티에 넘겨준다
         if(check != null){
             intent.putExtra("go_order_sheet", "go");
-            Log.e("<><>","go");
         }
 
 

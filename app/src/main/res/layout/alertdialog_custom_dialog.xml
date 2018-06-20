@@ -1,117 +1,165 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <!-- 자판기 클릭시 나오는 화면  alert-->
-<!-- alertdialog_first_item.xml, alertdialog_list_item.xml 폼으로 커스터마이징-->
+<!-- alertdialog_item.xml 폼으로 커스터마이징-->
 <android.support.constraint.ConstraintLayout
-    android:layout_width                    = "600dp"
-    android:layout_height                   = "300dp"
-    android:background                      = "@android:color/transparent"
-    xmlns:android                           = "http://schemas.android.com/apk/res/android"
-    xmlns:app                               = "http://schemas.android.com/apk/res-auto">
+    android:layout_width                        = "600dp"
+    android:layout_height                       = "300dp"
+    android:background                          = "@android:color/transparent"
+    xmlns:android                               = "http://schemas.android.com/apk/res/android"
+    xmlns:app                                   = "http://schemas.android.com/apk/res-auto">
 
     <!-- 취소(뒤로가기) 버튼 -->
     <ImageButton
-        android:id                          = "@+id/cancelButton"
-        android:layout_width                = "30dp"
-        android:layout_height               = "30dp"
-        android:layout_margin               = "5dp"
-        android:scaleType                   = "centerCrop"
-        android:background                  = "@android:color/transparent"
-        app:srcCompat                       = "@drawable/exit"
-        app:layout_constraintTop_toTopOf    = "parent"
-        app:layout_constraintEnd_toEndOf    = "parent"
+        android:id                              = "@+id/cancelButton"
+        android:layout_width                    = "30dp"
+        android:layout_height                   = "30dp"
+        android:layout_margin                   = "5dp"
+        android:scaleType                       = "centerCrop"
+        android:background                      = "@android:color/transparent"
+        app:srcCompat                           = "@drawable/exit"
+        app:layout_constraintTop_toTopOf        = "parent"
+        app:layout_constraintEnd_toEndOf        = "parent"
         />
 
     <!-- 창의 모든 내용이 들어가는 레이아웃 -->
     <LinearLayout
-        android:orientation                 = "vertical"
-        android:layout_width                = "500dp"
-        android:layout_height               = "match_parent"
-        android:background                  = "#FFFFFF"
-        android:layout_marginStart          = "50dp"
-        app:layout_constraintTop_toTopOf    = "parent"
-        app:layout_constraintStart_toStartOf= "parent"
+        android:orientation                     = "vertical"
+        android:layout_width                    = "500dp"
+        android:layout_height                   = "match_parent"
+        android:background                      = "#FFFFFF"
+        android:layout_marginStart              = "50dp"
+        app:layout_constraintTop_toTopOf        = "parent"
+        app:layout_constraintStart_toStartOf    = "parent"
         >
 
         <!-- 자판기 이름을 출력하기위한 레이아웃 -->
         <LinearLayout
-            android:layout_width            = "match_parent"
-            android:layout_height           = "0dp"
-            android:layout_weight           = "3"
-            android:weightSum               = "20"
-            android:background              = "@drawable/top"
-            android:orientation             = "vertical">
+            android:layout_width                = "match_parent"
+            android:layout_height               = "0dp"
+            android:layout_weight               = "3"
+            android:weightSum                   = "20"
+            android:background                  = "@drawable/top"
+            android:orientation                 = "vertical">
 
             <!-- 현재 자판기 이름 출력 텍스트 뷰 -->
             <TextView
-                android:id                  = "@+id/vending_name"
-                android:layout_width        = "match_parent"
-                android:layout_height       = "match_parent"
-                android:paddingStart        = "10dp"
-                android:text                = "자판기 명"
-                android:textColor           = "#FFFFFF"
-                android:gravity             = "center_vertical"
-                android:textSize            = "16dp" />
+                android:id                      = "@+id/vending_name"
+                android:layout_width            = "match_parent"
+                android:layout_height           = "match_parent"
+                android:paddingStart            = "10dp"
+                android:text                    = "자판기 명"
+                android:textColor               = "#FFFFFF"
+                android:gravity                 = "center_vertical"
+                android:textSize                = "16dp" />
 
         </LinearLayout>
 
-        <!-- 리스트업과 버튼들을 나눠서 버튼은 리스트업에 해당 안되도록 한다 -->
+        <!-- 작업지시서와 리스트들을 보여주게 해주는 레이아웃 -->
         <LinearLayout
-            android:layout_width            = "match_parent"
-            android:layout_height           = "0dp"
-            android:layout_weight           = "14"
-            android:orientation             ="vertical">
+            android:layout_width                = "match_parent"
+            android:layout_height               = "0dp"
+            android:layout_weight               = "13"
+            android:weightSum                   = "10"
+            android:orientation                 = "horizontal">
 
-            <!-- 현재 자판기의 음료 리스트들 -->
-            <ListView
-                android:id                  = "@+id/item_list"
-                android:layout_width        = "500dp"
-                android:layout_height       = "match_parent" />
+            <LinearLayout
+                android:layout_width            = "0dp"
+                android:layout_height           = "match_parent"
+                android:layout_weight           = "4"
+                android:paddingStart            = "12dp"
+                android:paddingTop              = "5dp"
+                android:weightSum               = "10"
+                android:orientation             = "vertical">
+
+                <!-- 작업지시서를 보야준다 -->
+                <TextView
+                    android:layout_width        = "match_parent"
+                    android:layout_height       = "0dp"
+                    android:layout_weight       = "1"
+                    android:textColor           = "#0064c8"
+                    android:letterSpacing       = "-0.1"
+                    android:textSize            = "13dp"
+                    android:text                = "지시 사항"/>
+
+                <!-- 작업지시서를 보야준다 -->
+                <TextView
+                    android:id                  = "@+id/order_list_tv"
+                    android:layout_width        = "match_parent"
+                    android:layout_height       = "0dp"
+                    android:layout_weight       = "9"
+                    android:paddingTop          = "15dp"
+                    android:letterSpacing       = "-0.1"
+                    android:text                = "No data"/>
+
+
+            </LinearLayout>
+
+            <!-- 리스트를 보여준다 -->
+            <LinearLayout
+                android:layout_width            = "0dp"
+                android:layout_height           = "match_parent"
+                android:layout_weight           = "6"
+                android:paddingStart            = "12dp"
+                android:paddingEnd              = "12dp"
+                android:orientation             = "vertical">
+
+                <!-- 현재 자판기의 음료 리스트들 -->
+                <ListView
+                    android:id                  = "@+id/item_list"
+                    android:layout_width        = "match_parent"
+                    android:layout_height       = "match_parent"
+                    android:divider             = "@null"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 
         <!-- 버튼이 출력되는 레이아웃 -->
         <LinearLayout
-            android:layout_width            = "match_parent"
-            android:layout_height           = "0dp"
-            android:layout_weight           = "3"
-            android:orientation             = "vertical"
-            android:background              = "@drawable/under">
+            android:layout_width                = "match_parent"
+            android:layout_height               = "0dp"
+            android:layout_weight               = "4"
+            android:orientation                 = "vertical"
+            android:background                  = "@drawable/under">
 
             <!-- 몰래 숨겨 놓은 vd_id -->
             <TextView
-                android:id                  = "@+id/vd_id"
-                android:layout_width        = "1dp"
-                android:layout_height       = "1dp"
-                android:visibility          = "gone"
-                android:text                = "" />
+                android:id                      = "@+id/vd_id"
+                android:layout_width            = "1dp"
+                android:layout_height           = "1dp"
+                android:visibility              = "gone"
+                android:text                    = "" />
 
             <!-- 버튼을 가로로 출력하기 위한 레이아웃 -->
             <LinearLayout
-                android:layout_width        = "match_parent"
-                android:layout_height       = "match_parent"
-                android:orientation         = "horizontal">
+                android:layout_width            = "match_parent"
+                android:layout_height           = "match_parent"
+                android:orientation             = "horizontal">
 
                 <!-- 보충완료 버튼을 오른쪽으로 정렬시키기위한 더미 뷰 -->
                 <View
-                    android:layout_width    = "0dp"
-                    android:layout_height   = "0dp"
-                    android:layout_weight   = "1"/>
+                    android:layout_width        = "0dp"
+                    android:layout_height       = "0dp"
+                    android:layout_weight       = "1"
+                    android:gravity             = "center"/>
 
                 <!-- 보충 완료 버튼 -->
-                <Button
-                    android:id              = "@+id/okButton"
-                    android:layout_width    = "100dp"
-                    android:layout_height   = "wrap_content"
-                    android:background      = "#566270"
-                    android:layout_margin   = "5dp"
-                    android:gravity         = "center"
-                    android:text            = "보충 완료"
-                    android:textColor       = "#FFFFFF"
-                    android:textSize        = "16dp"/>
+                <ImageButton
+                    android:id                  = "@+id/okButton"
+                    android:layout_marginTop    = "10dp"
+                    android:layout_marginEnd    = "8dp"
+                    android:layout_width        = "80dp"
+                    android:layout_height       = "40dp"
+                    android:scaleType           = "centerCrop"
+                    app:srcCompat               = "@drawable/complete"
+                    android:background          = "@android:color/transparent"
+                    android:gravity             = "center"/>
 
             </LinearLayout>
 
         </LinearLayout>
+
     </LinearLayout>
+
 </android.support.constraint.ConstraintLayout>
