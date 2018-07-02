@@ -35,19 +35,19 @@
             <item
                 android:id      = "@+id/order_list"
                 android:icon    = "@drawable/ic_attachment"
-                android:title   = "작업지시서 보기" />
+                android:title   = "@string/look_order_sheet"/>
 
             <!-- 원하는 날짜의 작업지시서 찾기 -->
             <item
                 android:id      = "@+id/serch_order_list"
                 android:icon    = "@drawable/calendar"
-                android:title   = "작업지시서 찾기" />
+                android:title   = "@string/serch_order_list" />
 
             <!-- 새로고침 -->
             <item
                 android:id      = "@+id/refrash_order_list"
                 android:icon    = "@drawable/ic_image"
-                android:title   = "작업지시서 갱신 하기" />
+                android:title   = "@string/refrash_order_list" />
 
             <!-- 일본 가기 버튼 -->
             <item

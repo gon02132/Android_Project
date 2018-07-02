@@ -62,7 +62,7 @@ public class Serch_id_Activity extends AppCompatActivity{
                         if(result_String.equals("no_exist")){
                             //결과Activity로 이동(존재하지 않는문자열을 넘겨줌)
                             Intent intent = new Intent(Serch_id_Activity.this, Serch_result_id_Activity.class);
-                            intent.putExtra("userids", "존재하지 않습니다.");
+                            intent.putExtra("userids", getString(R.string.not_exist));
                             startActivity(intent);
                             finish();
                         }
@@ -106,7 +106,7 @@ public class Serch_id_Activity extends AppCompatActivity{
             super.onBackPressed();
             finishAffinity();
         }
-        Toast.makeText(this, "한번더 뒤로가기 클릭 시 종료", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getString(R.string.back_double), Toast.LENGTH_SHORT).show();
         fir_time = System.currentTimeMillis();
     }
 

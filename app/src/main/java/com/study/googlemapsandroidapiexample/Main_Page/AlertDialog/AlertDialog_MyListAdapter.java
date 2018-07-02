@@ -27,6 +27,8 @@ public class AlertDialog_MyListAdapter extends BaseAdapter {
     private ImageView                           drk_img;                        //음료 이미지
     private String                              img_url;                        //서버 주소
 
+    private int                                 max_val = 4;                    //음료에 들어가는 최대 값
+
     //생성자
     public AlertDialog_MyListAdapter(Context context, ArrayList<AlertDialog_list_item> list_item_Arraylist) {
         this.context                = context;
@@ -79,15 +81,20 @@ public class AlertDialog_MyListAdapter extends BaseAdapter {
             count.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/Futura Heavy Italic font.ttf"));  //폰트 설정
 
             //count에 출력할 문자열 조합
-            // (+"/35") 는 각 라인마다 최대로 들어갈수 있는 양으로, 실제로는 이것또한 35가아니라
-            //DB에서 받아와 동적으로 바뀌게 해야한다(하지만 35로 고정이기 때문에 나도 고정으로 했다)
-            String temp = list_item_Arraylist.get(position * 4).getCount() + "/35";
+            // (+"/10") 는 각 라인마다 최대로 들어갈수 있는 양으로, 실제로는 이것또한 10가아니라
+            //DB에서 받아와 동적으로 바뀌게 해야한다(하지만 10로 고정이기 때문에 나도 고정으로 했다)
+            String temp = list_item_Arraylist.get(position * 4).getCount() + "/10";
 
             //하나의 textView에 글자색, 크기를 다르게 하는 함수
             SpannableStringBuilder sp = new SpannableStringBuilder(temp);
 
             //실 보충 수량은 글자를 크게 한다
             sp.setSpan(new AbsoluteSizeSpan(65),0, temp.length() - 3, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            //지정한 매진임박량 이하가 될 경우(X<max_val) 텍스트 색상을 빨간색으로 바꾼다
+            if (list_item_Arraylist.get(position * 4).getCount() < max_val) {
+                sp.setSpan(new ForegroundColorSpan(Color.RED), 0, temp.length() - 3, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
 
             //최대 보충수량은 글씨크기를 작게, 까만색으로 출력
             sp.setSpan(new ForegroundColorSpan(Color.BLACK), temp.length() - 3, temp.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -101,8 +108,8 @@ public class AlertDialog_MyListAdapter extends BaseAdapter {
             drink_line = (TextView) convertView.findViewById(R.id.line_1);
             drink_line.setText("LINE "+list_item_Arraylist.get(position * 4).getDrink_line());
 
-            //지정한 매진임박량 이하가 될 경우(X<9) 텍스트 색상을 빨간색으로 바꾼다
-            if (list_item_Arraylist.get(position * 4).getCount() < 9) {
+            //지정한 매진임박량 이하가 될 경우(X<4) 텍스트 색상을 빨간색으로 바꾼다
+            if (list_item_Arraylist.get(position * 4).getCount() < max_val) {
                 drink_line.setTextColor(Color.RED);
             } else {
                 drink_line.setTextColor(Color.BLACK);
@@ -127,15 +134,20 @@ public class AlertDialog_MyListAdapter extends BaseAdapter {
             count.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/Futura Heavy Italic font.ttf"));  //폰트 설정
 
             //count에 출력할 문자열 조합
-            // (+"/35") 는 각 라인마다 최대로 들어갈수 있는 양으로, 실제로는 이것또한 35가아니라
-            //DB에서 받아와 동적으로 바뀌게 해야한다(하지만 35로 고정이기 때문에 나도 고정으로 했다)
-            String temp = list_item_Arraylist.get((position * 4)+1).getCount() + "/35";
+            // (+"/10") 는 각 라인마다 최대로 들어갈수 있는 양으로, 실제로는 이것또한 10가아니라
+            //DB에서 받아와 동적으로 바뀌게 해야한다(하지만 10로 고정이기 때문에 나도 고정으로 했다)
+            String temp = list_item_Arraylist.get((position * 4)+1).getCount() + "/10";
 
             //하나의 textView에 글자색, 크기를 다르게 하는 함수
             SpannableStringBuilder sp = new SpannableStringBuilder(temp);
 
             //실 보충 수량은 까만색으로 뚜렷하게, 글자 크게
             sp.setSpan(new AbsoluteSizeSpan(65),0, temp.length() - 3, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            //지정한 매진임박량 이하가 될 경우(X<max_val) 텍스트 색상을 빨간색으로 바꾼다
+            if (list_item_Arraylist.get((position * 4)+1).getCount() < max_val) {
+                sp.setSpan(new ForegroundColorSpan(Color.RED), 0, temp.length() - 3, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
 
             //최대 보충수량은 글씨크기를 작게, 까만색으로 출력
             sp.setSpan(new ForegroundColorSpan(Color.BLACK), temp.length() - 3, temp.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -149,8 +161,8 @@ public class AlertDialog_MyListAdapter extends BaseAdapter {
             drink_line = (TextView) convertView.findViewById(R.id.line_2);
             drink_line.setText("LINE "+list_item_Arraylist.get((position * 4)+1).getDrink_line());
 
-            //지정한 매진임박량 이하가 될 경우(X<9) 텍스트 색상을 빨간색으로 바꾼다
-            if (list_item_Arraylist.get((position * 4)+1).getCount() < 9) {
+            //지정한 매진임박량 이하가 될 경우(X<max_val) 텍스트 색상을 빨간색으로 바꾼다
+            if (list_item_Arraylist.get((position * 4)+1).getCount() < max_val) {
                 drink_line.setTextColor(Color.RED);
             } else {
                 drink_line.setTextColor(Color.BLACK);
@@ -175,15 +187,20 @@ public class AlertDialog_MyListAdapter extends BaseAdapter {
             count.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/Futura Heavy Italic font.ttf"));  //폰트 설정
 
             //count에 출력할 문자열 조합
-            // (+"/35") 는 각 라인마다 최대로 들어갈수 있는 양으로, 실제로는 이것또한 35가아니라
-            //DB에서 받아와 동적으로 바뀌게 해야한다(하지만 35로 고정이기 때문에 나도 고정으로 했다)
-            String temp = list_item_Arraylist.get((position * 4)+2).getCount() + "/35";
+            // (+"/10") 는 각 라인마다 최대로 들어갈수 있는 양으로, 실제로는 이것또한 10가아니라
+            //DB에서 받아와 동적으로 바뀌게 해야한다(하지만 10로 고정이기 때문에 나도 고정으로 했다)
+            String temp = list_item_Arraylist.get((position * 4)+2).getCount() + "/10";
 
             //하나의 textView에 글자색, 크기를 다르게 하는 함수
             SpannableStringBuilder sp = new SpannableStringBuilder(temp);
 
             //실 보충 수량은 까만색으로 뚜렷하게, 글자 크게
             sp.setSpan(new AbsoluteSizeSpan(65),0, temp.length() - 3, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            //지정한 매진임박량 이하가 될 경우(X<max_val) 텍스트 색상을 빨간색으로 바꾼다
+            if (list_item_Arraylist.get((position * 4)+2).getCount() < max_val) {
+                sp.setSpan(new ForegroundColorSpan(Color.RED), 0, temp.length() - 3, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
 
             //최대 보충수량은 글씨크기를 작게, 까만색으로 출력
             sp.setSpan(new ForegroundColorSpan(Color.BLACK), temp.length() - 3, temp.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -197,8 +214,8 @@ public class AlertDialog_MyListAdapter extends BaseAdapter {
             drink_line = (TextView) convertView.findViewById(R.id.line_3);
             drink_line.setText("LINE "+list_item_Arraylist.get((position * 4)+2).getDrink_line());
 
-            //지정한 매진임박량 이하가 될 경우(X<9) 텍스트 색상을 빨간색으로 바꾼다
-            if (list_item_Arraylist.get((position * 4)+2).getCount() < 9) {
+            //지정한 매진임박량 이하가 될 경우(X<4) 텍스트 색상을 빨간색으로 바꾼다
+            if (list_item_Arraylist.get((position * 4)+2).getCount() < max_val) {
                 drink_line.setTextColor(Color.RED);
             } else {
                 drink_line.setTextColor(Color.BLACK);
@@ -223,15 +240,20 @@ public class AlertDialog_MyListAdapter extends BaseAdapter {
             count.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/Futura Heavy Italic font.ttf"));  //폰트 설정
 
             //count에 출력할 문자열 조합
-            // (+"/35") 는 각 라인마다 최대로 들어갈수 있는 양으로, 실제로는 이것또한 35가아니라
-            //DB에서 받아와 동적으로 바뀌게 해야한다(하지만 35로 고정이기 때문에 나도 고정으로 했다)
-            String temp = list_item_Arraylist.get((position * 4)+3).getCount() + "/35";
+            // (+"/10") 는 각 라인마다 최대로 들어갈수 있는 양으로, 실제로는 이것또한 10가아니라
+            //DB에서 받아와 동적으로 바뀌게 해야한다(하지만 10로 고정이기 때문에 나도 고정으로 했다)
+            String temp = list_item_Arraylist.get((position * 4)+3).getCount() + "/10";
 
             //하나의 textView에 글자색, 크기를 다르게 하는 함수
             SpannableStringBuilder sp = new SpannableStringBuilder(temp);
 
             //실 보충 수량은 까만색으로 뚜렷하게, 글자 크게
             sp.setSpan(new AbsoluteSizeSpan(65),0, temp.length() - 3, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            //지정한 매진임박량 이하가 될 경우(X<max_val) 텍스트 색상을 빨간색으로 바꾼다
+            if (list_item_Arraylist.get((position * 4)+3).getCount() < max_val) {
+                sp.setSpan(new ForegroundColorSpan(Color.RED), 0, temp.length() - 3, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
 
             //최대 보충수량은 글씨크기를 작게, 까만색으로 출력
             sp.setSpan(new ForegroundColorSpan(Color.BLACK), temp.length() - 3, temp.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -245,8 +267,8 @@ public class AlertDialog_MyListAdapter extends BaseAdapter {
             drink_line = (TextView) convertView.findViewById(R.id.line_4);
             drink_line.setText("LINE "+list_item_Arraylist.get((position * 4)+3).getDrink_line());
 
-            //지정한 매진임박량 이하가 될 경우(X<9) 텍스트 색상을 빨간색으로 바꾼다
-            if (list_item_Arraylist.get((position * 4)+3).getCount() < 9) {
+            //지정한 매진임박량 이하가 될 경우(X<4) 텍스트 색상을 빨간색으로 바꾼다
+            if (list_item_Arraylist.get((position * 4)+3).getCount() < max_val) {
                 drink_line.setTextColor(Color.RED);
             } else {
                 drink_line.setTextColor(Color.BLACK);

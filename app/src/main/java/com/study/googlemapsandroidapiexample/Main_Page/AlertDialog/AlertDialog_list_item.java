@@ -14,7 +14,7 @@ public class AlertDialog_list_item {
         this.note       = note;
         this.name       = name;
         this.img_path   = img_path;
-        this.count      = 35-count;
+        this.count      = 10-count;
         this.drink_line = drink_line;
     }
 

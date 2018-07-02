@@ -52,19 +52,19 @@ public class Create_user_Acitivty extends AppCompatActivity{
                     if(s.equals("exist")){
 
                     //존재할 경우
-                        serch_result.setText("존재하는 id입니다!");
+                        serch_result.setText(getString(R.string.duple_id));
                         serch_result.setTextColor(Color.parseColor("#FF0000"));
                     }
 
                     //존재하지 않을경우
                     else if(s.equals("no_exist")){
-                        serch_result.setText("사용가능한 id입니다!");
+                        serch_result.setText(getString(R.string.ok_id));
                         serch_result.setTextColor(Color.parseColor("#0000FF"));
                     }
 
                     //예외 발생 시, Toast 발생
                     else{
-                        Toast.makeText(Create_user_Acitivty.this, "Err 다시 실행 해 주세요", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Create_user_Acitivty.this, "error!!", Toast.LENGTH_SHORT).show();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -125,7 +125,7 @@ public class Create_user_Acitivty extends AppCompatActivity{
 
                     //빈칸이아니고 같을경우 -> 가입을 할 수 있는 조건 중 하나를 만족 시켜 준다.
                     else {
-                        two_pass_check.setText("두개의 비밀번호가 일치합니다.");
+                        two_pass_check.setText(getString(R.string.two_pw_ok));
                         two_pass_check.setTextColor(Color.parseColor("#0000FF"));
                     }
 
@@ -133,7 +133,7 @@ public class Create_user_Acitivty extends AppCompatActivity{
 
                 //두개의 비밀번호가 일치하지 않을 시, 가입을 못하게 조건을 준다.
                 else{
-                    two_pass_check.setText("두개의 비밀번호가 일치하지 않습니다.");
+                    two_pass_check.setText(getString(R.string.two_pw_no));
                     two_pass_check.setTextColor(Color.parseColor("#FF0000"));
                 }
 
@@ -163,14 +163,14 @@ public class Create_user_Acitivty extends AppCompatActivity{
 
                     //빈칸이아니고 같을경우 -> 가입을 할 수 있는 조건 중 하나를 만족 시켜 준다.
                     else {
-                        two_pass_check.setText("두개의 비밀번호가 일치합니다.");
+                        two_pass_check.setText(getString(R.string.two_pw_ok));
                         two_pass_check.setTextColor(Color.parseColor("#0000FF"));
                     }
                 }
 
                 //두개의 비밀번호가 일치하지 않을 시, 가입을 못하게 조건을 준다.
                 else{
-                    two_pass_check.setText("두개의 비밀번호가 일치하지 않습니다.");
+                    two_pass_check.setText(getString(R.string.two_pw_no));
                     two_pass_check.setTextColor(Color.parseColor("#FF0000"));
                 }
 
@@ -209,7 +209,7 @@ public class Create_user_Acitivty extends AppCompatActivity{
 
                         //DB에 insert되었다면 생성완료 알림 후 Mainpage로 이동
                         if(s.equals("insert_OK")){
-                            Toast.makeText(Create_user_Acitivty.this, "생성완료!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Create_user_Acitivty.this, "Create OK!", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(Create_user_Acitivty.this, Login_page_Activity.class);
                             startActivity(intent);
                             finish();
@@ -225,7 +225,7 @@ public class Create_user_Acitivty extends AppCompatActivity{
 
 
                 }else{
-                    Toast.makeText(Create_user_Acitivty.this, "누락된부분 올바르게 적으세요", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Create_user_Acitivty.this, getString(R.string.no_all_check), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -241,7 +241,7 @@ public class Create_user_Acitivty extends AppCompatActivity{
             super.onBackPressed();
             finishAffinity();
         }
-        Toast.makeText(this, "한번더 뒤로가기 클릭 시 종료", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getString(R.string.back_double), Toast.LENGTH_SHORT).show();
         fir_time = System.currentTimeMillis();
     }
 

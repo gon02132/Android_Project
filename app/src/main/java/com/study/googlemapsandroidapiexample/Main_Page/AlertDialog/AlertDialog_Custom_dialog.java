@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.study.googlemapsandroidapiexample.DB_conn;
+import com.study.googlemapsandroidapiexample.Main_Page.Get_set_package;
 import com.study.googlemapsandroidapiexample.Main_Page.MainActivity;
 import com.study.googlemapsandroidapiexample.R;
 
@@ -30,10 +31,12 @@ public class AlertDialog_Custom_dialog {
     private String                              user_login_id, order_sheet_str; //보충기사 로그인 아이디, 작업지시들 문자열
     private AlertDialog_MyListAdapter           myListAdapter;                  //custom어뎁터
     private DB_conn                             db_conn;                        //DB연결자
+    private Get_set_package                     get_set_package;                //겟셋 클래스 변수
 
     //생성자
-    public AlertDialog_Custom_dialog(Context context, String order_sheet_str, ArrayList<AlertDialog_list_item> list_itemArrayList, String vending_name, String vd_id, String user_login_id) {
+    public AlertDialog_Custom_dialog(Context context, Get_set_package get_set_package, String order_sheet_str, ArrayList<AlertDialog_list_item> list_itemArrayList, String vending_name, String vd_id, String user_login_id) {
         this.context            = context;                  //mainActivity this
+        this.get_set_package    = get_set_package;          //get_set변수 가져오기
         this.list_itemArrayList = list_itemArrayList;       //item list(array)
         this.vending_name       = vending_name;             //자판기 이름
         this.vd_id_str          = vd_id;                    //자판기 id
@@ -42,6 +45,7 @@ public class AlertDialog_Custom_dialog {
         this.order_sheet_str    = order_sheet_str;          //작업지시서 내용들
     }
 
+    //함수 실행
     public void callFunction() {
 
         //Dialog 객체 생성
@@ -92,19 +96,19 @@ public class AlertDialog_Custom_dialog {
                 builder.setTitle(vending_name);
 
                 //내용 지정 -> 버튼 2개생성
-                builder.setMessage("정말로 강제 갱신을 하시 겠습니까?").
+                builder.setMessage(context.getString(R.string.real_full_ok)).
 
                         //갱신 취소 기능
-                        setPositiveButton("아니오",
+                        setPositiveButton(context.getString(R.string.no),
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        Toast.makeText(context, "취소 되었습니다", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context, context.getString(R.string.the_canceled), Toast.LENGTH_SHORT).show();
                                     }
                                 })
 
                         //강제 갱신 기능
-                        .setNegativeButton("예",
+                        .setNegativeButton(context.getString(R.string.yes),
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
@@ -120,7 +124,7 @@ public class AlertDialog_Custom_dialog {
                                         }
 
 
-                                        Toast.makeText(context, "보충 완료 되었습니다.", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context, context.getString(R.string.full_ok), Toast.LENGTH_SHORT).show();
 
                                         //현재 열려있는 자판기 정보도 닫는다.
                                         dig.dismiss();

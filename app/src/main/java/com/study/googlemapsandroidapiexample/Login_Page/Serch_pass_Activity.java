@@ -67,7 +67,7 @@ public class Serch_pass_Activity extends AppCompatActivity{
 
                             //db에서 받아온 값을 결과 페이지에 넘겨준다.
                             Intent intent = new Intent(Serch_pass_Activity.this, Serch_result_pw_Activity.class);
-                            intent.putExtra("user_info", "존재하지 않습니다.");
+                            intent.putExtra("user_info", getString(R.string.not_exist));
                             startActivity(intent);
                             finish();
                         }
@@ -98,7 +98,7 @@ public class Serch_pass_Activity extends AppCompatActivity{
                         }
 
                     }else{
-                        Toast.makeText(Serch_pass_Activity.this, "빈칸이 있습니다", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Serch_pass_Activity.this, getString(R.string.exist_blank), Toast.LENGTH_SHORT).show();
                     }
 
                 }catch (Exception e){
@@ -116,7 +116,7 @@ public class Serch_pass_Activity extends AppCompatActivity{
             super.onBackPressed();
             finishAffinity();
         }
-        Toast.makeText(this, "한번더 뒤로가기 클릭 시 종료", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getString(R.string.back_double), Toast.LENGTH_SHORT).show();
         fir_time = System.currentTimeMillis();
     }
 

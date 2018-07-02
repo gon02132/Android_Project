@@ -71,7 +71,7 @@
         android:id                              = "@+id/id_serch_bt"
         android:layout_width                    = "wrap_content"
         android:layout_height                   = "wrap_content"
-        android:text                            = "ID찾기"
+        android:text                            = "@string/find_id"
         app:layout_constraintStart_toStartOf    = "parent"
         app:layout_constraintEnd_toStartOf      = "@+id/pass_serch_bt"
         app:layout_constraintTop_toBottomOf     = "@+id/line" />
@@ -81,7 +81,7 @@
         android:id                              = "@+id/pass_serch_bt"
         android:layout_width                    = "wrap_content"
         android:layout_height                   = "wrap_content"
-        android:text                            = "비밀번호 찾기"
+        android:text                            = "@string/find_pass"
         app:layout_constraintStart_toEndOf      = "@+id/id_serch_bt"
         app:layout_constraintEnd_toStartOf      = "@+id/create_id_bt"
         app:layout_constraintTop_toBottomOf     = "@+id/line" />
@@ -91,7 +91,7 @@
         android:id                              = "@+id/create_id_bt"
         android:layout_width                    = "wrap_content"
         android:layout_height                   = "wrap_content"
-        android:text                            = "회원가입"
+        android:text                            = "@string/create_user"
         app:layout_constraintEnd_toEndOf        = "parent"
         app:layout_constraintStart_toEndOf      = "@+id/pass_serch_bt"
         app:layout_constraintTop_toBottomOf     = "@+id/line" />

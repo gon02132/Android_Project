@@ -24,7 +24,12 @@ public class Get_set_package {
     private ArrayList<Marker>   originMarkerlist;               //구글맵에 그려진 마커들이 저장된 배열
     private ArrayList<Marker>   vending_stack,    mini_stack;   //가야할 자판기들의 배열(롱클릭으로 지정한 것들)
 
-    private Marker              next_Marker;        //다음 가야할 위치의 마커
+    private Marker              next_Marker;                    //다음 가야할 위치의 마커
+
+    public  LatLng              japan_location;                 //일본버전에서 자신의 위치가 되는 변수
+
+    public Directions_Functions dir_fuc;                        // 길 경로 표시 클래스 변수
+
 
     //기본 생성자
     public Get_set_package(Context context, GoogleMap googleMap, GoogleMap minimap, ArrayList<Marker> originMarkerlist, ArrayList<Marker> vending_stack, ArrayList<Marker> mini_stack) {
@@ -34,6 +39,17 @@ public class Get_set_package {
         this.originMarkerlist   = originMarkerlist;
         this.vending_stack      = vending_stack;
         this.mini_stack         = mini_stack;
+
+    }
+
+    //길 경로 표시 변수 초기화
+    public void set_dir_fuc(Directions_Functions dir_fuc){
+        this.dir_fuc = dir_fuc;
+    }
+
+    //일본에서 임시로 만든 나의 위치 초기화
+    public void set_japan_location(LatLng japan_location){
+        this.japan_location = japan_location;
     }
 
     //현재 그려진 모든 마커들 가져오기
@@ -49,6 +65,13 @@ public class Get_set_package {
 
     //다음 가야할 마커 가져오기
     public Marker getNow_Marker() {return next_Marker;}
+
+    //구글맵 가져오기
+    public GoogleMap get_main_map(){ return googleMap; }
+
+    //미니맵 가져오기
+    public GoogleMap get_mini_map(){ return minimap; }
+
 
     //마커 그리기
     public void drawMarkers(LatLng latLng, String vd_name, String vending_info, Integer status, boolean draggable) {
@@ -215,7 +238,7 @@ public class Get_set_package {
         markerOptions.title("my_location");               //제목(위치의 주소)
         markerOptions.snippet("[" + latLng.latitude + ":" + latLng.longitude + "]");//내용
         markerOptions.draggable(draggable);      //드래그 허용
-        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("my_location", 150, 150)));
+        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("my_location", 80, 90)));
 
         return markerOptions;
     }

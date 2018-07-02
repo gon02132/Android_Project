@@ -1,10 +1,76 @@
 <resources>
     <!-- 툴바나 타이틀에 원하는 이름있으면 넣어도 됨-->
-    <string name="app_name">kinotsunagari_from_jsk</string>
+    <string name="app_name">kituna_jsk</string>
     
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="drawer_header_text">Drawer Header</string>
     <string name="second_activity_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin consectetur diam id aliquam scelerisque. Donec ultrices lacus vel dignissim pharetra. Vivamus pharetra augue quis rhoncus placerat. Sed ultricies at risus non cursus. Nam rutrum leo nec placerat consectetur. Vestibulum feugiat eleifend diam, nec interdum augue tincidunt sit amet. Praesent feugiat est auctor lacus consectetur, vitae pellentesque dolor laoreet.</string>
     <string name="title_activity_second">SecondActivity</string>
+
+    <!-- !!!국가별 맞춤 언어들!!! -->
+
+    <!-- activirt_login.xml -->
+    <string name="find_id">ID찾기</string>
+    <string name="find_pass">비밀번호 찾기</string>
+    <string name="create_user">회원가입</string>
+
+    <!-- alertdialog_custom_dialog.xml -->
+    <string name="vending_name">자판기 명</string>
+    <string name="order_check">지시 사항</string>
+
+    <!-- create_user.xml -->
+    <string name="duple_check">중복 확인</string>
+    <string name="create_user_ok">가입하기</string>
+
+    <!-- main_page_activity_main.xml -->
+    <string name="select_next_vd">다음 가야할 자판기를 지정해 주세요.</string>
+    <string name="no_order_sheet">작업 지시서가 없습니다</string>
+    <string name="open">열기</string>
+
+    <!-- MyFirebaseMessagingService -->
+    <string name="notice">공지사항</string>
+
+    <!-- Create_user_Acitivty -->
+    <string name="duple_id">존재하는 id입니다!</string>
+    <string name="ok_id">사용가능한 id입니다!</string>
+    <string name="two_pw_ok">두개의 비밀번호가 일치합니다.</string>
+    <string name="two_pw_no">두개의 비밀번호가 일치하지 않습니다.</string>
+    <string name="no_all_check">누락된부분 올바르게 적으세요</string>
+    <string name="back_double">한번더 뒤로가기 클릭 시 종료</string>
+
+    <!-- Login_page_Activity -->
+    <string name="exist_blank">빈 칸이 있습니다</string>
+    <string name="not_fount_id">찾는 id가 없습니다</string>
+    <string name="no_pass_ok">비밀번호가 틀립니다</string>
+
+    <!-- Serch_id_Activity -->
+    <string name="not_exist">존재하지 않습니다.</string>
+
+    <!-- AlertDialog_Custom_dialog -->
+    <string name="real_full_ok">정말로 보충 완료 하시 겠습니까?</string>
+    <string name="no">아니오</string>
+    <string name="yes">예</string>
+    <string name="the_canceled">취소 되었습니다</string>
+    <string name="full_ok">보충 완료 되었습니다.</string>
+
+    <!-- Order_sheet_alert -->
+    <string name="add_need_all">보충 필요량 합계</string>
+    <string name="work_order">작업 지시</string>
+
+    <!-- MainActivity -->
+    <string name="data_format">yyyy년MM월dd일HH시mm분ss초</string>
+    <string name="now_addr">현재 주소</string>
+    <string name="now_speed">현재 속도</string>
+    <string name="total_vd">남은 자판기</string>
+    <string name="val">개</string>
+    <string name="next_vd">다음 자판기</string>
+    <string name="no_add_vd">보충해야할 자판기가 없습니다.</string>
+    <string name="no_order">지시 사항이 없습니다</string>
+
+    <!-- res/menu -->
+    <string name="look_order_sheet">작업지시서 보기</string>
+    <string name="serch_order_list">작업지시서 찾기</string>
+    <string name="refrash_order_list">작업지시서 갱신 하기</string>
+
 </resources>

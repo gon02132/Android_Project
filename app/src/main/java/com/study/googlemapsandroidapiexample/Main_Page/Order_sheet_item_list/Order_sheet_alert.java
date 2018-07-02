@@ -29,7 +29,6 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Locale;
 
 //작업지시서 만들어지는 class
@@ -39,7 +38,6 @@ public class Order_sheet_alert{
     private Context                 context;
     private String                  user_login_id;
     private String                  date_String;                        //특정날자를 검색 했을 시, 이 날자로 검색한다
-    private int                     check_bg_color          = 0;        //배경색을 구별 해주기 위해 사용
     private boolean                 swap_bg_color           = true;     //한줄한줄 배경을 다르게 해주는 애
     private int                     now_page_print_val      = 0;        //현재 페이지에 가로로 몇개씩 출력되는지
 
@@ -163,7 +161,6 @@ public class Order_sheet_alert{
 
                     //세로로 회색줄을 구분하기 위한 변수들
                     swap_bg_color   = true;
-                    check_bg_color  = 0;
 
                     //예외처리) 광클시 1이하로 내려가는데 이를 막기위함, 이외에는 정상 접근이므로 --를 해준다
                     if(Order_sheet_alert.this.now_page < 1){
@@ -186,7 +183,6 @@ public class Order_sheet_alert{
 
                     //세로로 회색줄을 구분하기 위한 변수들
                     swap_bg_color   = true;
-                    check_bg_color  = 0;
 
                     //예외처리) 광클시 3이상 올라가는데 이를 막기위함, 이외에는 정상 접근이므로 ++를 해준다
                     if(Order_sheet_alert.this.now_page > 3){
@@ -275,9 +271,9 @@ public class Order_sheet_alert{
 
                 //현재 날짜 구하는 함수 포멧은 ex) 2018-04-25 로 문자열로 변환되어 출력됨
                 SimpleDateFormat df = new SimpleDateFormat("yyy-MM-dd", Locale.KOREA);
-                String str_date     = df.format(new Date());
-                //String str_date     = "2018-05-16";
-                //String str_date = "2018-06-15";
+                //String str_date     = df.format(new Date());
+                //String str_date = "2018-06-23";
+                String str_date = "2018-06-27";
 
                 //db에 접속하여 반환된 결과값 초기화
                 result_str = db_conn_obj.execute("get_order_sheet", user_login_id, str_date).get();
@@ -344,7 +340,7 @@ public class Order_sheet_alert{
         textView.setBackgroundColor(Color.parseColor(bg_color));                    //배경색 설정
 
         //1,2페이지에서 각 칸마다 구별을 주기위해(세로로 배경색 색칠)
-        if(!bg_color.equals("#0064c8") && str.length() < 4 && now_page != 3){
+        if(!bg_color.equals("#0064c8") && str.length() < 4 && now_page != 3 && !str.equals("")){
 
             //흰색으로 색칠하기
             if(swap_bg_color == true){
@@ -358,15 +354,6 @@ public class Order_sheet_alert{
                 swap_bg_color = !swap_bg_color;
             }
 
-            check_bg_color++;
-
-            //출력되는 수량이 홀 수인경우 짝수와 같은 출력효과를 내도록 해준다.
-            if(check_bg_color % now_page_print_val == 0 && now_page_print_val % 2 == 1){
-                swap_bg_color = !swap_bg_color;
-            }
-
-            //구분자는 계속 ++한다
-            //check_bg_color++;
 
         }
 
@@ -409,7 +396,7 @@ public class Order_sheet_alert{
 
         //특정 크기로 추가하고 싶을 시,
         if(select == 3){
-            if(str.equals("보충 필요량 합계")){
+            if(str.equals(context.getString(R.string.add_need_all))){
                 params = new TableRow.LayoutParams(count, 130);
             }
             else{
@@ -476,13 +463,25 @@ public class Order_sheet_alert{
         //사진 다 보이도록
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
-        //값 넣기
-        //imageView.setImageResource(R.drawable.japangi2);
+        //배경만 출력하고 싶은 경우에 얘를 호출
+        if(img_select.equals("back")){
+            //값 넣기
+            //imageView.setImageResource(R.drawable.japangi2);
             com.squareup.picasso.Picasso.with(context)
-                    .load("http://52.78.198.67/images/drink/"+img_select+"_back.png")
+                    .load("http://52.78.198.67/images/drink/" + img_select + ".png")
                     .into(imageView);
 
+        }
 
+        //배경 + 음료까지 출력하고 싶을 경우 얘를 호출
+        else {
+            //값 넣기
+            //imageView.setImageResource(R.drawable.japangi2);
+            com.squareup.picasso.Picasso.with(context)
+                    .load("http://52.78.198.67/images/drink/" + img_select + "_back.png")
+                    .into(imageView);
+
+        }
         //TR에 넣기
         tr.addView(imageView);
     }
@@ -565,12 +564,17 @@ public class Order_sheet_alert{
                             //현재 모든 제품들의 이름들을 가져온다.
                             String drk_name = json_object.getString("drk_name");
 
-                            //현재 소유중인 제품들의 명들을 차례차례 출력한다.
-                            //draw_td(1,0, drk_name,false);
-
-                            //아이콘을 출력 하고 싶은 경우 주석을 풀고 위에 draw_td를 주석처리한다.
+                            //아이콘 출력
                             draw_td_image(1,0, "#0064c8", drk_name);
 
+                        }
+
+                        //6개씩 맞춰서 출력하기위해 한페이지당 6개이하의 제품이 있다면 나머지는 공백으로 놔둔다
+                        if(result_arr_size - for_i < 7){
+                            for(int i = 0; i < (6-(result_arr_size - for_i)); i++){
+                                //아이콘 출력
+                                draw_td_image(1,0, "#0064c8", "back");
+                            }
                         }
 
                         //반복문마다 다른 레이아아웃에 추가
@@ -598,7 +602,7 @@ public class Order_sheet_alert{
                         draw_td(3,600, "Vending Machine\nName","#0064c8", 16, "fonts/Futura Heavy font.ttf", false);
 
                         //"작업 지시" TD 생성
-                        draw_td(3,700, "작업 지시","#0064c8", 16, "fonts/Futura Heavy font.ttf", false);
+                        draw_td(3,770, context.getString(R.string.work_order),"#0064c8", 16, "fonts/Futura Heavy font.ttf", false);
 
                         //반복문마다 다른 레이아아웃에 추가
                         if(a==0){
@@ -706,6 +710,17 @@ public class Order_sheet_alert{
 
                                 }
 
+
+                                //6개씩 맞춰서 출력하기위해 한페이지당 6개이하의 제품이 있다면 나머지는 공백으로 놔둔다
+                                if(result_arr_size - for_j < 7){
+                                    for(int j = 0; j < (6-(result_arr_size - for_j)); j++){
+                                        //빈 수량 출력
+                                        draw_td(1,0,"-","#FFFFFF", 16,"fonts/Futura Heavy Italic font.ttf",(sp_check_int == 1) ? true : false);
+                                    }
+                                }
+
+
+
                                 //줄 긋기(위아래 TR 구분선)
                                 View v = new View(context);
                                 v.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT,3));
@@ -773,6 +788,15 @@ public class Order_sheet_alert{
 
                             }
 
+                            //6개씩 맞춰서 출력하기위해 한페이지당 6개이하의 제품이 있다면 나머지는 공백으로 놔둔다
+                            if(result_arr_size - for_j < 7){
+                                for(int j = 0; j < (6-(result_arr_size - for_j)); j++){
+                                    //빈 수량 출력
+                                    draw_td(1,0,"-","#FFFFFF", 16,"fonts/Futura Heavy Italic font.ttf",(sp_check_int == 1) ? true : false);
+                                }
+                            }
+
+
                             //줄 긋기(위아래 TR 구분선)
                             View v = new View(context);
                             v.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT,3));
@@ -809,14 +833,47 @@ public class Order_sheet_alert{
                         //테이블의 TR태그를 만든다
                         tr = new TableRow(context);
 
-                        //합계 글자 TD 생성
-                        draw_td(3, 600, "보충 필요량 합계", "#0064c8", 13,"fonts/YoonGothic760.ttf", false);
+                        //움직이는 바는 안보이게, 고정바는 파란색배경으로 보이게 출력한다
+                        if(i == 0){
+                            //합계 글자 TD 생성
+                            draw_td(3, 600, "", "#FFFFFF", 13, "fonts/YoonGothic760.ttf", false);
+                        }else {
+                            //합계 글자 TD 생성
+                            draw_td(3, 600, context.getString(R.string.add_need_all), "#0064c8", 13, "fonts/YoonGothic760.ttf", false);
+                        }
 
                         //지정된 횟수만큼 합계의 수량들을  출력한다.
                         for (int j = for_j; j < result_arr_size; j++) {
-                            //합계 TD 만들기
-                            draw_td(1, 0, product_count.get(j) + "", "#0064c8", 20,"fonts/Futura Heavy Italic font.ttf", false);
+
+                            //움직이는 바는 안보이게, 고정바는 파란색배경으로 보이게 출력한다
+                            if(i == 0){
+                                //합계 TD 만들기
+                                draw_td(1, 0, "", "#FFFFFF", 20, "fonts/Futura Heavy Italic font.ttf", false);
+
+                            }else {
+                                //합계 TD 만들기
+                                draw_td(1, 0, product_count.get(j) + "", "#0064c8", 20, "fonts/Futura Heavy Italic font.ttf", false);
+                            }
+
                         }
+
+                        //6개씩 맞춰서 출력하기위해 한페이지당 6개이하의 제품이 있다면 나머지는 공백으로 놔둔다
+                        if(result_arr_size - for_j < 7){
+                            for(int j = 0; j < (6-(result_arr_size - for_j)); j++){
+
+                                //움직이는 바는 안보이게, 고정바는 파란색배경으로 보이게 출력한다
+                                if(i == 0){
+                                    //합계 TD 만들기
+                                    draw_td(1, 0, "", "#FFFFFF", 20, "fonts/Futura Heavy Italic font.ttf", false);
+
+                                }else {
+                                    //합계 TD 만들기
+                                    draw_td(1, 0,  "-", "#0064c8", 20, "fonts/Futura Heavy Italic font.ttf", false);
+                                }
+
+                            }
+                        }
+
 
                         //고정바와 메인바 둘 다 적용 시킨다
                         if(i == 0) {

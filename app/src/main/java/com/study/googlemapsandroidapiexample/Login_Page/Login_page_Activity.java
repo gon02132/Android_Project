@@ -142,22 +142,22 @@ public class Login_page_Activity extends AppCompatActivity implements View.OnCli
 
                         //id랑 password 중 하나라도 미입력 시
                         case "no_full":
-                            Toast.makeText(this, "빈 칸이 있습니다", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, getString(R.string.exist_blank), Toast.LENGTH_SHORT).show();
                             return;
 
                         //id가 없을 시,
                         case "no_id":
-                            Toast.makeText(this, "찾는 id가 없습니다", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, getString(R.string.not_fount_id), Toast.LENGTH_SHORT).show();
                             return;
 
                         //비밀번호가 틀릴 시,
                         case "no_pass":
-                            Toast.makeText(this, "비밀번호가 틀립니다.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, getString(R.string.no_pass_ok), Toast.LENGTH_SHORT).show();
                             return;
 
                         //이외(mysql_err ....)
                         case "mysql_err":
-                            Toast.makeText(this, "mysql에러! 구문을 재확인 하십쇼", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "mysql err!!", Toast.LENGTH_SHORT).show();
                             return;
 
                         //성공적으로 값을 받아왔다면 다음 페이지로 넘어간다.
@@ -170,7 +170,7 @@ public class Login_page_Activity extends AppCompatActivity implements View.OnCli
 
                             //받아온 결과값이 없거나, 올바르지 않은 값이 들어가 있을 시,
                             if(json_result == null || json_result.length() == 0){
-                                Toast.makeText(this, "데이터베이스 입력값 오류", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(this, "DB values err!!", Toast.LENGTH_SHORT).show();
                                 return;
                             }
 
@@ -234,7 +234,7 @@ public class Login_page_Activity extends AppCompatActivity implements View.OnCli
             super.onBackPressed();
             finishAffinity();
         }
-        Toast.makeText(this, "한번더 뒤로가기 클릭 시 종료", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getString(R.string.back_double), Toast.LENGTH_SHORT).show();
         fir_time = System.currentTimeMillis();
     }
 

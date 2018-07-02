@@ -52,11 +52,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         //보낼 양식 지정
         Notification.Builder nBuilder = new Notification.Builder(this,"my_channel_01")
-                .setContentTitle("공지사항")                //알림영역의 제목
-                .setContentText(messageBody)                //알림 영역의 내용
-                .setSmallIcon(R.drawable.japangi)           //알림 영역에 보여질 아이콘
-                .setAutoCancel(true)                        //알림 눌렀을때 자동으로 사라지게 할것인지
-                .setTicker("알림!!")                        //실행시 잠깐 나오는 메세지
+                .setContentTitle(getString(R.string.notice))    //알림영역의 제목 - 공지사항
+                .setContentText(messageBody)                    //알림 영역의 내용
+                .setSmallIcon(R.drawable.japangi)               //알림 영역에 보여질 아이콘
+                .setAutoCancel(true)                            //알림 눌렀을때 자동으로 사라지게 할것인지
+                .setTicker("Notice!!")                          //실행시 잠깐 나오는 메세지
                 .setContentIntent(pendingIntent);
 
 

@@ -1,0 +1,76 @@
+<resources>
+    <!-- 툴바나 타이틀에 원하는 이름있으면 넣어도 됨-->
+    <string name="app_name">kituna_jsk</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="drawer_header_text">Drawer Header</string>
+    <string name="second_activity_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin consectetur diam id aliquam scelerisque. Donec ultrices lacus vel dignissim pharetra. Vivamus pharetra augue quis rhoncus placerat. Sed ultricies at risus non cursus. Nam rutrum leo nec placerat consectetur. Vestibulum feugiat eleifend diam, nec interdum augue tincidunt sit amet. Praesent feugiat est auctor lacus consectetur, vitae pellentesque dolor laoreet.</string>
+    <string name="title_activity_second">SecondActivity</string>
+
+    <!-- !!!국가별 맞춤 언어들!!! -->
+
+    <!-- activirt_login.xml -->
+    <string name="find_id">ID検索</string>
+    <string name="find_pass">パスワード検索</string>
+    <string name="create_user">会員登録</string>
+
+    <!-- alertdialog_custom_dialog.xml -->
+    <string name="vending_name">自販機の名</string>
+    <string name="order_check">指示事項</string>
+
+    <!-- create_user.xml -->
+    <string name="duple_check">中腹確認</string>
+    <string name="create_user_ok">登録</string>
+
+    <!-- main_page_activity_main.xml -->
+    <string name="select_next_vd">次に行きたい自販機を指定してください</string>
+    <string name="no_order_sheet">作業指示書がありません</string>
+    <string name="open">開く</string>
+
+    <!-- MyFirebaseMessagingService -->
+    <string name="notice">お知らせ</string>
+
+    <!-- Create_user_Acitivty -->
+    <string name="duple_id">存在するidです</string>
+    <string name="ok_id">使用可能なidです</string>
+    <string name="two_pw_ok">二つのパスワードが一致します</string>
+    <string name="two_pw_no">二つのパスワードが一致しません</string>
+    <string name="no_all_check">間違った部分を正しく入力してください</string>
+    <string name="back_double">もう一度押すと終了</string>
+
+    <!-- Login_page_Activity -->
+    <string name="exist_blank">空白があります</string>
+    <string name="not_fount_id">探すidがないです</string>
+    <string name="no_pass_ok">パスワードが違います</string>
+
+    <!-- Serch_id_Activity -->
+    <string name="not_exist">存在</string>
+
+    <!-- AlertDialog_Custom_dialog -->
+    <string name="real_full_ok">本当に補充を完了しますか</string>
+    <string name="no">いいえ</string>
+    <string name="yes">はい</string>
+    <string name="the_canceled">キャンセルしますた</string>
+    <string name="full_ok">補充完了しました</string>
+
+    <!-- Order_sheet_alert -->
+    <string name="add_need_all">補充必要量合計</string>
+    <string name="work_order">作業支持</string>
+
+    <!-- MainActivity -->
+    <string name="data_format">yyyy年MM月dd日HH時mm分ss秒</string>
+    <string name="now_addr">現在のアドレス</string>
+    <string name="now_speed">現在の速度</string>
+    <string name="total_vd">残った自販機</string>
+    <string name="val">個</string>
+    <string name="next_vd">次の自販機</string>
+    <string name="no_add_vd">補充しなければならない自販機がないです</string>
+    <string name="no_order">指示事項がないです</string>
+
+    <!-- res/menu -->
+    <string name="look_order_sheet">作業指示書を見る</string>
+    <string name="serch_order_list">作業指示書を探す</string>
+    <string name="refrash_order_list">作業指示書を更新する</string>
+
+</resources>

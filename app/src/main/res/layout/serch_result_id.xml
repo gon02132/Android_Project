@@ -31,7 +31,7 @@
         android:id                              = "@+id/serch_pw_bt"
         android:layout_width                    = "wrap_content"
         android:layout_height                   = "wrap_content"
-        android:text                            = "비밀번호 찾기"
+        android:text                            = "@string/find_pass"
         app:layout_constraintEnd_toEndOf        = "parent"
         app:layout_constraintStart_toStartOf    = "parent"
         app:layout_constraintTop_toBottomOf     = "@+id/result_id_tv" />
@@ -41,7 +41,7 @@
         android:id                              = "@+id/back_login_bt"
         android:layout_width                    = "wrap_content"
         android:layout_height                   = "wrap_content"
-        android:text                            = "로그인 화면으로"
+        android:text                            = "back"
         app:layout_constraintEnd_toEndOf        = "parent"
         app:layout_constraintStart_toStartOf    = "parent"
         app:layout_constraintTop_toBottomOf     = "@+id/serch_pw_bt" />

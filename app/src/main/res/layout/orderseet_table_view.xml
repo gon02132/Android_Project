@@ -39,9 +39,9 @@
     <android.support.constraint.ConstraintLayout
         android:id                                  = "@+id/bottom_con_layout"
         android:layout_width                        = "510dp"
-        android:layout_height                       = "250dp"
+        android:layout_height                       = "300dp"
         android:layout_marginStart                  = "50dp"
-        android:layout_marginTop                    = "100dp"
+        android:layout_marginTop                    = "50dp"
         app:layout_constraintStart_toStartOf        = "parent"
         app:layout_constraintTop_toTopOf            = "parent">
 
@@ -50,9 +50,9 @@
             xmlns:android                           = "http://schemas.android.com/apk/res/android"
             android:id                              = "@+id/bottom_layout"
             android:orientation                     = "vertical"
-            android:layout_width                    = "500dp"
-            android:layout_height                   = "0dp"
-            android:background                      = "@android:color/transparent"
+            android:layout_width                    = "469dp"
+            android:layout_height                   = "250dp"
+            android:background                      = "#FFFFFF"
             app:layout_constraintStart_toStartOf    = "parent"
             app:layout_constraintTop_toTopOf        = "parent">
 
@@ -121,7 +121,7 @@
         android:layout_width                        = "500dp"
         android:layout_height                       = "63dp"
         android:layout_marginStart                  = "50dp"
-        android:layout_marginTop                    = "100dp"
+        android:layout_marginTop                    = "50dp"
         android:background                          = "@android:color/transparent"
         app:layout_constraintStart_toStartOf        = "parent"
         app:layout_constraintTop_toTopOf            = "parent">

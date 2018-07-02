@@ -48,7 +48,7 @@
                 android:layout_width            = "match_parent"
                 android:layout_height           = "match_parent"
                 android:paddingStart            = "10dp"
-                android:text                    = "자판기 명"
+                android:text                    = "@string/vending_name"
                 android:textColor               = "#FFFFFF"
                 android:gravity                 = "center_vertical"
                 android:textSize                = "16dp" />
@@ -80,7 +80,7 @@
                     android:textColor           = "#0064c8"
                     android:letterSpacing       = "-0.1"
                     android:textSize            = "13dp"
-                    android:text                = "지시 사항"/>
+                    android:text                = "@string/order_check"/>
 
                 <!-- 작업지시서를 보야준다 -->
                 <TextView
@@ -152,7 +152,7 @@
                     android:layout_width        = "80dp"
                     android:layout_height       = "40dp"
                     android:scaleType           = "centerCrop"
-                    app:srcCompat               = "@drawable/complete"
+                    app:srcCompat               = "@drawable/complete_jp"
                     android:background          = "@android:color/transparent"
                     android:gravity             = "center"/>
 

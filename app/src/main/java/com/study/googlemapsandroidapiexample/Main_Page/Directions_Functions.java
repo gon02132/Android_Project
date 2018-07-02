@@ -8,9 +8,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.json.JSONException;
@@ -32,37 +31,28 @@ import java.util.List;
 //생성자에 필요한 초기화 작업외에는 github에서 소스를 가져옴
 
 public class Directions_Functions extends FragmentActivity{
+
     private static final int    LOCATION_REQUEST = 500;
-    private GoogleMap           mMap;
+    private GoogleMap           main_Map, mini_Map;
     private ArrayList<LatLng>   japan_two_marker;
     private Get_set_package     get_set_package;
+    public  Polyline            main_polyline, mini_polyline;
 
     //생성자
-    public Directions_Functions(GoogleMap mMap, Get_set_package get_set_package) {
+    public Directions_Functions(Get_set_package get_set_package) {
 
-        this.mMap               = mMap;
         this.get_set_package    = get_set_package;
-        japan_two_marker        = new ArrayList<LatLng>();
-        japan_two_marker.add(new LatLng(33.588288, 130.399311));
-        japan_two_marker.add(new LatLng(33.589084, 130.390576));
 
-        //내 위치(임시) 추가
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(get_set_package.resizeMapIcons("my_temp_location", 80, 90)));
-        markerOptions.position(japan_two_marker.get(0));
-        mMap.addMarker(markerOptions);
+        main_Map                = get_set_package.get_main_map();
+        mini_Map                = get_set_package.get_mini_map();
+    }
 
-        //내위치 강조 추가
-        markerOptions = new MarkerOptions();
-        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(get_set_package.resizeMapIcons("now", 85, 95)));
-        markerOptions.position(japan_two_marker.get(0));
-        mMap.addMarker(markerOptions);
+    //그리기 실행!
+    public void call_Function(LatLng start_latLng, LatLng end_latLng){
 
-        //가야할 자판기 추가
-        markerOptions = new MarkerOptions();
-        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(get_set_package.resizeMapIcons("japangi2", 80, 90)));
-        markerOptions.position(japan_two_marker.get(1));
-        mMap.addMarker(markerOptions);
+        japan_two_marker = new ArrayList<LatLng>();
+        japan_two_marker.add(start_latLng);
+        japan_two_marker.add(end_latLng);
 
         //현재 위치와 가야할 자판기의 위치 사이에 길경로를 그린다.
         String url = getRequestUrl(japan_two_marker.get(0), japan_two_marker.get(1));
@@ -130,7 +120,7 @@ public class Directions_Functions extends FragmentActivity{
         switch (requestCode){
             case LOCATION_REQUEST:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    mMap.setMyLocationEnabled(true);
+                    main_Map.setMyLocationEnabled(true);
                 }
                 break;
         }
@@ -200,7 +190,18 @@ public class Directions_Functions extends FragmentActivity{
             }
 
             if (polylineOptions!=null) {
-                mMap.addPolyline(polylineOptions);
+
+                //기존의 폴리라인을 없앤다
+                if(main_polyline != null)
+                    main_polyline.remove();
+
+                if(mini_polyline != null)
+                    mini_polyline.remove();
+
+                //폴리라인을 그린다
+                main_polyline = main_Map.addPolyline(polylineOptions);
+                mini_polyline = mini_Map.addPolyline(polylineOptions);
+
             } else {
                 //Toast.makeText(getApplicationContext(), "Direction not found!", Toast.LENGTH_SHORT).show();
             }

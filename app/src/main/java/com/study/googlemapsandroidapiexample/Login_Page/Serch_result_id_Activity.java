@@ -62,7 +62,7 @@ public class Serch_result_id_Activity extends AppCompatActivity{
             super.onBackPressed();
             finishAffinity();
         }
-        Toast.makeText(this, "한번더 뒤로가기 클릭 시 종료", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getString(R.string.back_double), Toast.LENGTH_SHORT).show();
         fir_time = System.currentTimeMillis();
     }
 }

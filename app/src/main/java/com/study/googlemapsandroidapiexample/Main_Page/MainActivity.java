@@ -66,8 +66,8 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
     private GoogleMap           gmap, minimap;                  //구글 지도
 
     //나의 정보들4개, 다음 자판기까지의 거리
-    private TextView            now_addr,now_speed,
-                                vd_val, next_vd_name,
+    private TextView            now_addr, now_speed,
+                                vd_val  , next_vd_name,
                                 next_vending;
 
     private Context             context;                        //MainActivity this
@@ -87,7 +87,7 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
     private Location            lastlocation;                   //최초 한번만 update되는 함수가 호출되어
                                                                 //생기는 에러를 방지하기위한 변수
 
-    private LatLng              japan_location;                 //일본버전에서 자신의 위치가 되는 변수
+    public  LatLng              japan_location;                 //일본버전에서 자신의 위치가 되는 변수
 
     //-----한번만 실행되게 하기위한 Boolean 변수들-----
 
@@ -137,7 +137,9 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
         next_vd_name.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/YoonGothic750.ttf"));
 
         //일본버전의 나의 위치 지정하기
-        japan_location = new LatLng(33.585542, 130.392997);
+        japan_location = new LatLng(35.690695, 139.703262);
+        //get_set클래스에서도 위치 초기화
+        get_set_package.set_japan_location(japan_location);
 
         //맵이 전부 로딩된 이후 롱클릭 이벤트 활성화
         gmap.setOnMapLongClickListener(this);
@@ -172,13 +174,29 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
         //두번째 함수 호출시 로딩화면 출력
         else if (refresh == true && originMarkerlist.size() < 2) {
             ((MainActivity) context).loading();
+            next_vd_name.setText("");
             refresh = false;
         }
 
-        //위도 경도 고도
-        Double lattitude = location.getLatitude();
-        Double longitude = location.getLongitude();
-        Double altitude  = location.getAltitude();
+        Double lattitude;
+        Double longitude;
+        Double altitude;
+
+        //일본 버전 일경우 일본 위치를 가져온다.
+        if(now_nation){
+            //위도 경도 고도
+            lattitude = japan_location.latitude;
+            longitude = japan_location.longitude;
+            altitude = location.getAltitude();
+        }
+
+        //한국 버전 인 경우 실제 자신의 위치를 가져온다.
+        else {
+            //위도 경도 고도
+            lattitude = location.getLatitude();
+            longitude = location.getLongitude();
+            altitude = location.getAltitude();
+        }
 
         //status에 저장될 msg
         String msg       = "";
@@ -196,27 +214,38 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
             addr = get_set_package.getAddress(new LatLng(lattitude, longitude), now_nation);
         }
 
+        //예외처리 (팅김 방지)
+        try {
 
-        //스택 자판기가 특정 m안에 자판기가 없는경우
-        if (vending_stack.size() < 1 ||
-                get_set_package.getmeter(originMarkerlist.get(0).getPosition(), vending_stack.get(0).getPosition()) > 443) {
+            //스택 수량이 0이상인경우에만 실행을 한다(예외처리)
+            if(vending_stack.size() > 0) {
 
-            //특정 m밖에 있다면 미니맵을 없앤다
-            if ((((Activity) context).findViewById(R.id.minimap_side)).getVisibility() == View.VISIBLE) {
-                ((MainActivity) context).findViewById(R.id.minimap_side).setVisibility(View.GONE);
-                ((MainActivity) context).findViewById(R.id.minimap_layout).setVisibility(View.GONE);
+                //스택 자판기가 특정 m안에 자판기가 없는경우
+                if (vending_stack.size() < 1 ||
+                        get_set_package.getmeter(originMarkerlist.get(0).getPosition(), vending_stack.get(0).getPosition()) > 443) {
+
+                    //특정 m밖에 있다면 미니맵을 없앤다
+                    if ((((Activity) context).findViewById(R.id.minimap_side)).getVisibility() == View.VISIBLE) {
+                        ((MainActivity) context).findViewById(R.id.minimap_side).setVisibility(View.GONE);
+                        ((MainActivity) context).findViewById(R.id.minimap_layout).setVisibility(View.GONE);
+                    }
+
+                }
+
+                //스택 자판기가 특정 m안에 있는 경우
+                else {
+                    //화면이 비활성화 되어있으면 활성화 시킨다
+                    if ((((Activity) context).findViewById(R.id.minimap_side)).getVisibility() == View.GONE &&
+                            get_set_package.getmeter(originMarkerlist.get(0).getPosition(), vending_stack.get(0).getPosition()) > 0.1) {
+                        ((MainActivity) context).findViewById(R.id.minimap_side).setVisibility(View.VISIBLE);
+                        ((MainActivity) context).findViewById(R.id.minimap_layout).setVisibility(View.VISIBLE);
+                    }
+
+                }
+
             }
 
-        }
-
-        //스택 자판기가 특정 m안에 있는 경우
-        else {
-
-            //화면이 비활성화 되어있으면 활성화 시킨다
-            if ((((Activity) context).findViewById(R.id.minimap_side)).getVisibility() == View.GONE) {
-                ((MainActivity) context).findViewById(R.id.minimap_side).setVisibility(View.VISIBLE);
-                ((MainActivity) context).findViewById(R.id.minimap_layout).setVisibility(View.VISIBLE);
-            }
+        }catch (Exception e){
 
         }
 
@@ -266,8 +295,11 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
                 //미니맵도 그린다
                 get_set_package.draw_minimap_marker(closestMarker.getPosition(), closestMarker.getTitle(), closestMarker.getSnippet(), -1, false);
 
+                //길 경로를 표시 해준다
+                get_set_package.dir_fuc.call_Function(originMarkerlist.get(0).getPosition(), closestMarker.getPosition());
+
                 //추적된 자판기가 특정 m안에 자판기가 있는경우
-                if (vending_stack.size() > 0 ||
+                if (vending_stack.size() > 0 &&
                         get_set_package.getmeter(originMarkerlist.get(0).getPosition(), closestMarker.getPosition()) < 443) {
 
                     //미니맵을 보이게 한다. -> 왼쪽 위 레이아웃
@@ -290,7 +322,16 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
                     }
 
 
+                }else{
+
+                    //미니맵을 보이게 한다. -> 왼쪽 위 레이아웃
+                    if ((((Activity) context).findViewById(R.id.minimap_side)).getVisibility() == View.VISIBLE) {
+                        ((MainActivity) context).findViewById(R.id.minimap_side).setVisibility(View.GONE);
+                        ((MainActivity) context).findViewById(R.id.minimap_layout).setVisibility(View.GONE);
+                    }
+
                 }
+
 
             }
 
@@ -387,7 +428,7 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
 
             //위치 추적 활성화 버튼을 눌렀다면 추적 활성화
             if (location_button) {
-                gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(japan_location, 13));
+                gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(japan_location, 14));
             }
 
             //미니맵은 항상 추적한다
@@ -418,7 +459,7 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
 
             //위치 추적 활성화 버튼을 눌렀다면 추적 활성화
             if (location_button) {
-                gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13));
+                gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 14));
             }
 
             //미니맵은 항상 추적한다
@@ -445,7 +486,7 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
             Date date               = new Date(nowSecond);
 
             //데이터 포멧 설정
-            SimpleDateFormat sdf    = new SimpleDateFormat("yyyy년MM월dd일HH시mm분ss초");
+            SimpleDateFormat sdf    = new SimpleDateFormat(context.getString(R.string.data_format));
             String nowDate          = sdf.format(date);
 
             //0km/s근접 소수점일 경우 0으로 내림(E-7이런 식으로 나오는거 방지)
@@ -463,17 +504,17 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
             //msg+="고도: "+String.format("%.1f",altitude)+"m\n"; //고도의 세계표준을 한국표준으로 바꾸는걸 모르겟엉.. 쓸꺼면 걍써 잘 되니까...
 
             //출력하고자하는 문자열
-            String chnage_str = "현재 주소\n"  + addr;
+            String chnage_str = context.getString(R.string.now_addr) + "\n"  + addr;
 
             //하나의 textView에 글자색, 크기를 다르게 하는 함수
             SpannableStringBuilder sp = new SpannableStringBuilder(chnage_str);
 
             //앞 글자는 크게 출력한다
-            sp.setSpan(new AbsoluteSizeSpan(25),             0, 5, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            sp.setSpan(new AbsoluteSizeSpan(25),             0, 7, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             now_addr.setText(sp);
 
             //출력하고자하는 문자열
-            chnage_str = "현재 속도\n" +  SkmPerHour + "km/h";
+            chnage_str = context.getString(R.string.now_speed)+"\n" +  SkmPerHour + "km/h";
 
             //하나의 textView에 글자색, 크기를 다르게 하는 함수
             sp = new SpannableStringBuilder(chnage_str);
@@ -483,7 +524,7 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
             now_speed.setText(sp);
 
             //출력하고자하는 문자열
-            chnage_str = "남은 자판기\n" +  (originMarkerlist.size()-1)+ "개";
+            chnage_str = context.getString(R.string.total_vd)+"\n" +  (originMarkerlist.size()-1)+ context.getString(R.string.val);
 
             //하나의 textView에 글자색, 크기를 다르게 하는 함수
             sp = new SpannableStringBuilder(chnage_str);
@@ -496,7 +537,7 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
             if(vending_stack.size() > 0){
 
                 //출력하고자하는 문자열
-                chnage_str = "다음 자판기\n"+vending_stack.get(0).getTitle();
+                chnage_str = context.getString(R.string.next_vd)+"\n"+vending_stack.get(0).getTitle();
 
                 //하나의 textView에 글자색, 크기를 다르게 하는 함수
                 sp = new SpannableStringBuilder(chnage_str);
@@ -505,7 +546,6 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
                 sp.setSpan(new AbsoluteSizeSpan(25),             0, 6, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 next_vd_name.setText(sp);
 
-                //next_vd_name.setText("다음 자판기\n"+vending_stack.get(0).getTitle());
             }
 
             //추가된 자판기가 하나이상 + 다음가야할 자판기가 있을경우 다음 자판기 거리 표시
@@ -560,7 +600,7 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
                 if(now_nation){
                     gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(japan_location, 13));
                 }else {
-                    gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13));
+                    gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 14));
                     minimap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15));
                 }
                 camera_move_check = true;
@@ -610,12 +650,12 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
 
         //바꾼 국가가 일본 인 경우
         if(now_nation){
-            gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(japan_location, 15));
+            gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(japan_location, 14));
         }
 
         //바꾼 국가가 한국 인 경우
         else{
-            gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lastlocation.getLatitude(), lastlocation.getLongitude()), 15));
+            gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lastlocation.getLatitude(), lastlocation.getLongitude()), 14));
         }
     }
 
@@ -740,6 +780,9 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
 
                         //다음 가야할 자판기의 마커를 최신화 시킨다 -> 직선상의 거리를 표시해주는 기능을 함
                         closestMarker = originMarkerlist.get(i);
+
+                        //길 경로 그려주기
+                        get_set_package.dir_fuc.call_Function(get_set_package.japan_location ,get_set_package.get_vending_stack().get(0).getPosition());
                     }
 
                     //만약 롱클릭으로 빨간색 하이라이트를 클릭한다면 지정된 자판기들은 전부 해제한다
@@ -755,12 +798,17 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
                             mini_stack.get(j).remove();
                         }
 
+                        //길 경로들을 지운다
+                        get_set_package.dir_fuc.main_polyline.remove();
+                        get_set_package.dir_fuc.mini_polyline.remove();
+
                         //배열 비우기
                         vending_stack.clear();
                         mini_stack   .clear();
 
                         //미니맵 비우기
                         minimap.clear();
+                        minimap.addMarker(get_set_package.getMarkerOption(japan_location, "no data", false));
 
                         //오른쪽 밑 레이아웃을 안보이게 한다
                         if (((Activity) context).findViewById(R.id.sc_layout).getVisibility() == View.VISIBLE) {
@@ -777,6 +825,9 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
                             ((MainActivity) context).findViewById(R.id.minimap_side).setVisibility(View.GONE);
                             ((MainActivity) context).findViewById(R.id.minimap_layout).setVisibility(View.GONE);
                         }
+
+                        //다음 가야할 자판기 텍스트 초기화
+                        next_vd_name.setText(context.getString(R.string.select_next_vd));
 
                     }
 
@@ -849,8 +900,10 @@ class Mark_click_event implements GoogleMap.OnMarkerClickListener {
     //마커를 클릭했을시 이벤트 -> custom_alertDialog를 만들어서 띄워준다
     @Override
     public boolean onMarkerClick(Marker marker) {
-        //현재 위치(일본)가 아닌 마커인경우에만 작동
+
+        //자신의 위치를 클릭하였을 경우에는 실행하지 않는다
         if (!marker.getTitle().equals("my_location")) {
+
             //핸들러 생성
             Runnable task = new Runnable() {
                 @Override
@@ -886,6 +939,7 @@ class Mark_click_event implements GoogleMap.OnMarkerClickListener {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
         }
         //반환형이 false일 경우 기존의 클릭 이벤트도 같이 발생된다.
         return true;
@@ -1470,6 +1524,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             new Mark_click_event(this, gmap, originMarkerlist, user_info[0], handler);
             new Mark_click_event(this, minimap, originMarkerlist, user_info[0], handler);
 
+            get_set_package.set_dir_fuc(new Directions_Functions(get_set_package));
+
             //매초 혹은 미터 마다 갱신될 class 생성
             listener = new Locationlistener(this, originMarkerlist, vending_stack, mini_stack, gmap, minimap, sc_lv, next_vending, get_set_package, navi_menu);
 
@@ -1486,8 +1542,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         if (gmap != null && minimap != null) {
             //최초 카메라 위치 잡기 -> 일본 기준
-            gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(33.585542, 130.392997), 13));
-            minimap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(33.585542, 130.392997), 15));
+            gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(35.690695, 139.703262), 14));
+            minimap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(35.690695, 139.703262), 15));
         }
 
     }
@@ -1553,6 +1609,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (gmap != null) {
             gmap.clear();
             minimap.clear();
+            minimap.addMarker(get_set_package.getMarkerOption(listener.japan_location, "no data", false));
         }
 
         //기존 마커들 저장소 지우기
@@ -1599,14 +1656,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             db_conn_obj = new DB_conn(this, get_set_package, vending_stack, mini_stack);
 
             //마커들을 새로 그린다 ->user의 login_id를 기준으로
-            db_conn_obj.execute("get_markers", user_info[0], str_date);
+            //db_conn_obj.execute("get_markers", user_info[0], str_date);
 
             //특정 날짜를 기준으로 마커를 그리고 싶으면 얘를 쓴다
-            //db_conn_obj.execute("get_markers", user_info[0], "2018-05-16");
-            //db_conn_obj.execute("get_markers", user_info[0], "2018-06-15");
+            //db_conn_obj.execute("get_markers", user_info[0], "2018-06-23");
+            db_conn_obj.execute("get_markers", user_info[0], "2018-06-27");
 
-            //길찾기 함수 호출(일본에서 경로표시)
-            //new Directions_Functions(gmap, get_set_package);
 
 
         } catch (Exception e) {
@@ -1637,7 +1692,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             //  }
 
         } catch (SecurityException e) {
-            Toast.makeText(this, "권한이 필요합니다.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "No Permission.", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -1666,7 +1721,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             super.onBackPressed();
             finishAffinity();
         }
-        Toast.makeText(this, "한번더 뒤로가기 클릭 시 종료", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getString(R.string.back_double), Toast.LENGTH_SHORT).show();
         fir_time = System.currentTimeMillis();
     }
 }

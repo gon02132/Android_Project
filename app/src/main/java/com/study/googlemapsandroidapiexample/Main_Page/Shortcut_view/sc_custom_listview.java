@@ -65,7 +65,7 @@ public class Sc_custom_listview {
 
             //작업지시서가 없는 경우 없다는 문자열을 출력한다
             else{
-                tv.setText("작업 지시서가 없습니다");
+                tv.setText(context.getString(R.string.no_order_sheet));
             }
 
 
