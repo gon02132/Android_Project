@@ -195,15 +195,16 @@ public class Get_set_package {
 
             Geocoder geocoder;
 
-            //한국 버전 일 경우
+            //일본 버전 일 경우
             if(now_nation) {
                 //Geocoder로 지명을 가져오기위해 클래스를 가져온다
                 geocoder = new Geocoder(context, Locale.JAPANESE);
             }
 
-            //일본 버전 일 경우
+            //한국 버전 일 경우
             else{
-                geocoder = new Geocoder(context, Locale.KOREAN);
+                //geocoder = new Geocoder(context, Locale.KOREAN);
+                geocoder = new Geocoder(context, Locale.JAPANESE); // 일단은 일본인만 쓴다는 전제하에
             }
 
             //주소 리스트 객체를 가져온다

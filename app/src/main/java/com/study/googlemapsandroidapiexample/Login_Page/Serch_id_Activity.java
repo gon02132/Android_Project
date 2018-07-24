@@ -22,16 +22,29 @@ public class Serch_id_Activity extends AppCompatActivity{
 
     private long        fir_time, sec_time;     //뒤로가기 2번누르기를 위한 변수
 
+    private String      url;                    //서버 주소
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.serch_id);
 
+        //intent의 값을 가져온다.
+        Intent data = getIntent();
+
+        //정상적으로 값을 가져왔다면
+        if (data.getStringExtra("url") != null) {
+            //유저 정보를 가져온다
+            String str = data.getStringExtra("url");
+            url = str;
+        }
+
+
         //입력한 이름을 가져온다
         serch_name_et = (EditText)findViewById(R.id.serch_name_et);
 
         //db 연결
-        conn = new DB_conn(this);
+        conn = new DB_conn(this, url);
 
         //뒤로가기 버튼 클릭 시 ->Main Page로 이동한다.
         back_bt = (Button)findViewById(R.id.back_bt);

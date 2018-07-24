@@ -34,6 +34,8 @@ public class Login_page_Activity extends AppCompatActivity implements View.OnCli
     private String           user_token;                                          //현재 유저의 토큰 저장소
     private long             fir_time,  sec_time;                                 //뒤로가기 2번누르기를 위한 변수
 
+    private String              url                 = "52.78.83.17";              //서버 주소
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +43,9 @@ public class Login_page_Activity extends AppCompatActivity implements View.OnCli
 
         //다음 가야할 액티비티를 지정한다
         Intent intent = new Intent(Login_page_Activity.this, MainActivity.class);
+
+        //서버 주소를 전송 한다
+        intent.putExtra("url", url);
 
         //이전 액티비티로부터 값을 가져온다
         Intent get_intent  = getIntent();
@@ -108,6 +113,10 @@ public class Login_page_Activity extends AppCompatActivity implements View.OnCli
             //아이디 찾기 버튼
             case R.id.id_serch_bt:
                 intent = new Intent(Login_page_Activity.this, Serch_id_Activity.class);
+
+                //서버 주소를 전송 한다
+                intent.putExtra("url", url);
+
                 startActivity(intent);
                 finish();
                 break;
@@ -115,6 +124,10 @@ public class Login_page_Activity extends AppCompatActivity implements View.OnCli
             //비밀번호 찾기 버튼
             case R.id.pass_serch_bt:
                 intent = new Intent(Login_page_Activity.this, Serch_pass_Activity.class);
+
+                //서버 주소를 전송 한다
+                intent.putExtra("url", url);
+
                 startActivity(intent);
                 finish();
                 break;
@@ -122,6 +135,10 @@ public class Login_page_Activity extends AppCompatActivity implements View.OnCli
             //회원가입 버튼
             case R.id.create_id_bt:
                 intent = new Intent(Login_page_Activity.this, Create_user_Acitivty.class);
+
+                //서버 주소를 전송 한다
+                intent.putExtra("url", url);
+
                 startActivity(intent);
                 finish();
                 break;
@@ -131,7 +148,7 @@ public class Login_page_Activity extends AppCompatActivity implements View.OnCli
                 //ID와 PASSWORD를 서버에 날려 결과값을 받아온다.
                 id_et       = (EditText)findViewById(R.id.id_et);
                 pass_et     = (EditText)findViewById(R.id.pass_et);
-                test_obj    = new DB_conn(Login_page_Activity.this);
+                test_obj    = new DB_conn(Login_page_Activity.this, url);
                 //doInBackground 실행(인자를 2개로 넘겨준다 // ID,비밀번호)
                 try {
 
@@ -200,16 +217,21 @@ public class Login_page_Activity extends AppCompatActivity implements View.OnCli
                             //시작 시 초기화를 할 경우, 토큰이 미처 생성되지 않으므로 로그인 버튼을 누를시,
                             //현재 정보를 가지고 생성된 토큰 테이블을 다시 초기화한다.
                             //P.S execute는 객체를 항상 새로 생성해야 된다! -> 아니면 에러뜸
-                            test_obj    = new DB_conn(Login_page_Activity.this);
+                            test_obj    = new DB_conn(Login_page_Activity.this, url);
                             test_obj.execute("token", user_token, user_login_id, user_name);
 
 
                             //얘는 휴대폰을 꺼도 접속유지를위한애
                             share_login_info_obj.set_login_info(print_string);
                             Intent intent_2 = new Intent(this, MainActivity.class);
+
+                            //서버 주소를 전송 한다
+                            intent_2.putExtra("url", url);
+
                             //user_info파일에 보충기사의 정보를 저장한다.
                             intent_2.putExtra("user_info" , print_string);
                             intent_2.putExtra("user_token", user_token);
+
                             startActivity(intent_2);
                             finish();
 

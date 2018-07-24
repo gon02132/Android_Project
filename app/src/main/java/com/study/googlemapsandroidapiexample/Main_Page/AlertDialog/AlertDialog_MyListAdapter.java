@@ -30,12 +30,15 @@ public class AlertDialog_MyListAdapter extends BaseAdapter {
     private int                                 max_val = 4;                    //음료에 들어가는 최대 값
 
     //생성자
-    public AlertDialog_MyListAdapter(Context context, ArrayList<AlertDialog_list_item> list_item_Arraylist) {
+    public AlertDialog_MyListAdapter(Context context, ArrayList<AlertDialog_list_item> list_item_Arraylist, String url) {
         this.context                = context;
         this.list_item_Arraylist    = list_item_Arraylist;
 
         //이미지를 가져오기위해 서버의 주소를 가져온다
-        img_url = "http://52.78.198.67/";
+        //img_url = "http://52.78.83.17/";
+
+        img_url =  "http://"+url+"/";
+
     }
 
     //데이터 총 갯수 지정

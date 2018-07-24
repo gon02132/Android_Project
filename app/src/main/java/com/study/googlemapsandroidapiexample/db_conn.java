@@ -31,69 +31,82 @@ import java.util.ArrayList;
 //비동기적 쓰레드, 백그라운드 쓰레드와 UI쓰레드(메인 쓰레드)와 같이 쓰기위해 쓰임
 public class DB_conn extends AsyncTask<String, Void, String> {
 
-    private Context context;                         //MainActivity this
-    private BufferedReader bufferedReader = null;  //버퍼
-    private Get_set_package get_set_package;                 //함수 저장 변수
+    private Context                 context;                         //MainActivity this
+    private BufferedReader          bufferedReader       = null;     //버퍼
+    private Get_set_package         get_set_package;                 //함수 저장 변수
 
-    private String router_string = "";    //백그라운드 UI작업 구분자
-    private String second_router;                   //같은 구분자를 쓰며 다른 UI이 작업이 필요한 경우 얘가 쓰임
+    private String                  router_string        = "";       //백그라운드 UI작업 구분자
+    private String                  second_router;                   //같은 구분자를 쓰며 다른 UI이 작업이 필요한 경우 얘가 쓰임
 
-    public int vd_id = -1;
+    public int                      vd_id                = -1;
 
-    private ArrayList<Marker> vending_stack;                   //롱클릭시 저장되는 마커 배열들
-    private ArrayList<Marker> mini_stack;                      //롱클릭시 저장되는 마커 배열들(미니맵)
+    private ArrayList<Marker>       vending_stack;                   //롱클릭시 저장되는 마커 배열들
+    private ArrayList<Marker>       mini_stack;                      //롱클릭시 저장되는 마커 배열들(미니맵)
 
     //--------------------------------------UI작업때 쓰이는 변수들---------------------------------------
-    private ListView sc_lv;                           //Short_cut 리스트뷰   ->get_vending_info/short_cut
-    private String marker_title;                    //마커의 타이틀        ->get_vending_info/alert
-    private String user_login_id;                   //유저 로그인 아이디   ->get_vending_info/alert
+    private ListView                sc_lv;                          //Short_cut 리스트뷰   ->get_vending_info/short_cut
+    private String                  marker_title;                   //마커의 타이틀        ->get_vending_info/alert
+    private String                  user_login_id;                  //유저 로그인 아이디   ->get_vending_info/alert
 
-    private MaterialCalendarView materialCalendarView;           //달력에 여러 작업을 하기위한 viee ->CalendarDialog/Create_AlertDialog
+    private MaterialCalendarView    materialCalendarView;           //달력에 여러 작업을 하기위한 viee ->CalendarDialog/Create_AlertDialog
     //--------------------------------------------------------------------------------------------------
+    private String                  url;                            //서버 주소
     //받아올 php 경로 선택 1:aws 2:autoset
-    private String link = "http://52.78.198.67/android_db_conn_source/conn.php";
-    //String link  = "http://172.25.1.26/android_db_conn_source/conn.php";
+    private String                  link;
+    //String                        link                = "http://172.25.1.26/android_db_conn_source/conn.php";
 
     //HTTP커넥션
     private HttpURLConnection con;
 
     //------------------------------------생성자 오버로딩------------------------------------------
     //Activity의 작업이 필요할 경우
-    public DB_conn(Context context) {
-        this.context = context;
+    public DB_conn(Context context, String url) {
+        this.context                = context;
+        this.url                    = url;
+        this.link                   = "http://"+url+"/android_db_conn_source/conn.php";
     }
 
     //get_marker 구분자로 불릴시 사용
-    public DB_conn(Context context, Get_set_package get_set_package, ArrayList<Marker> vending_stack, ArrayList<Marker> mini_stack) {
-        this.context = context;
-        this.get_set_package = get_set_package;
-        this.vending_stack = vending_stack;
-        this.mini_stack = mini_stack;
+    public DB_conn(Context context, Get_set_package get_set_package, ArrayList<Marker> vending_stack, ArrayList<Marker> mini_stack, String url) {
+        this.context                = context;
+        this.get_set_package        = get_set_package;
+        this.vending_stack          = vending_stack;
+        this.mini_stack             = mini_stack;
+        this.url                    = url;
+        this.link                   = "http://"+url+"/android_db_conn_source/conn.php";
     }
 
     //달력 수정을 할때 사용
-    public DB_conn(Context context, MaterialCalendarView materialCalendarView) {
-        this.context = context;
-        this.materialCalendarView = materialCalendarView;
+    public DB_conn(Context context, MaterialCalendarView materialCalendarView, String url) {
+        this.context                = context;
+        this.materialCalendarView   = materialCalendarView;
+        this.url                    = url;
+        this.link                   = "http://"+url+"/android_db_conn_source/conn.php";
     }
 
     //get_vending_info 구분자로 불릴시 사용 -> short_cut
-    public DB_conn(Context context, ListView sc_lv, String second_router) {
-        this.context = context;
-        this.sc_lv = sc_lv;
-        this.second_router = second_router;
+    public DB_conn(Context context, ListView sc_lv, String second_router, String url) {
+        this.context                = context;
+        this.sc_lv                  = sc_lv;
+        this.second_router          = second_router;
+        this.url                    = url;
+        this.link                   = "http://"+url+"/android_db_conn_source/conn.php";
     }
 
     //get_vending_info 구분자로 불릴시 사용 -> alert_dialog
-    public DB_conn(Context context, String marker_title, String user_login_id, String second_router) {
-        this.context = context;
-        this.marker_title = marker_title;
-        this.user_login_id = user_login_id;
-        this.second_router = second_router;
+    public DB_conn(Context context, String marker_title, String user_login_id, String second_router, String url) {
+        this.context                = context;
+        this.marker_title           = marker_title;
+        this.user_login_id          = user_login_id;
+        this.second_router          = second_router;
+        this.url                    = url;
+        this.link                   = "http://"+url+"/android_db_conn_source/conn.php";
     }
 
     //ui작업 및 추가/삭제/업데이트 기능이 필요 없는 경우
-    public DB_conn() {
+    public DB_conn(String url) {
+        this.url                    = url;
+        this.link                   = "http://"+url+"/android_db_conn_source/conn.php";
     }
     //-------------------------------------------------------------------------------------------
 
@@ -512,7 +525,7 @@ public class DB_conn extends AsyncTask<String, Void, String> {
                                 //생성자에서 sc_lv로 받아온 값이 널이 아니면 실행
                                 if (sc_lv != null) {
                                     //오른쪽 밑에 보여주는 listview를 custom하여 보여준다
-                                    Sc_custom_listview sc_custom = new Sc_custom_listview(context, jsonObject, sc_lv);
+                                    Sc_custom_listview sc_custom = new Sc_custom_listview(context, jsonObject, sc_lv, url);
 
                                     //custom Listview 만들기!!
                                     sc_custom.change_listview();
@@ -597,7 +610,7 @@ public class DB_conn extends AsyncTask<String, Void, String> {
                                 //생성자로 올바른 값을 받았다면 custom alertdialog를 만들어서 띄운다
                                 if (marker_title != "" && user_login_id != "") {
                                     //custom_dialog를 만들어서 보여준다
-                                    AlertDialog_Custom_dialog custom_dialog = new AlertDialog_Custom_dialog(context, get_set_package, order_list_str, list_itemArrayList, marker_title, json_result.getJSONObject(0).getString("vd_id"), user_login_id);
+                                    AlertDialog_Custom_dialog custom_dialog = new AlertDialog_Custom_dialog(context, get_set_package, order_list_str, list_itemArrayList, marker_title, json_result.getJSONObject(0).getString("vd_id"), user_login_id, url);
                                     custom_dialog.callFunction();
                                 } else {
                                     Toast.makeText(context, "no_title or user_login_id", Toast.LENGTH_SHORT).show();

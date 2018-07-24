@@ -72,5 +72,7 @@
     <string name="look_order_sheet">작업지시서 보기</string>
     <string name="serch_order_list">작업지시서 찾기</string>
     <string name="refrash_order_list">작업지시서 갱신 하기</string>
+    <string name="gps_trk">GPS Tracking On/Off</string>
+    <string name="vd_trk">V-machine Tracking On/Off</string>
 
 </resources>

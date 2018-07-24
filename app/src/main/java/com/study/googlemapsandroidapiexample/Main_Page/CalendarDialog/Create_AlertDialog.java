@@ -18,11 +18,13 @@ public class Create_AlertDialog {
     private Context                 context;
     private String                  user_login_id;
     private MaterialCalendarView    materialCalendarView;
+    private String                  url;
 
     //생성자
-    public Create_AlertDialog(Context context, String user_login_id) {
+    public Create_AlertDialog(Context context, String user_login_id, String url) {
         this.context       = context;
         this.user_login_id = user_login_id;
+        this.url           = url;
     }
 
     //생성 함수 호출
@@ -83,9 +85,8 @@ public class Create_AlertDialog {
                 }else{
                     result += "-"+String.valueOf(day);
                 }
-
                 //custom alert 보여주기 클래스 생성(작업지시서) / 함수 실행
-                Order_sheet_alert order_sheet_alert = new Order_sheet_alert(context, user_login_id, result);
+                Order_sheet_alert order_sheet_alert = new Order_sheet_alert(context, user_login_id, result, url);
                 order_sheet_alert.create_table(1, 0);
 
                 //현재 열려있는 자판기 정보도 닫는다.
@@ -95,7 +96,7 @@ public class Create_AlertDialog {
         });
 
         //DB객체를 생성한다
-        DB_conn db_conn = new DB_conn(context, materialCalendarView);
+        DB_conn db_conn = new DB_conn(context, materialCalendarView, url);
         //현재 접속된 userid로 DB에 날짜를 가져와 달력 작업을 한다
         db_conn.execute("calendar_get_Day",user_login_id);
 

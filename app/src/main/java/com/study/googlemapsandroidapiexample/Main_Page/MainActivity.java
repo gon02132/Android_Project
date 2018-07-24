@@ -110,8 +110,11 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
     //아무 자판기도 찾지 못하였을경우 로딩창을 생성 하기위한 변수
     private boolean             refresh                                 = false;
 
+    //서버 주소
+    private String              url;
+
     //생성자
-    public Locationlistener(Context context, ArrayList<Marker> originMarkerlist, ArrayList<Marker> vending_stack, ArrayList<Marker> mini_stack, GoogleMap gmap, GoogleMap minimap, ListView sc_lv, TextView next_vending, Get_set_package get_set_package, Menu navi_menu) {
+    public Locationlistener(Context context, ArrayList<Marker> originMarkerlist, ArrayList<Marker> vending_stack, ArrayList<Marker> mini_stack, GoogleMap gmap, GoogleMap minimap, ListView sc_lv, TextView next_vending, Get_set_package get_set_package, Menu navi_menu, String url) {
 
         this.originMarkerlist   = originMarkerlist;
         this.mini_stack         = mini_stack;
@@ -123,6 +126,7 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
         this.get_set_package    = get_set_package;
         this.navi_menu          = navi_menu;
         this.vending_stack      = vending_stack;
+        this.url                = url;
 
         //나의 정보들이 출력될 공간들
         now_addr                = (TextView)((MainActivity) context).findViewById(R.id.now_addr);
@@ -164,6 +168,7 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
     //프로그래머가 지정한 일정 시간 or 간 meter만큼 반복해서 실행되는 함수
     @Override
     public void onLocationChanged(Location location) {
+        Log.e("<><>",context.getApplicationContext().getResources().getConfiguration().getLocales().get(0).getLanguage()+"");
 
         //다음 함수 호출까지 마커가 생성되지 않았다면 로딩 화면을띄워준다(마커가 생성될 때까지 반복)
         //첫번째 함수호출 시 에는 무시한다
@@ -344,7 +349,7 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
 
                     try {
                         //db 접속(try/catch 필수)
-                        DB_conn db_conn_obj = new DB_conn(context, sc_lv, "short_cut");
+                        DB_conn db_conn_obj = new DB_conn(context, sc_lv, "short_cut", url);
 
                         //db에 접속하여 short_cut 생성
                         db_conn_obj.execute("get_vending_info", closestMarker.getSnippet());
@@ -380,7 +385,7 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
             try {
 
                 //db 접속(try/catch 필수)
-                DB_conn db_conn_obj = new DB_conn(context, sc_lv, "short_cut");
+                DB_conn db_conn_obj = new DB_conn(context, sc_lv, "short_cut", url);
 
                 //db에 접속하여 short_cut 생성
                 db_conn_obj.execute("get_vending_info", vending_stack.get(0).getSnippet());
@@ -733,7 +738,7 @@ class Locationlistener implements LocationListener, GoogleMap.OnMapLongClickList
                     //첫번째 롱클릭인 경우 바로 다음가야할 자판기이므로 그에따른 처리를한다
                     if (vending_stack.size() == 0) {
                         //db 접속 try/catch 필수
-                        DB_conn db_conn_obj = new DB_conn(context, sc_lv, "short_cut");
+                        DB_conn db_conn_obj = new DB_conn(context, sc_lv, "short_cut", url);
 
                         //서버에서 값을 가져와 shortcut을 만들어준다
                         db_conn_obj.execute("get_vending_info", originMarkerlist.get(i).getSnippet());
@@ -885,13 +890,16 @@ class Mark_click_event implements GoogleMap.OnMarkerClickListener {
     private ArrayList<Marker>   originMarkerlist;   //마커들이 저장되어있는 배열
     private String              user_login_id;      //유저 로그인 아이디
     private Handler             handler;            //핸둘러!
+    private String              url;                //서버 주소
 
     //생성자
-    public Mark_click_event(Context context, GoogleMap googleMap, ArrayList<Marker> originMarkerlist, String user_login_id, Handler handler) {
+    public Mark_click_event(Context context, GoogleMap googleMap, ArrayList<Marker> originMarkerlist, String user_login_id, Handler handler, String url) {
         this.context            = context;
         this.originMarkerlist   = originMarkerlist;
         this.user_login_id      = user_login_id;
         this.handler            = handler;
+        this.url                = url;
+
         //마커 클릭을 활성화 시킨다
         googleMap.setOnMarkerClickListener(this);
     }
@@ -931,7 +939,7 @@ class Mark_click_event implements GoogleMap.OnMarkerClickListener {
                 //쓰레드 실행
                 thread.start();
                 //db접속 try/catch 필수
-                db_conn_obj = new DB_conn(context, marker.getTitle(), user_login_id, "alert_dialog");
+                db_conn_obj = new DB_conn(context, marker.getTitle(), user_login_id, "alert_dialog", url);
 
                 //서버의 결과값으로 custom alert dailog를 만들어 띄운다
                 db_conn_obj.execute("get_vending_info", marker.getSnippet());
@@ -979,6 +987,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     //주소는 능동적으로 바뀔 수 있다!
     private String              image_path          =
             "http://ec2-13-125-134-167.ap-northeast-2.compute.amazonaws.com/images/supplementer/";
+
+    //서버 주소
+    private String              url;
 
 
     //--------------------------------------------이외--------------------------------------------
@@ -1089,6 +1100,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         Intent data = getIntent();
 
         //정상적으로 값을 가져왔다면
+        if (data.getStringExtra("url") != null) {
+            //유저 정보를 가져온다
+            String str = data.getStringExtra("url");
+            url = str;
+        }
+
+        //정상적으로 값을 가져왔다면
         if (data.getStringExtra("user_info") != null) {
 
             //유저 정보를 가져온다
@@ -1126,7 +1144,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 thread.start();
 
                 //custom alert 보여주기 클래스 생성(작업지시서) / 함수 실행
-                Order_sheet_alert order_sheet_alert = new Order_sheet_alert(MainActivity.this, user_info[0]);
+                Order_sheet_alert order_sheet_alert = new Order_sheet_alert(MainActivity.this, user_info[0], url);
                 order_sheet_alert.create_table(1,0);
             }
 
@@ -1232,7 +1250,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         thread.start();
 
                         //custom alert 보여주기 클래스 생성(작업지시서) / 함수 실행
-                        Order_sheet_alert order_sheet_alert = new Order_sheet_alert(MainActivity.this, user_info[0]);
+                        Order_sheet_alert order_sheet_alert = new Order_sheet_alert(MainActivity.this, user_info[0], url);
                         order_sheet_alert.create_table(1,0);
 
                         break;
@@ -1264,7 +1282,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         //쓰레드 실행
                         thread2.start();
 
-                        Create_AlertDialog create_alertDialog = new Create_AlertDialog(MainActivity.this, user_info[0]);
+                        Create_AlertDialog create_alertDialog = new Create_AlertDialog(MainActivity.this, user_info[0], url);
                         create_alertDialog.callFunction();
                         break;
 
@@ -1274,25 +1292,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         //마커 최신화 / 갱신
                         draw_marker();
 
-                        break;
-
-                    //일본 자판기 보여주기(경로알려주기)
-                    case R.id.go_japan:
-
-                        //맵이 로딩되어있지 않다면 보여주지 않는다
-                        if (gmap != null) {
-
-                            //GPS추적 버튼이 켜져 있으면 끈다
-                            if (navi_menu.findItem(R.id.GPS_tracking).isChecked()) {
-
-                                //토글 같은 느낌 켜져있으면 끄고 꺼져있으면 킨다 ->GPS버튼 끄기
-                                listener.location_button();
-
-                                //추적을 실제로 껏을 경우, menu바의 추적 활성화도 비활성화로 바꾼다.
-                                navi_menu.findItem(R.id.GPS_tracking).setChecked(false);
-                            }
-
-                        }
                         break;
 
                     //클릭시 로그아웃 후 로그인 화면으로 전환
@@ -1398,7 +1397,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 //현재 자판기 마커를 없애고(보충완료) 마커를 최신화한다
                 try {
-                    DB_conn db_conn = new DB_conn(MainActivity.this);
+                    DB_conn db_conn = new DB_conn(MainActivity.this, url);
                     db_conn.execute("insert_vending", listener.now_vd_id.toString(), user_info[0].toString());
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -1521,13 +1520,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             get_set_package = new Get_set_package(this, gmap, minimap, originMarkerlist,vending_stack, mini_stack);
 
             //마커클릭 이벤트 클래스 생성
-            new Mark_click_event(this, gmap, originMarkerlist, user_info[0], handler);
-            new Mark_click_event(this, minimap, originMarkerlist, user_info[0], handler);
+            new Mark_click_event(this, gmap, originMarkerlist, user_info[0], handler, url);
+            new Mark_click_event(this, minimap, originMarkerlist, user_info[0], handler, url);
 
             get_set_package.set_dir_fuc(new Directions_Functions(get_set_package));
 
             //매초 혹은 미터 마다 갱신될 class 생성
-            listener = new Locationlistener(this, originMarkerlist, vending_stack, mini_stack, gmap, minimap, sc_lv, next_vending, get_set_package, navi_menu);
+            listener = new Locationlistener(this, originMarkerlist, vending_stack, mini_stack, gmap, minimap, sc_lv, next_vending, get_set_package, navi_menu, url);
 
             //마커 최신화 / 갱신
             draw_marker();
@@ -1653,7 +1652,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             String str_date     = df.format(new Date());
 
             //db접속 try/catch 필수
-            db_conn_obj = new DB_conn(this, get_set_package, vending_stack, mini_stack);
+            db_conn_obj = new DB_conn(this, get_set_package, vending_stack, mini_stack, url);
 
             //마커들을 새로 그린다 ->user의 login_id를 기준으로
             //db_conn_obj.execute("get_markers", user_info[0], str_date);

@@ -32,17 +32,19 @@ public class AlertDialog_Custom_dialog {
     private AlertDialog_MyListAdapter           myListAdapter;                  //custom어뎁터
     private DB_conn                             db_conn;                        //DB연결자
     private Get_set_package                     get_set_package;                //겟셋 클래스 변수
+    private String                              url;                            //서버 주소
 
     //생성자
-    public AlertDialog_Custom_dialog(Context context, Get_set_package get_set_package, String order_sheet_str, ArrayList<AlertDialog_list_item> list_itemArrayList, String vending_name, String vd_id, String user_login_id) {
+    public AlertDialog_Custom_dialog(Context context, Get_set_package get_set_package, String order_sheet_str, ArrayList<AlertDialog_list_item> list_itemArrayList, String vending_name, String vd_id, String user_login_id, String url) {
         this.context            = context;                  //mainActivity this
         this.get_set_package    = get_set_package;          //get_set변수 가져오기
         this.list_itemArrayList = list_itemArrayList;       //item list(array)
         this.vending_name       = vending_name;             //자판기 이름
         this.vd_id_str          = vd_id;                    //자판기 id
-        this.db_conn            = new DB_conn(context);     //db연결자
+        this.db_conn            = new DB_conn(context, url);     //db연결자
         this.user_login_id      = user_login_id;            //보충기사 로그인 아이디
         this.order_sheet_str    = order_sheet_str;          //작업지시서 내용들
+        this.url                = url;                      //서버 주소 초기화
     }
 
     //함수 실행
@@ -65,7 +67,7 @@ public class AlertDialog_Custom_dialog {
 
         //custom listview 만드는 과정
         //만든 BaseAdapt class 생성
-        myListAdapter   = new AlertDialog_MyListAdapter(context, list_itemArrayList);
+        myListAdapter   = new AlertDialog_MyListAdapter(context, list_itemArrayList, url);
 
         order_list_tv = (TextView)dig.findViewById(R.id.order_list_tv);
         //order_list_tv.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/YoonGothic770.ttf"));  //폰트 설정

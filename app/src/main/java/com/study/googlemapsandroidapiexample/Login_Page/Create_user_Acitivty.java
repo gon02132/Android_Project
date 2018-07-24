@@ -24,12 +24,23 @@ public class Create_user_Acitivty extends AppCompatActivity{
     private TextView    serch_result,       two_pass_check;
     private DB_conn     conn;
     private long        fir_time,           sec_time;
+    private String      url;
     //----------------------------------------------------------------------------------------------
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_user);
+
+        //intent의 값을 가져온다.
+        Intent data = getIntent();
+
+        //정상적으로 값을 가져왔다면
+        if (data.getStringExtra("url") != null) {
+            //유저 정보를 가져온다
+            String str = data.getStringExtra("url");
+            url = str;
+        }
 
         // 초기화 하기(변수, onclick)!
         id_input_et       = (EditText)findViewById(R.id.id_input_tv);       //ID 입력 란
@@ -46,7 +57,7 @@ public class Create_user_Acitivty extends AppCompatActivity{
             @Override
             public void onClick(View v) {
                 try {
-                    conn = new DB_conn();
+                    conn = new DB_conn(url);
                     //중복확인 버튼 클릭시, doin함수에서 반환값을 받아온다
                     String s = conn.execute("exist_id_check",id_input_et.getText().toString()).get();
                     if(s.equals("exist")){
@@ -197,7 +208,7 @@ public class Create_user_Acitivty extends AppCompatActivity{
 
                     //db접속에서는 예외가 발생할 수 있으므로 try/catch문을 사용한다
                     try {
-                        conn = new DB_conn();
+                        conn = new DB_conn(url);
                         //.get()을 할경우 doIn..함수에서 반환값이 돌아온다(하지만 처리량이 많을경우) 리턴값이 늦게받아질수도 있다
                         String s = conn.execute("create_user_ok",
                                 id_input_et .getText().toString(),

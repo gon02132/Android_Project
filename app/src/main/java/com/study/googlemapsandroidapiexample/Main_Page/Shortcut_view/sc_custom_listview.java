@@ -21,13 +21,15 @@ public class Sc_custom_listview {
     private ArrayList<Sc_list_item> sc_list_items;  //db에서 가져온 제품 리스트들이 저장될 곳
     private JSONObject              json_obj;       //db에서 가져온 제품 리스트들의 JSONObj
     private Context                 context;        //MatinActivty this
+    private String                  url;            //서버 주소
 
     //생성자
-    public Sc_custom_listview(Context context, JSONObject json_obj, ListView sc_lv) {
+    public Sc_custom_listview(Context context, JSONObject json_obj, ListView sc_lv, String url) {
         this.json_obj           = json_obj;
         this.context            = context;
         this.sc_lv              = sc_lv;
         this.sc_list_items      = new ArrayList<Sc_list_item>();
+        this.url                = url;
     }
 
     //호출 함수
@@ -78,7 +80,7 @@ public class Sc_custom_listview {
             }
 
             //custom_listview 생성
-            sc_adapter = new Sc_adapter(context, sc_list_items);
+            sc_adapter = new Sc_adapter(context, sc_list_items, url);
             sc_lv.setAdapter(sc_adapter);
 
         }catch (Exception e){

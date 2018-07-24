@@ -21,17 +21,28 @@ public class Serch_pass_Activity extends AppCompatActivity{
     private DB_conn     conn;                           //DB연결 변수
 
     private long        fir_time,    sec_time;         //2번눌러야 뒤로가기위한 변수
+    private String      url;                           //서버 주소
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.serch_pass);
 
+        //intent의 값을 가져온다.
+        Intent data = getIntent();
+
+        //정상적으로 값을 가져왔다면
+        if (data.getStringExtra("url") != null) {
+            //유저 정보를 가져온다
+            String str = data.getStringExtra("url");
+            url = str;
+        }
+
         serch_id_et     = (EditText)findViewById(R.id.serch_id_et);     //ID 입력란 가져오기
         serch_name_et   = (EditText)findViewById(R.id.serch_name_et);   //PASSWORD 입력란 가져오기
 
         //db 연결
-        conn = new DB_conn(this);
+        conn = new DB_conn(this, url);
 
         //뒤로가기 버튼 클릭시 -> 로그인 메인페이지로 이동
         back_bt = (Button) findViewById(R.id.back_bt);

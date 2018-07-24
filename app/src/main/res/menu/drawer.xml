@@ -16,13 +16,13 @@
             <item
                 android:id      ="@+id/GPS_tracking"
                 android:icon    ="@drawable/ic_place"
-                android:title   ="GPS Tracking On/Off" />
+                android:title   ="@string/gps_trk" />
 
             <!-- 가장 가까운 자판기 추적 ON/OFF -->
             <item
                 android:id      ="@+id/Closest_V-machine_tracking"
                 android:icon    ="@drawable/ic_image"
-                android:title   ="V-machine Tracking On/Off" />
+                android:title   ="@string/vd_trk" />
         </menu>
 
     </item>
@@ -48,12 +48,6 @@
                 android:id      = "@+id/refrash_order_list"
                 android:icon    = "@drawable/ic_image"
                 android:title   = "@string/refrash_order_list" />
-
-            <!-- 일본 가기 버튼 -->
-            <item
-                android:id      = "@+id/go_japan"
-                android:icon    = "@drawable/ic_attachment"
-                android:title   = "Go japan" />
 
             <!-- 로그아웃 버튼 -->
             <item

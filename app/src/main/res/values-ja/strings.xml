@@ -25,7 +25,7 @@
 
     <!-- main_page_activity_main.xml -->
     <string name="select_next_vd">次に行きたい自販機を指定してください</string>
-    <string name="no_order_sheet">作業指示書がありません</string>
+    <string name="no_order_sheet">作業指示がありません</string>
     <string name="open">開く</string>
 
     <!-- MyFirebaseMessagingService -->
@@ -41,7 +41,7 @@
 
     <!-- Login_page_Activity -->
     <string name="exist_blank">空白があります</string>
-    <string name="not_fount_id">探すidがないです</string>
+    <string name="not_fount_id">探すidがありません</string>
     <string name="no_pass_ok">パスワードが違います</string>
 
     <!-- Serch_id_Activity -->
@@ -65,12 +65,14 @@
     <string name="total_vd">残った自販機</string>
     <string name="val">個</string>
     <string name="next_vd">次の自販機</string>
-    <string name="no_add_vd">補充しなければならない自販機がないです</string>
-    <string name="no_order">指示事項がないです</string>
+    <string name="no_add_vd">補充しなければならない自販機がありません</string>
+    <string name="no_order">指示事項がありません</string>
 
     <!-- res/menu -->
     <string name="look_order_sheet">作業指示書を見る</string>
     <string name="serch_order_list">作業指示書を探す</string>
     <string name="refrash_order_list">作業指示書を更新する</string>
+    <string name="gps_trk">GPS追跡 On/Off</string>
+    <string name="vd_trk">自販機追跡 On/Off</string>
 
 </resources>

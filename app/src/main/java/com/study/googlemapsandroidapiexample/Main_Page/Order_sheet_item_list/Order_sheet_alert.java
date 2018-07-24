@@ -38,6 +38,7 @@ public class Order_sheet_alert{
     private Context                 context;
     private String                  user_login_id;
     private String                  date_String;                        //특정날자를 검색 했을 시, 이 날자로 검색한다
+    private String                  url;                                //서버주소
     private boolean                 swap_bg_color           = true;     //한줄한줄 배경을 다르게 해주는 애
     private int                     now_page_print_val      = 0;        //현재 페이지에 가로로 몇개씩 출력되는지
 
@@ -76,16 +77,18 @@ public class Order_sheet_alert{
 
 
     //-------------------------------------생성자----------------------------------
-    public Order_sheet_alert(Context context, String user_login_id){
+    public Order_sheet_alert(Context context, String user_login_id, String url){
         this.context                = context;
         this.user_login_id          = user_login_id;
+        this.url                    = url;
         this.date_String            = "";
     }
 
     //---생성자 오버로딩-- 특정 날짜를 클릭하여 보는 작업지시서의 경우
-    public Order_sheet_alert(Context context, String user_login_id, String date){
+    public Order_sheet_alert(Context context, String user_login_id, String date, String url){
         this.context                = context;
         this.user_login_id          = user_login_id;
+        this.url                    = url;
         this.date_String            = date;
     }
 
@@ -264,7 +267,7 @@ public class Order_sheet_alert{
         try {
 
             //db 접속(try/catch 필수)
-            DB_conn db_conn_obj = new DB_conn(context);
+            DB_conn db_conn_obj = new DB_conn(context, url);
 
             //특정 날짜를 검색하지 않는 경우
             if (date_String.equals("") || date_String.equals(" ") || date_String == null) {
@@ -468,7 +471,7 @@ public class Order_sheet_alert{
             //값 넣기
             //imageView.setImageResource(R.drawable.japangi2);
             com.squareup.picasso.Picasso.with(context)
-                    .load("http://52.78.198.67/images/drink/" + img_select + ".png")
+                    .load("http://"+url+"/images/drink/" + img_select + ".png")
                     .into(imageView);
 
         }
@@ -478,7 +481,7 @@ public class Order_sheet_alert{
             //값 넣기
             //imageView.setImageResource(R.drawable.japangi2);
             com.squareup.picasso.Picasso.with(context)
-                    .load("http://52.78.198.67/images/drink/" + img_select + "_back.png")
+                    .load("http://"+url+"/images/drink/" + img_select + "_back.png")
                     .into(imageView);
 
         }

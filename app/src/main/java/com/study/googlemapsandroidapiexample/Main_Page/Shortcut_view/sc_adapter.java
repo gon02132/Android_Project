@@ -21,10 +21,13 @@ public class Sc_adapter extends BaseAdapter{
     private ImageView               line_image;        //제품 이미지 뷰
     private TextView                val;               //제품 수량 텍스트 뷰
 
+    private String                  url;               //서버 주소
+
     //생성자
-    public Sc_adapter(Context context, ArrayList<Sc_list_item> sc_list) {
+    public Sc_adapter(Context context, ArrayList<Sc_list_item> sc_list, String url) {
         this.context = context;
         this.sc_list = sc_list;
+        this.url     = url;
     }
     //DB에서 값을 가져오기 때문에 set은 필요 없다!
 
@@ -66,7 +69,7 @@ public class Sc_adapter extends BaseAdapter{
 
             //서버에서 이미지 가져오기
             com.squareup.picasso.Picasso.with(context)
-                    .load("http://52.78.198.67/images/drink/" + sc_list.get(position * 4).getLv_product_name() + "_back.png")
+                    .load("http://"+url+"/images/drink/" + sc_list.get(position * 4).getLv_product_name() + "_back.png")
                     .into(line_image);
 
             //제품 수량
@@ -82,7 +85,7 @@ public class Sc_adapter extends BaseAdapter{
 
             //서버에서 이미지 가져오기
             com.squareup.picasso.Picasso.with(context)
-                    .load("http://52.78.198.67/images/drink/" + sc_list.get((position * 4) + 1).getLv_product_name() + "_back.png")
+                    .load("http://"+url+"/images/drink/" + sc_list.get((position * 4) + 1).getLv_product_name() + "_back.png")
                     .into(line_image);
 
             //제품 수량
@@ -98,7 +101,7 @@ public class Sc_adapter extends BaseAdapter{
 
             //서버에서 이미지 가져오기
             com.squareup.picasso.Picasso.with(context)
-                    .load("http://52.78.198.67/images/drink/" + sc_list.get((position * 4) + 2).getLv_product_name() + "_back.png")
+                    .load("http://"+url+"/images/drink/" + sc_list.get((position * 4) + 2).getLv_product_name() + "_back.png")
                     .into(line_image);
 
             //제품 수량
@@ -115,7 +118,7 @@ public class Sc_adapter extends BaseAdapter{
 
             //서버에서 이미지 가져오기
             com.squareup.picasso.Picasso.with(context)
-                    .load("http://52.78.198.67/images/drink/" + sc_list.get((position * 4) + 3).getLv_product_name() + "_back.png")
+                    .load("http://"+url+"/images/drink/" + sc_list.get((position * 4) + 3).getLv_product_name() + "_back.png")
                     .into(line_image);
 
             //제품 수량
