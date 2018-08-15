@@ -1658,8 +1658,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             //db_conn_obj.execute("get_markers", user_info[0], str_date);
 
             //특정 날짜를 기준으로 마커를 그리고 싶으면 얘를 쓴다
-            //db_conn_obj.execute("get_markers", user_info[0], "2018-06-23");
-            db_conn_obj.execute("get_markers", user_info[0], "2018-06-27");
+            db_conn_obj.execute("get_markers", user_info[0], "2018-08-14");
+            //db_conn_obj.execute("get_markers", user_info[0], "2018-06-27");
 
 
 

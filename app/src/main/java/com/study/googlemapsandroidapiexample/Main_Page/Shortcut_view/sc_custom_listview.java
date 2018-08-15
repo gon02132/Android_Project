@@ -76,7 +76,8 @@ public class Sc_custom_listview {
                 //[0]=vd_id [1]=vd_name [2]=drink_name [3]=drink_path [4]=drink_stook [5]=drink_line [6]=note
                 JSONObject json_obj = json_result.getJSONObject(i);
 
-                sc_list_items.add(new Sc_list_item(json_obj.getString("drink_name"), json_obj.getString("drink_line"), json_obj.getString("drink_stook")));
+                Integer stock_int = 10-json_obj.getInt("drink_stook");
+                sc_list_items.add(new Sc_list_item(json_obj.getString("drink_name"), json_obj.getString("drink_line"), stock_int.toString()));
             }
 
             //custom_listview 생성

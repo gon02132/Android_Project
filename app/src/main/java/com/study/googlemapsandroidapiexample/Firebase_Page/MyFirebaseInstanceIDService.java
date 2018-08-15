@@ -16,7 +16,7 @@ import okhttp3.RequestBody;
 public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
 
     //받아올 php 경로 선택 1:aws 2:autoset
-    private String   link = "http://52.78.198.67/android_db_conn_source/resigster.php";
+    private String   link = "http://52.79.80.213/android_db_conn_source/resigster.php";
    //private String  link = "http://WIFI경로주소!/android_db_conn_source/resigster.php";
 
     //토큰이 새로 생성될때마다 실행되는 콜백 함수

@@ -34,7 +34,7 @@ public class Login_page_Activity extends AppCompatActivity implements View.OnCli
     private String           user_token;                                          //현재 유저의 토큰 저장소
     private long             fir_time,  sec_time;                                 //뒤로가기 2번누르기를 위한 변수
 
-    private String              url                 = "52.78.83.17";              //서버 주소
+    private String           url                 = "52.79.80.213";               //서버 주소
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -275,8 +275,8 @@ public class Order_sheet_alert{
                 //현재 날짜 구하는 함수 포멧은 ex) 2018-04-25 로 문자열로 변환되어 출력됨
                 SimpleDateFormat df = new SimpleDateFormat("yyy-MM-dd", Locale.KOREA);
                 //String str_date     = df.format(new Date());
-                //String str_date = "2018-06-23";
-                String str_date = "2018-06-27";
+                String str_date = "2018-08-14";
+                //String str_date = "2018-06-27";
 
                 //db에 접속하여 반환된 결과값 초기화
                 result_str = db_conn_obj.execute("get_order_sheet", user_login_id, str_date).get();
@@ -708,7 +708,8 @@ public class Order_sheet_alert{
                                     if(one_line_list.get(j) == -1){
                                         draw_td(1,0,"-","#FFFFFF", 16,"fonts/Futura Heavy Italic font.ttf",(sp_check_int == 1) ? true : false);
                                     }else{
-                                        draw_td(1,0,one_line_list.get(j).toString(),"#FFFFFF", 16,"fonts/Futura Heavy Italic font.ttf", (sp_check_int == 1) ? true : false);
+                                        Integer result = 10-one_line_list.get(j);
+                                        draw_td(1,0,result.toString(),"#FFFFFF", 16,"fonts/Futura Heavy Italic font.ttf", (sp_check_int == 1) ? true : false);
                                     }
 
                                 }
@@ -786,7 +787,8 @@ public class Order_sheet_alert{
                                 if(one_line_list.get(j) == -1) {
                                     draw_td(1, 0, "-", "#FFFFFF", 16,"fonts/Futura Heavy Italic font.ttf", (sp_check_int == 1) ? true : false);
                                 }else{
-                                    draw_td(1, 0, one_line_list.get(j).toString(), "#FFFFFF", 16,"fonts/Futura Heavy Italic font.ttf", (sp_check_int == 1) ? true : false);
+                                    Integer result = 10-one_line_list.get(j);
+                                    draw_td(1,0,result.toString(),"#FFFFFF", 16,"fonts/Futura Heavy Italic font.ttf", (sp_check_int == 1) ? true : false);
                                 }
 
                             }
